@@ -2,3 +2,8 @@ let Vector = import("vector").Vector;
 
 let vec = Vector(0:10);
 println(vec.data);
+
+assert vec.size() == 10;
+assert vec[0] == 0;
+assert vec[9] == 9;
+assert vec[1:9] == Vector(1:9);

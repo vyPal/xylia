@@ -79,6 +79,32 @@ bool values_equal(value_t a, value_t b) {
         return false;
       return memcmp(a_str->chars, b_str->chars, a_str->length) == 0;
     } break;
+    case OBJ_VECTOR: {
+      obj_vector_t *a_vec = AS_VECTOR(a);
+      obj_vector_t *b_vec = AS_VECTOR(b);
+
+      if (a_vec->count != b_vec->count)
+        return false;
+
+      for (int i = 0; i < a_vec->count; i++)
+        if (!values_equal(a_vec->values[i], b_vec->values[i]))
+          return false;
+
+      return true;
+    } break;
+    case OBJ_LIST: {
+      obj_list_t *a_list = AS_LIST(a);
+      obj_list_t *b_list = AS_LIST(b);
+
+      if (a_list->count != b_list->count)
+        return false;
+
+      for (int i = 0; i < a_list->count; i++)
+        if (!values_equal(a_list->values[i], b_list->values[i]))
+          return false;
+
+      return true;
+    } break;
     default:
       return AS_OBJ(a) == AS_OBJ(b);
     }

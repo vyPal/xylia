@@ -1282,8 +1282,6 @@ static result_t run(void) {
     } break;
     case OP_CALL: {
       unsigned int argc = READ_BYTE();
-      // TODO: implement function having its own context if its closure or
-      // reference
       if (!call_value(peek(argc), argc, frame->frame_context))
         return RESULT_RUNTIME_ERROR;
       UPDATE_FRAME();

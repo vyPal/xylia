@@ -10,6 +10,10 @@ class Vector {
     }
   }
 
+  func size() {
+    return len(self.data);
+  }
+
   func push(args[]) {
     append(self.data, ..args);
   }
@@ -31,7 +35,7 @@ class Vector {
   }
 
   operator [:] (from, to) {
-    return slice(self.data, from, to);
+    return Vector(..slice(self.data, from, to));
   }
 
   operator [:]= (from, to, value) {
@@ -56,7 +60,7 @@ class Vector {
 
   operator + (other) {
     assert typeof(other) == "vector" || isinstance(other, Vector),
-            "Can only add Vector + vector or Vector + Vector";
+            "Can only add vectors";
 
     let elements;
     if (typeof(other) == "vector")
@@ -68,5 +72,18 @@ class Vector {
     new_vec.push(..elements);
 
     return new_vec;
+  }
+
+  operator == (other) {
+    assert typeof(other) == "vector" || isinstance(other, Vector),
+            "Can only compare vectors";
+
+    let elements;
+    if (typeof(other) == "vector")
+      elements = other;
+    else
+      elements = other.data;
+
+    return self.data == elements;
   }
 }
