@@ -1,0 +1,4 @@
+let Vector = import("vector").Vector;
+
+let vec = Vector(0:10);
+println(vec.data);
