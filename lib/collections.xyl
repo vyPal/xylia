@@ -1,0 +1,74 @@
+func sort(vec, fn) {
+  let result = {};
+  let vec_len = len(vec);
+  for (let i = 0; i < vec_len; i = i + 1)
+    append(result, vec[i]);
+
+  for (let i = 0; i < vec_len; i = i + 1)
+    for (let j = i + 1; j < vec_len; j = j + 1)
+      if (fn(result[i], result[j]) > 0) {
+        let tmp = result[i];
+        result[i] = result[j];
+        result[j] = tmp;
+      }
+
+  return result;
+}
+
+func reverse(vec) {
+  let result = {};
+
+  for (let i = len(vec) - 1; i >= 0; i = i - 1)
+    append(result, vec[i]);
+
+  return result;
+}
+
+func filter(vec, fn) {
+  let result = {};
+  let vec_len = len(vec);
+
+  for (let i = 0; i < vec_len; i = i + 1)
+    if (fn(vec[i]))
+      append(result, vec[i]);
+
+  return result;
+}
+
+func map(vec, fn) {
+  let result = {};
+  let vec_len = len(vec);
+
+  for (let i = 0; i < vec_len; i = i + 1)
+    append(result, fn(vec[i]));
+
+  return result;
+}
+
+func reduce(vec, fn, init) {
+  let acc = init;
+  let vec_len = len(vec);
+
+  for (let i = 0; i < vec_len; i = i + 1)
+    acc = fn(acc, vec[i]);
+
+  return acc;
+}
+
+func unique(vec) {
+  let result = {};
+  let vec_len = len(vec);
+
+  for (let i = 0; i < vec_len; i = i + 1) {
+    let found = false;
+    for (let j = 0; j < len(result); j = j + 1)
+      if (vec[i] == result[j]) {
+        found = true;
+        break;
+      }
+    if (!found)
+      append(result, vec[i]);
+  }
+
+  return result;
+}

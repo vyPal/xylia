@@ -1,0 +1,10 @@
+func greet_closure(name) {
+  func greet() {
+    printf("Hello, %!\n", name);
+  }
+
+  return greet;
+}
+
+let greet = greet_closure("Xylia");
+greet();

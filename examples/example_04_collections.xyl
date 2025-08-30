@@ -1,0 +1,11 @@
+let vector = {10, 20};  -- mutable
+let list = [10, 20];    -- immutable
+
+-- insert(vector, index, value);
+-- remove(vector, index);
+-- slice(vector, start, end);
+-- len(vector/list/string);
+append(vector, 30, 40, 50);
+
+println(pop(vector));
+println(vector);

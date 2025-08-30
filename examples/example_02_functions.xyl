@@ -1,0 +1,15 @@
+func greet(name) {
+  -- printf is a builtin function
+  -- just like print and println
+  printf("Hello, %!\n", name);
+}
+
+func add(a, b) {
+  return a + b;
+}
+
+greet("Xylia");
+
+let fn = add;
+let result = fn(10, 20);
+println(result);

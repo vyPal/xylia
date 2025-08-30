@@ -1,0 +1,72 @@
+class Vector {
+  func init(args[]) {
+    let argc = len(args);
+
+    if (argc == 1 && typeof(args[0]) == "range")
+      self.data = vector(args[0]);
+    else {
+      self.data = {};
+      append(self.data, ..args);
+    }
+  }
+
+  func push(args[]) {
+    append(self.data, ..args);
+  }
+
+  func pop() {
+    return pop(self.data);
+  }
+
+  func insert(index, value) {
+    insert(self.data, index, value);
+  }
+
+  func remove(index) {
+    return remove(self.data, index);
+  }
+
+  func to_string() {
+    return string(self.data);
+  }
+
+  operator [:] (from, to) {
+    return slice(self.data, from, to);
+  }
+
+  operator [:]= (from, to, value) {
+    for (let i = from; i < to; i = i + 1)
+      remove(self.data, from);
+
+    if (typeof(value) == "list") {
+      to = len(value);
+      for (let i = 0; i < to; i = i + 1)
+        insert(self.data, from + i, value[i]);
+    } else
+      insert(self.data, from, value);
+  }
+
+  operator [] (index) {
+    return self.data[index];
+  }
+
+  operator []= (index, value) {
+    self.data[index] = value;
+  }
+
+  operator + (other) {
+    assert typeof(other) == "vector" || isinstance(other, Vector),
+            "Can only add Vector + vector or Vector + Vector";
+
+    let elements;
+    if (typeof(other) == "vector")
+      elements = other;
+    else 
+      elements = other.data;
+
+    let new_vec = Vector(..self.data);
+    new_vec.push(..elements);
+
+    return new_vec;
+  }
+}

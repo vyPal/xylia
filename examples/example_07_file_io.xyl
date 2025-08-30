@@ -1,0 +1,10 @@
+let file = open("hello.txt", "w");
+let message = "Hello, World!";
+
+write(file, message);
+
+-- optionally you can close the file manually
+close(file);
+
+file = open("hello.txt", "r");
+println(read(file));
