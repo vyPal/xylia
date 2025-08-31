@@ -89,7 +89,7 @@ static int jump_op(const char *name, int sign, chunk_t *chunk, int offset) {
 int disassemble_instruction(chunk_t *chunk, int offset) {
   printf("%04d ", offset);
 
-  uint8_t op = chunk->code[offset];
+  op_code_t op = chunk->code[offset];
   switch (op) {
   case OP_CONSTANT:
     return constant_op("OP_CONSTANT", chunk, offset);
@@ -253,6 +253,14 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
     return jump_op("JUMP_IF_FALSE", 1, chunk, offset);
   case OP_RETURN:
     return simple_op("OP_RETURN", offset);
+  case OP_LIST:
+    return byte_op("OP_LIST", chunk, offset);
+  case OP_LIST_LONG:
+    return long_op("OP_LIST_LONG", chunk, offset);
+  case OP_SPREAD:
+    return simple_op("OP_SPREAD", offset);
+  case OP_RANGE:
+    return simple_op("OP_RANGE", offset);
   default:
     printf("Unknown opcode 0x%02x\n", op);
     return offset + 1;
