@@ -1,9 +1,38 @@
+let test = import("test");
 let Vector = import("vector").Vector;
 
-let vec = Vector(0:10);
-println(vec.data);
+func vec_init() {
+  let vec = Vector(0:10);
+  let vec_size = vec.size();
 
-assert vec.size() == 10;
-assert vec[0] == 0;
-assert vec[9] == 9;
-assert vec[1:9] == Vector(1:9);
+  assert_eq(vec_size, 10);
+  for (let i = 0; i < vec_size; i = i + 1)
+    assert_eq(vec[i], i);
+}
+
+func vec_slice() {
+  let vec = Vector(0:10);
+  let vec_size = vec.size();
+
+  assert_true(vec[2:5] == {2, 3, 4});
+  vec[2:8] = 5;
+  assert_true(vec == {0, 1, 5, 8, 9});
+}
+
+func vec_concat() {
+  let vec1 = Vector(0:3);
+  let vec2 = Vector(3:7);
+  let vec3 = vec1 + vec2;
+
+  let vec4 = Vector(0:7);
+
+  assert_true(vec3 == vec4);
+}
+
+let suite = test.Suite("vector");
+
+suite.add_case(test.Case("Vector initialization", vec_init));
+suite.add_case(test.Case("Vector slices", vec_slice));
+suite.add_case(test.Case("Vector concat", vec_concat));
+
+suite.run();

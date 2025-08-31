@@ -45,16 +45,16 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ -f "${BUILD_DIR}/${EXE}" ]; then
-  # before_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
-  # info "Stripping binary ${BUILD_DIR}/${EXE}..."
-  # strip --strip-all "${BUILD_DIR}/${EXE}"
-  # after_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
+  before_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
+  info "Stripping binary ${BUILD_DIR}/${EXE}..."
+  strip --strip-all "${BUILD_DIR}/${EXE}"
+  after_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
 
-  # saved=$((before_size - after_size))
-  # saved_kb=$((saved / 1024))
-  # after_kb=$((after_size / 1024))
+  saved=$((before_size - after_size))
+  saved_kb=$((saved / 1024))
+  after_kb=$((after_size / 1024))
 
-  # info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
+  info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
 
   info "Moving binary to ${BIN_DIR}/${EXE}..."
   mv "${BUILD_DIR}/${EXE}" "${BIN_DIR}/${EXE}"
@@ -67,6 +67,6 @@ if [ ! -f "$BUILD_DIR/compile_commands.json" ]; then
   exit 1
 fi
 
-cp "${BUILD_DIR}/compile_commands.json" .
+mv "${BUILD_DIR}/compile_commands.json" .
 
 success "Build complete!"
