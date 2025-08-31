@@ -163,8 +163,7 @@ void init_vm(void) {
 
   vm.args = NULL;
 
-  // init_table(&vm.globals);
-  init_value_array(&vm.modules);
+  init_table(&vm.module_lookup);
   init_table(&vm.builtins);
   init_table(&vm.strings);
 
@@ -216,8 +215,7 @@ void free_vm(void) {
   free_stack();
   free_frames();
 
-  // free_table(&vm.globals);
-  free_value_array(&vm.modules);
+  free_table(&vm.module_lookup);
   free_table(&vm.builtins);
   free_table(&vm.strings);
 

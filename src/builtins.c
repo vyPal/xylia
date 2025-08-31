@@ -9,6 +9,7 @@
 #include "compiler.h"
 #include "memory.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -828,6 +829,9 @@ xyl_builtin(import) {
   xyl_builtin_signature(argv, 1, ARGC_EXACT, {VAL_OBJ, OBJ_STRING});
 
   obj_string_t *path = AS_STRING(argv[0]);
+  value_t value;
+  if (table_get(&vm.module_lookup, path, &value))
+    return value;
 
   if (path->length < EXT_LEN ||
       memcmp(path->chars + path->length - EXT_LEN, EXT, EXT_LEN) != 0) {
@@ -863,7 +867,7 @@ xyl_builtin(import) {
     vm.update_frame = true;
 
     push(OBJ_VAL(module));
-    write_value_array(&vm.modules, OBJ_VAL(module));
+    table_set(&vm.module_lookup, path, OBJ_VAL(module));
     pop();
 
     return OBJ_VAL(module);
@@ -885,7 +889,7 @@ xyl_builtin(import) {
   vm.update_frame = true;
 
   push(OBJ_VAL(module));
-  write_value_array(&vm.modules, OBJ_VAL(module));
+  table_set(&vm.module_lookup, path, OBJ_VAL(module));
   pop();
 
   return OBJ_VAL(module);

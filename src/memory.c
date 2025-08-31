@@ -263,8 +263,7 @@ static void mark_roots(void) {
   if (vm.args)
     mark_object((obj_t *)vm.args);
 
-  // mark_table(&vm.globals);
-  mark_array(&vm.modules);
+  mark_table(&vm.module_lookup);
   mark_table(&vm.builtins);
   mark_table(&vm.strings);
 
