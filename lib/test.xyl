@@ -51,7 +51,10 @@ class Suite {
       }
     }
 
-    printf("\nSummary: % passed, % failed, % total\n", passed, failed, cases_len);
+    printf("\nSummary: ");
+    printf("\x1b[1;32m%\x1b[0m passed, ", passed);
+    printf("\x1b[1;31m%\x1b[0m failed, ", failed);
+    printf("\x1b[1;34m%\x1b[0m total\n", cases_len);
   }
 }
 
