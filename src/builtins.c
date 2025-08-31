@@ -9,7 +9,6 @@
 #include "compiler.h"
 #include "memory.h"
 #include "object.h"
-#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -647,11 +646,11 @@ xyl_builtin(remove) {
   }
 
   value_t removed = vector->values[index];
+  vector->count--;
 
   for (int i = index; i < vector->count; i++)
     vector->values[i] = vector->values[i + 1];
 
-  vector->count--;
   return removed;
 }
 
