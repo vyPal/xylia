@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "memory.h"
 #include "repl.h"
@@ -74,15 +75,26 @@ int main(int argc, char **argv) {
 
   init_vm();
 
+  char *file = NULL;
+  bool repl = false;
+
   if (argc == 1) {
+    repl = true;
     set_args(0, argv + 1);
-    repl();
-  } else if (argc >= 2) {
-    set_args(argc - 2, argv + 2);
-    run_file(argv[1]);
   } else {
-    fprintf(stderr, "Usage: xylia [path [flags]]\n");
-    failed = true;
+    file = argv[1];
+    set_args(argc - 1, argv + 1);
+  }
+
+  if (!failed) {
+    if (repl)
+      run_repl();
+    else if (file)
+      run_file(file);
+    else {
+      fprintf(stderr, "Usage [path [flags]]\n");
+      failed = true;
+    }
   }
 
   int exit_code = failed ? 1 : vm.exit_code;

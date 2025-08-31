@@ -141,8 +141,6 @@ static void blacken_object(obj_t *object) {
     obj_function_t *function = (obj_function_t *)object;
     mark_object((obj_t *)function->name);
     mark_array(&function->chunk.constants);
-    if (function->context != NULL)
-      mark_table(function->context);
   } break;
   case OBJ_UPVALUE:
     mark_value(((obj_upvalue_t *)object)->closed);
@@ -261,7 +259,7 @@ static void mark_roots(void) {
   if (vm.args)
     mark_object((obj_t *)vm.args);
 
-  mark_table(&vm.globals);
+  // mark_table(&vm.globals);
   mark_table(&vm.builtins);
   mark_table(&vm.strings);
 

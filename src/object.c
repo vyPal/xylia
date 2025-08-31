@@ -51,7 +51,7 @@ obj_function_t *new_function(void) {
   function->arity = 0;
   function->upvalue_count = 0;
   function->name = NULL;
-  function->context = NULL;
+  function->globals = NULL;
   function->has_varargs = false;
   init_chunk(&function->chunk);
   return function;
@@ -190,12 +190,13 @@ obj_file_t *new_file(const char *path, const char *mode) {
   return file;
 }
 
-obj_module_t *new_module(obj_string_t *name, obj_closure_t *init) {
+obj_module_t *new_module(obj_string_t *name, obj_closure_t *init,
+                         table_t *table) {
   obj_module_t *module = ALLOCATE_OBJ(obj_module_t, OBJ_MODULE);
   module->name = name;
   module->init = init;
   push(OBJ_VAL(module));
-  module->globals = ALLOCATE(table_t, 1);
+  module->globals = table;
   init_table(module->globals);
   pop();
   return module;

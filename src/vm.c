@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -31,6 +32,7 @@ void set_signal(vm_singal_t sig, int exit_code) {
     case SIG_STACK_UNDERFLOW:
     case SIG_ASSERT_FAIL:
     case SIG_RUNTIME_ERROR:
+    case SIG_TEST_ASSERT_FAIL:
       vm.exit_code = 1;
       break;
     case SIG_NONE:
@@ -161,7 +163,7 @@ void init_vm(void) {
 
   vm.args = NULL;
 
-  init_table(&vm.globals);
+  // init_table(&vm.globals);
   init_table(&vm.builtins);
   init_table(&vm.strings);
 
@@ -198,6 +200,13 @@ void init_vm(void) {
   define_builtin("vector", builtin_vector);
   define_builtin("list", builtin_list);
 
+  define_builtin("case_failed", builtin_case_failed);
+
+  define_builtin("assert_true", builtin_assert_true);
+  define_builtin("assert_false", builtin_assert_false);
+  define_builtin("assert_eq", builtin_assert_eq);
+  define_builtin("assert_neq", builtin_assert_neq);
+
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
 }
@@ -206,7 +215,7 @@ void free_vm(void) {
   free_stack();
   free_frames();
 
-  free_table(&vm.globals);
+  // free_table(&vm.globals);
   free_table(&vm.builtins);
   free_table(&vm.strings);
 
@@ -245,7 +254,7 @@ value_t pop(void) {
   return *vm.stack_top;
 }
 
-void push_frame(obj_closure_t *closure, int argc, table_t *context) {
+void push_frame(obj_closure_t *closure, int argc) {
   if (vm.frame_count >= vm.frame_capacity) {
     int old_capacity = vm.frame_capacity;
     vm.frame_capacity = GROW_CAPACITY(old_capacity);
@@ -255,9 +264,9 @@ void push_frame(obj_closure_t *closure, int argc, table_t *context) {
 
   call_frame_t *frame = &vm.frames[vm.frame_count++];
   frame->closure = closure;
+  frame->globals = closure->function->globals;
   frame->ip = closure->function->chunk.code;
   frame->slots = vm.stack_top - argc - 1;
-  frame->frame_context = context;
   frame->is_module = false;
 }
 
@@ -273,7 +282,7 @@ static value_t peek(int distance) {
   return vm.stack_top[-1 - distance];
 }
 
-static bool call(obj_closure_t *closure, int argc, table_t *context) {
+static bool call(obj_closure_t *closure, int argc) {
   int true_argc = 0;
   for (int i = 0; i < argc; i++) {
     if (IS_LIST(peek(i)) && AS_LIST(peek(i))->spread)
@@ -295,9 +304,6 @@ static bool call(obj_closure_t *closure, int argc, table_t *context) {
                   true_argc);
     return false;
   }
-
-  if (context == NULL && closure->function->context != NULL)
-    context = closure->function->context;
 
   value_t stack[argc] = {};
   for (int i = 0; i < argc; i++)
@@ -322,27 +328,27 @@ static bool call(obj_closure_t *closure, int argc, table_t *context) {
       list->values[i] = pop();
     push(OBJ_VAL(list));
 
-    push_frame(closure, closure->function->arity, context);
+    push_frame(closure, closure->function->arity);
   } else
-    push_frame(closure, true_argc, context);
+    push_frame(closure, true_argc);
 
   return true;
 }
 
-static bool call_value(value_t callee, int argc, table_t *context) {
+static bool call_value(value_t callee, int argc) {
   if (IS_OBJ(callee)) {
     switch (OBJ_TYPE(callee)) {
     case OBJ_BOUND_METHOD: {
       obj_bound_method_t *bound = AS_BOUND_METHOD(callee);
       vm.stack_top[-argc - 1] = bound->receiver;
-      return call(bound->method, argc, context);
+      return call(bound->method, argc);
     }
     case OBJ_CLASS: {
       obj_class_t *clas = AS_CLASS(callee);
       vm.stack_top[-argc - 1] = OBJ_VAL(new_instance(clas));
       value_t initializer;
       if (table_get(&clas->methods, vm.vm_strings[VM_STR_INIT], &initializer))
-        return call(AS_CLOSURE(initializer), argc, context);
+        return call(AS_CLOSURE(initializer), argc);
       else if (argc != 0) {
         runtime_error("Expected 0 arguments but got %d", argc);
         return false;
@@ -350,7 +356,7 @@ static bool call_value(value_t callee, int argc, table_t *context) {
       return true;
     }
     case OBJ_CLOSURE:
-      return call(AS_CLOSURE(callee), argc, context);
+      return call(AS_CLOSURE(callee), argc);
     case OBJ_BUILTIN: {
       builtin_fn_t builtin = AS_BUILTIN(callee);
       value_t result = builtin(argc, vm.stack_top - argc);
@@ -373,8 +379,7 @@ static bool invoke_from_class(obj_class_t *clas, obj_string_t *name, int argc) {
     runtime_error("Undefined property '%s'", name->chars);
     return false;
   }
-  table_t *context = vm.frames[vm.frame_count - 1].frame_context;
-  return call(AS_CLOSURE(method), argc, context);
+  return call(AS_CLOSURE(method), argc);
 }
 
 static bool invoke(obj_string_t *name, int argc) {
@@ -391,8 +396,7 @@ static bool invoke(obj_string_t *name, int argc) {
     value_t value;
     if (table_get(&instance->fields, name, &value)) {
       vm.stack_top[-argc - 1] = value;
-      table_t *context = vm.frames[vm.frame_count - 1].frame_context;
-      return call_value(value, argc, context);
+      return call_value(value, argc);
     }
 
     return invoke_from_class(instance->clas, name, argc);
@@ -402,7 +406,7 @@ static bool invoke(obj_string_t *name, int argc) {
     value_t value;
     if (table_get(moduele->globals, name, &value)) {
       vm.stack_top[-argc - 1] = value;
-      return call_value(value, argc, moduele->globals);
+      return call_value(value, argc);
     }
   }
 
@@ -561,8 +565,12 @@ static result_t run(void) {
     }
     printf("\n");
 #endif
-    table_t *globals =
-        frame->frame_context ? frame->frame_context : &vm.globals;
+    // table_t *globals = frame->globals == NULL ? &vm.globals : frame->globals;
+    table_t *globals = frame->globals;
+    if (globals == NULL) {
+      runtime_error("No globals table found");
+      return RESULT_RUNTIME_ERROR;
+    }
 
     switch (READ_BYTE()) {
     case OP_CONSTANT:
@@ -690,10 +698,6 @@ static result_t run(void) {
 
         value_t value;
         if (table_get(module->globals, name, &value)) {
-          if (IS_FUNCTION(value))
-            AS_FUNCTION(value)->context = module->globals;
-          else if (IS_CLOSURE(value))
-            AS_CLOSURE(value)->function->context = module->globals;
           pop();
           push(value);
           break;
@@ -728,10 +732,6 @@ static result_t run(void) {
 
         value_t value;
         if (table_get(module->globals, name, &value)) {
-          if (IS_FUNCTION(value))
-            AS_FUNCTION(value)->context = module->globals;
-          else if (IS_CLOSURE(value))
-            AS_CLOSURE(value)->function->context = module->globals;
           pop();
           push(value);
           break;
@@ -1282,7 +1282,7 @@ static result_t run(void) {
     } break;
     case OP_CALL: {
       unsigned int argc = READ_BYTE();
-      if (!call_value(peek(argc), argc, frame->frame_context))
+      if (!call_value(peek(argc), argc))
         return RESULT_RUNTIME_ERROR;
       UPDATE_FRAME();
     } break;
@@ -1319,10 +1319,11 @@ static result_t run(void) {
     if (vm.signal != SIG_NONE)
       switch (vm.signal) {
       case SIG_NONE: // Unreachable
+      case SIG_TEST_ASSERT_FAIL:
         break;
+      case SIG_ASSERT_FAIL:
       case SIG_STACK_OVERFLOW:
       case SIG_STACK_UNDERFLOW:
-      case SIG_ASSERT_FAIL:
       case SIG_RUNTIME_ERROR:
         return RESULT_RUNTIME_ERROR;
       case SIG_HALT:
@@ -1348,15 +1349,12 @@ static result_t run(void) {
 }
 
 result_t interpret(const char *source) {
-  obj_function_t *function = compile(source);
-  if (function == NULL)
+  obj_module_t *module = compile(source, NULL);
+  if (module == NULL)
     return RESULT_COMPILE_ERROR;
 
-  push(OBJ_VAL(function));
-  obj_closure_t *closure = new_closure(function);
-  pop();
-  push(OBJ_VAL(closure));
-  call(closure, 0, NULL);
+  push(OBJ_VAL(module));
+  call(module->init, 0);
 
   return run();
 }

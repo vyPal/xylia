@@ -9,7 +9,6 @@
 #include "compiler.h"
 #include "memory.h"
 #include "object.h"
-#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -250,11 +249,10 @@ static const char *obj_type_to_str(obj_type_t type) {
     return "class";
   case OBJ_BOUND_METHOD:
   case OBJ_FUNCTION:
+  case OBJ_CLOSURE:
     return "function";
   case OBJ_INSTANCE:
     return "instance";
-  case OBJ_CLOSURE:
-    return "closure";
   case OBJ_BUILTIN:
     return "builtin";
   case OBJ_UPVALUE:
@@ -657,36 +655,96 @@ xyl_builtin(remove) {
 }
 
 xyl_builtin(slice) {
-  xyl_builtin_signature(slice, 3, ARGC_EXACT, {VAL_OBJ, OBJ_VECTOR},
+  xyl_builtin_signature(slice, 3, ARGC_EXACT, {VAL_OBJ, OBJ_ANY},
                         {VAL_NUMBER, OBJ_ANY}, {VAL_NUMBER, OBJ_ANY});
 
-  obj_vector_t *vector = AS_VECTOR(argv[0]);
-  int64_t from = AS_NUMBER(argv[1]);
-  int64_t to = AS_NUMBER(argv[2]);
+  if (IS_VECTOR(argv[0])) {
+    obj_vector_t *vector = AS_VECTOR(argv[0]);
+    int64_t from = AS_NUMBER(argv[1]);
+    int64_t to = AS_NUMBER(argv[2]);
 
-  if (from > to) {
-    runtime_error("Start index can not be bigger than end index");
-    return NIL_VAL;
+    if (from > to) {
+      runtime_error("Start index can not be bigger than end index");
+      return NIL_VAL;
+    }
+
+    if (from < 0 || from > vector->count) {
+      runtime_error("Index %d out of range", from);
+      return NIL_VAL;
+    }
+
+    if (to < 0 || to > vector->count) {
+      runtime_error("Index %d out of range", to);
+      return NIL_VAL;
+    }
+
+    if (from == to)
+      return OBJ_VAL(new_vector(4));
+
+    obj_vector_t *new_vec = new_vector(to - from);
+    for (int i = 0; i < (to - from); i++)
+      new_vec->values[new_vec->count++] = vector->values[from + i];
+
+    return OBJ_VAL(new_vec);
+  } else if (IS_LIST(argv[0])) {
+    obj_list_t *list = AS_LIST(argv[0]);
+    int64_t from = AS_NUMBER(argv[1]);
+    int64_t to = AS_NUMBER(argv[2]);
+
+    if (from > to) {
+      runtime_error("Start index can not be bigger than end index");
+      return NIL_VAL;
+    }
+
+    if (from < 0 || from > list->count) {
+      runtime_error("Index %d out of range", from);
+      return NIL_VAL;
+    }
+
+    if (to < 0 || to > list->count) {
+      runtime_error("Index %d out of range", to);
+      return NIL_VAL;
+    }
+
+    if (from == to) {
+      runtime_error("Can not create empty list slice");
+      return NIL_VAL;
+    }
+
+    obj_list_t *new_lst = new_list(to - from);
+    for (int i = 0; i < (to - from); i++)
+      new_lst->values[i] = list->values[from + i];
+
+    return OBJ_VAL(new_lst);
+  } else if (IS_STRING(argv[0])) {
+    obj_string_t *string = AS_STRING(argv[0]);
+    int64_t from = AS_NUMBER(argv[1]);
+    int64_t to = AS_NUMBER(argv[2]);
+
+    if (from > to) {
+      runtime_error("Start index can not be bigger than end index");
+      return NIL_VAL;
+    }
+
+    if (from < 0 || from > string->length) {
+      runtime_error("Index %d out of range", from);
+      return NIL_VAL;
+    }
+
+    if (to < 0 || to > string->length) {
+      runtime_error("Index %d out of range", to);
+      return NIL_VAL;
+    }
+
+    if (from == to)
+      return OBJ_VAL(copy_string("", 0, true));
+
+    obj_string_t *new_str = copy_string(string->chars + from, to - from, true);
+    return OBJ_VAL(new_str);
   }
 
-  if (from < 0 || from > vector->count) {
-    runtime_error("Index %d out of range", from);
-    return NIL_VAL;
-  }
-
-  if (to < 0 || to > vector->count) {
-    runtime_error("Index %d out of range", to);
-    return NIL_VAL;
-  }
-
-  if (from == to)
-    return OBJ_VAL(new_vector(4));
-
-  obj_vector_t *new_vec = new_vector(to - from);
-  for (int i = 0; i < (to - from); i++)
-    new_vec->values[new_vec->count++] = vector->values[from + i];
-
-  return OBJ_VAL(new_vec);
+  runtime_error("Can call slice only on vecor, list and string");
+  return NIL_VAL;
 }
 
 xyl_builtin(typeof) {
@@ -718,11 +776,10 @@ xyl_builtin(typeof) {
       return OBJ_VAL(vm.vm_strings[VM_STR_CLASS]);
     case OBJ_FUNCTION:
     case OBJ_BOUND_METHOD:
+    case OBJ_CLOSURE:
       return OBJ_VAL(vm.vm_strings[VM_STR_FUNCTION]);
     case OBJ_INSTANCE:
       return OBJ_VAL(vm.vm_strings[VM_STR_INSTANCE]);
-    case OBJ_CLOSURE:
-      return OBJ_VAL(vm.vm_strings[VM_STR_CLOSURE]);
     case OBJ_BUILTIN:
       return OBJ_VAL(vm.vm_strings[VM_STR_BUILTIN]);
     case OBJ_UPVALUE:
@@ -794,21 +851,14 @@ xyl_builtin(import) {
     if (!source)
       return NIL_VAL;
 
-    obj_function_t *function = compile(source);
+    obj_module_t *module = compile(source, path);
     free(source);
-    if (function == NULL) {
+    if (module == NULL) {
       runtime_error("Failed to compile module '%s'", path->chars);
       return NIL_VAL;
     }
 
-    push(OBJ_VAL(function));
-    obj_closure_t *closure = new_closure(function);
-    push(OBJ_VAL(closure));
-    obj_module_t *module = new_module(path, closure);
-    pop();
-    pop();
-
-    push_frame(closure, 0, module->globals);
+    push_frame(module->init, 0);
     vm.frames[vm.frame_count - 1].is_module = true;
     vm.update_frame = true;
 
@@ -819,21 +869,14 @@ xyl_builtin(import) {
   if (!source)
     return NIL_VAL;
 
-  obj_function_t *function = compile(source);
+  obj_module_t *module = compile(source, path);
   free(source);
-  if (function == NULL) {
+  if (module == NULL) {
     runtime_error("Failed to compile module '%s'", path->chars);
     return NIL_VAL;
   }
 
-  push(OBJ_VAL(function));
-  obj_closure_t *closure = new_closure(function);
-  push(OBJ_VAL(closure));
-  obj_module_t *module = new_module(path, closure);
-  pop();
-  pop();
-
-  push_frame(closure, 0, module->globals);
+  push_frame(module->init, 0);
   vm.frames[vm.frame_count - 1].is_module = true;
   vm.update_frame = true;
 
@@ -1056,5 +1099,42 @@ xyl_builtin(list) {
                 "'range' but got '%s'",
                 obj_type_to_str(OBJ_TYPE(arg)));
 
+  return NIL_VAL;
+}
+
+xyl_builtin(case_failed) {
+  xyl_builtin_signature(case_failed, 0, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
+  bool failed = vm.signal == SIG_TEST_ASSERT_FAIL;
+  vm.signal = SIG_NONE;
+  return BOOL_VAL(failed);
+}
+
+xyl_builtin(assert_true) {
+  xyl_builtin_signature(assert_true, 1, ARGC_EXACT, {VAL_BOOL, OBJ_ANY});
+  if (!AS_BOOL(argv[0]))
+    vm.signal = SIG_TEST_ASSERT_FAIL;
+  return NIL_VAL;
+}
+
+xyl_builtin(assert_false) {
+  xyl_builtin_signature(assert_false, 1, ARGC_EXACT, {VAL_BOOL, OBJ_ANY});
+  if (AS_BOOL(argv[0]))
+    vm.signal = SIG_TEST_ASSERT_FAIL;
+  return NIL_VAL;
+}
+
+xyl_builtin(assert_eq) {
+  xyl_builtin_signature(assert_eq, 2, ARGC_EXACT, {VAL_ANY, OBJ_ANY},
+                        {VAL_ANY, OBJ_ANY});
+  if (!values_equal(argv[0], argv[1]))
+    vm.signal = SIG_TEST_ASSERT_FAIL;
+  return NIL_VAL;
+}
+
+xyl_builtin(assert_neq) {
+  xyl_builtin_signature(assert_neq, 2, ARGC_EXACT, {VAL_ANY, OBJ_ANY},
+                        {VAL_ANY, OBJ_ANY});
+  if (values_equal(argv[0], argv[1]))
+    vm.signal = SIG_TEST_ASSERT_FAIL;
   return NIL_VAL;
 }

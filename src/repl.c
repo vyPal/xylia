@@ -12,7 +12,7 @@ static inline void print_prompt(void) {
   printf("\x1b[33m>>>\x1b[0m ");
 }
 
-void repl(void) {
+void run_repl(void) {
   size_t capacity = 64;
   size_t count = 0;
   char *buffer = (char *)malloc(capacity);

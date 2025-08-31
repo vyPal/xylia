@@ -1,0 +1,39 @@
+let Vector = import("vector").Vector;
+
+class Case {
+  func init(name, fn) {
+    assert typeof(name) == "string", "name must be string";
+    assert typeof(fn) == "function", "fn must be function";
+    self.name = name;
+    self.fn = fn;
+  }
+
+  func run() {
+    self.fn();
+    return case_failed();
+  }
+}
+
+class Suite {
+  func init(name) {
+    assert typeof(name) == "string", "name must be string";
+    self.cases = Vector();
+    self.name = name;
+  }
+
+  func add_case(case) {
+    assert isinstance(case, Case), "case must be Case";
+    self.cases.push(case);
+  }
+
+  func run() {
+    printf("\x1b[1;33mSuite\x1b[0m: %\n", self.name);
+    let cases_len = self.cases.size();
+    for (let i = 0; i < cases_len; i = i + 1) {
+      if (self.cases[i].run())
+        printf("  \x1b[1;31m[FAILED]\x1b[0m %\n", self.cases[i].name);
+      else
+        printf("  \x1b[1;32m[PASSED]\x1b[0m %\n", self.cases[i].name);
+    }
+  }
+}

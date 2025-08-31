@@ -7,12 +7,13 @@ project(
 )
 
 add_compile_options(
-  # -DDECOMPILE
-  # -DDEBUG_STRESS_GC
-  # -g
-  # -rdynamic
-  # -no-pie
-  -O3
+  -DDECOMPILE
+  -DDEBUG_STRESS_GC
+  -DDEBUG
+  -g
+  -rdynamic
+  -no-pie
+  # -O3
 )
 
 file(GLOB_RECURSE SOURCES "src/*.c")

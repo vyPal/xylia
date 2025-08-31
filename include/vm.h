@@ -55,6 +55,7 @@ typedef enum {
   SIG_NONE,
   SIG_STACK_OVERFLOW,
   SIG_STACK_UNDERFLOW,
+  SIG_TEST_ASSERT_FAIL,
   SIG_ASSERT_FAIL,
   SIG_RUNTIME_ERROR,
   SIG_HALT,
@@ -64,7 +65,7 @@ typedef struct {
   obj_closure_t *closure;
   uint8_t *ip;
   value_t *slots;
-  table_t *frame_context;
+  table_t *globals;
   bool is_module;
 } call_frame_t;
 
@@ -78,7 +79,7 @@ typedef struct {
   value_t *stack_top;
   int stack_capacity;
 
-  table_t globals;
+  // table_t globals;
   table_t builtins;
   table_t strings;
 
@@ -114,7 +115,7 @@ void free_vm(void);
 void set_args(int argc, char **argv);
 result_t interpret(const char *source);
 void push(value_t value);
-void push_frame(obj_closure_t *closure, int argc, table_t *context);
+void push_frame(obj_closure_t *closure, int argc);
 value_t pop(void);
 
 #endif

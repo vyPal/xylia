@@ -9,7 +9,9 @@
 #include "memory.h"
 #include "object.h"
 #include "scanner.h"
+#include "table.h"
 #include "value.h"
+#include "vm.h"
 
 #ifdef DECOMPILE
 #include "debug.h"
@@ -71,6 +73,7 @@ typedef struct compiler {
   struct compiler *enclosing;
   obj_function_t *function;
   function_type_t type;
+  table_t *globals;
 
   local_t *locals;
   int local_capacity;
@@ -100,7 +103,8 @@ class_compiler_t *current_class = NULL;
 chunk_t *compiling_chunk = NULL;
 loop_t *current_loop = NULL;
 
-static void init_compiler(compiler_t *compiler, function_type_t type) {
+static void init_compiler(compiler_t *compiler, function_type_t type,
+                          table_t *globals) {
   compiler->enclosing = current;
   compiler->function = NULL;
   compiler->type = type;
@@ -111,6 +115,7 @@ static void init_compiler(compiler_t *compiler, function_type_t type) {
       GROW_ARRAY(local_t, compiler->locals, 0, compiler->local_capacity);
   compiler->scope_depth = 0;
   compiler->function = new_function();
+  compiler->globals = globals;
   current = compiler;
   if (type != TYPE_SCRIPT)
     current->function->name =
@@ -230,6 +235,7 @@ static void emit_return(void) {
 static obj_function_t *end_compiler(void) {
   emit_return();
   obj_function_t *function = current->function;
+  function->globals = current->globals;
 
 #ifdef DECOMPILE
   if (!parser.had_error)
@@ -945,7 +951,7 @@ static void define_variable(unsigned int global) {
 
 static void function(function_type_t type) {
   compiler_t compiler;
-  init_compiler(&compiler, type);
+  init_compiler(&compiler, type, current->globals);
   begin_scope();
 
   consume(TOK_LPAREN, "Expected '(' after function name");
@@ -1261,10 +1267,11 @@ static void statement(void) {
     expression_statement();
 }
 
-obj_function_t *compile(const char *source) {
+obj_module_t *compile(const char *source, obj_string_t *path) {
+  table_t *globals = ALLOCATE(table_t, 1);
   init_scanner(source);
   compiler_t compiler;
-  init_compiler(&compiler, TYPE_SCRIPT);
+  init_compiler(&compiler, TYPE_SCRIPT, globals);
 
   parser.had_error = false;
   parser.panic_mode = false;
@@ -1275,7 +1282,14 @@ obj_function_t *compile(const char *source) {
     declaration();
 
   obj_function_t *function = end_compiler();
-  return parser.had_error ? NULL : function;
+  push(OBJ_VAL(function));
+  obj_closure_t *closure = new_closure(function);
+  pop();
+  push(OBJ_VAL(closure));
+  obj_module_t *module = new_module(
+      path == NULL ? copy_string("main", 4, true) : path, closure, globals);
+  pop();
+  return parser.had_error ? NULL : module;
 }
 
 void mark_compiler_roots(void) {

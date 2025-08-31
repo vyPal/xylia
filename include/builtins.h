@@ -45,4 +45,12 @@ xyl_builtin(bool);
 xyl_builtin(vector);
 xyl_builtin(list);
 
+// Tests
+xyl_builtin(case_failed);
+
+xyl_builtin(assert_true);
+xyl_builtin(assert_false);
+xyl_builtin(assert_eq);
+xyl_builtin(assert_neq);
+
 #endif
