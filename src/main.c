@@ -80,10 +80,10 @@ int main(int argc, char **argv) {
 
   if (argc == 1) {
     repl = true;
-    set_args(0, argv + 1);
+    set_args(0, NULL);
   } else {
     file = argv[1];
-    set_args(argc - 1, argv + 1);
+    set_args(argc - 2, argv + 2);
   }
 
   if (!failed) {

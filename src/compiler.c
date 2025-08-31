@@ -1268,10 +1268,13 @@ static void statement(void) {
 }
 
 obj_module_t *compile(const char *source, obj_string_t *path) {
-  table_t *globals = ALLOCATE(table_t, 1);
+  obj_module_t *module =
+      new_module(path == NULL ? copy_string("main", 4, true) : path);
+  push(OBJ_VAL(module));
+
   init_scanner(source);
   compiler_t compiler;
-  init_compiler(&compiler, TYPE_SCRIPT, globals);
+  init_compiler(&compiler, TYPE_SCRIPT, &module->globals);
 
   parser.had_error = false;
   parser.panic_mode = false;
@@ -1285,10 +1288,8 @@ obj_module_t *compile(const char *source, obj_string_t *path) {
   push(OBJ_VAL(function));
   obj_closure_t *closure = new_closure(function);
   pop();
-  push(OBJ_VAL(closure));
-  obj_module_t *module = new_module(
-      path == NULL ? copy_string("main", 4, true) : path, closure, globals);
   pop();
+  module->init = closure;
   return parser.had_error ? NULL : module;
 }
 

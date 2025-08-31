@@ -113,8 +113,9 @@ static void blacken_object(obj_t *object) {
   } break;
   case OBJ_LIST: {
     obj_list_t *list = (obj_list_t *)object;
-    for (int i = 0; i < list->count; i++)
-      mark_value(list->values[i]);
+    if (list->values != NULL)
+      for (int i = 0; i < list->count; i++)
+        mark_value(list->values[i]);
   } break;
   case OBJ_CLASS: {
     obj_class_t *clas = (obj_class_t *)object;
@@ -141,6 +142,8 @@ static void blacken_object(obj_t *object) {
     obj_function_t *function = (obj_function_t *)object;
     mark_object((obj_t *)function->name);
     mark_array(&function->chunk.constants);
+    if (function->globals != NULL)
+      mark_table(function->globals);
   } break;
   case OBJ_UPVALUE:
     mark_value(((obj_upvalue_t *)object)->closed);
@@ -149,8 +152,7 @@ static void blacken_object(obj_t *object) {
     obj_module_t *module = (obj_module_t *)object;
     mark_object((obj_t *)module->name);
     mark_object((obj_t *)module->init);
-    if (module->globals != NULL)
-      mark_table(module->globals);
+    mark_table(&module->globals);
   } break;
   case OBJ_RANGE: {
     obj_range_t *range = (obj_range_t *)object;
@@ -174,7 +176,8 @@ static void free_object(obj_t *object) {
   } break;
   case OBJ_LIST: {
     obj_list_t *list = (obj_list_t *)object;
-    FREE_ARRAY(value_t, list->values, list->count);
+    if (list->count != 0)
+      FREE_ARRAY(value_t, list->values, list->count);
     FREE(obj_list_t, object);
   } break;
   case OBJ_FILE: {
@@ -218,8 +221,7 @@ static void free_object(obj_t *object) {
     break;
   case OBJ_MODULE: {
     obj_module_t *module = (obj_module_t *)object;
-    free_table(module->globals);
-    FREE(table_t, module->globals);
+    free_table(&module->globals);
     FREE(obj_module_t, object);
   } break;
   case OBJ_RANGE:
@@ -246,8 +248,10 @@ static void mark_roots(void) {
   for (value_t *slot = vm.stack; slot < vm.stack_top; slot++)
     mark_value(*slot);
 
-  for (int i = 0; i < vm.frame_count; i++)
+  for (int i = 0; i < vm.frame_count; i++) {
     mark_object((obj_t *)vm.frames[i].closure);
+    mark_table(vm.frames[i].globals);
+  }
 
   for (obj_upvalue_t *upvalue = vm.open_upvalues; upvalue != NULL;
        upvalue = upvalue->next)
@@ -260,6 +264,7 @@ static void mark_roots(void) {
     mark_object((obj_t *)vm.args);
 
   // mark_table(&vm.globals);
+  mark_array(&vm.modules);
   mark_table(&vm.builtins);
   mark_table(&vm.strings);
 

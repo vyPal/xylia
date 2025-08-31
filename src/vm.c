@@ -164,6 +164,7 @@ void init_vm(void) {
   vm.args = NULL;
 
   // init_table(&vm.globals);
+  init_value_array(&vm.modules);
   init_table(&vm.builtins);
   init_table(&vm.strings);
 
@@ -216,6 +217,7 @@ void free_vm(void) {
   free_frames();
 
   // free_table(&vm.globals);
+  free_value_array(&vm.modules);
   free_table(&vm.builtins);
   free_table(&vm.strings);
 
@@ -404,7 +406,7 @@ static bool invoke(obj_string_t *name, int argc) {
     obj_module_t *moduele = AS_MODULE(receiver);
 
     value_t value;
-    if (table_get(moduele->globals, name, &value)) {
+    if (table_get(&moduele->globals, name, &value)) {
       vm.stack_top[-argc - 1] = value;
       return call_value(value, argc);
     }
@@ -555,8 +557,6 @@ static result_t run(void) {
 
   while (true) {
 #ifdef DECOMPILE
-    disassemble_instruction(&frame->closure->function->chunk,
-                            frame->ip - frame->closure->function->chunk.code);
     printf("     ");
     for (value_t *slot = vm.stack; slot < vm.stack_top; slot++) {
       printf("[ ");
@@ -564,6 +564,8 @@ static result_t run(void) {
       printf(" ]");
     }
     printf("\n");
+    disassemble_instruction(&frame->closure->function->chunk,
+                            frame->ip - frame->closure->function->chunk.code);
 #endif
     // table_t *globals = frame->globals == NULL ? &vm.globals : frame->globals;
     table_t *globals = frame->globals;
@@ -697,7 +699,7 @@ static result_t run(void) {
         obj_string_t *name = READ_STRING();
 
         value_t value;
-        if (table_get(module->globals, name, &value)) {
+        if (table_get(&module->globals, name, &value)) {
           pop();
           push(value);
           break;
@@ -731,7 +733,7 @@ static result_t run(void) {
         obj_string_t *name = READ_STRING_LONG();
 
         value_t value;
-        if (table_get(module->globals, name, &value)) {
+        if (table_get(&module->globals, name, &value)) {
           pop();
           push(value);
           break;

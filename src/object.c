@@ -149,11 +149,13 @@ obj_vector_t *new_vector(int initial_capacity) {
 
 obj_list_t *new_list(int count) {
   obj_list_t *list = ALLOCATE_OBJ(obj_list_t, OBJ_LIST);
+  list->values = NULL;
   list->count = count;
   list->spread = false;
 
   push(OBJ_VAL(list));
-  list->values = ALLOCATE(value_t, list->count);
+  if (count != 0)
+    list->values = ALLOCATE(value_t, count);
   pop();
   return list;
 }
@@ -190,14 +192,12 @@ obj_file_t *new_file(const char *path, const char *mode) {
   return file;
 }
 
-obj_module_t *new_module(obj_string_t *name, obj_closure_t *init,
-                         table_t *table) {
+obj_module_t *new_module(obj_string_t *name) {
   obj_module_t *module = ALLOCATE_OBJ(obj_module_t, OBJ_MODULE);
   module->name = name;
-  module->init = init;
+  module->init = NULL;
   push(OBJ_VAL(module));
-  module->globals = table;
-  init_table(module->globals);
+  init_table(&module->globals);
   pop();
   return module;
 }

@@ -9,6 +9,7 @@
 #include "compiler.h"
 #include "memory.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 #include "vm.h"
 
@@ -862,6 +863,10 @@ xyl_builtin(import) {
     vm.frames[vm.frame_count - 1].is_module = true;
     vm.update_frame = true;
 
+    push(OBJ_VAL(module));
+    write_value_array(&vm.modules, OBJ_VAL(module));
+    pop();
+
     return OBJ_VAL(module);
   }
 
@@ -879,6 +884,10 @@ xyl_builtin(import) {
   push_frame(module->init, 0);
   vm.frames[vm.frame_count - 1].is_module = true;
   vm.update_frame = true;
+
+  push(OBJ_VAL(module));
+  write_value_array(&vm.modules, OBJ_VAL(module));
+  pop();
 
   return OBJ_VAL(module);
 }

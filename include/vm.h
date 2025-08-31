@@ -80,6 +80,7 @@ typedef struct {
   int stack_capacity;
 
   // table_t globals;
+  value_array_t modules;
   table_t builtins;
   table_t strings;
 

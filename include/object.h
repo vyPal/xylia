@@ -143,7 +143,7 @@ typedef struct {
 typedef struct {
   obj_t obj;
   obj_string_t *name;
-  table_t *globals;
+  table_t globals;
   obj_closure_t *init;
 } obj_module_t;
 
@@ -165,8 +165,7 @@ obj_upvalue_t *new_upvalue(value_t *slot);
 obj_vector_t *new_vector(int initial_capacity);
 obj_list_t *new_list(int count);
 obj_file_t *new_file(const char *path, const char *mode);
-obj_module_t *new_module(obj_string_t *name, obj_closure_t *init,
-                         table_t *table);
+obj_module_t *new_module(obj_string_t *name);
 obj_range_t *new_range(value_t from, value_t to);
 void print_object(value_t value, bool literally);
 

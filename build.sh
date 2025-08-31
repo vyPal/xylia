@@ -44,21 +44,21 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# if [ -f "${BUILD_DIR}/${EXE}" ]; then
-#   before_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
-#   info "Stripping binary ${BUILD_DIR}/${EXE}..."
-#   strip --strip-all "${BUILD_DIR}/${EXE}"
-#   after_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
-# 
-#   saved=$((before_size - after_size))
-#   saved_kb=$((saved / 1024))
-#   after_kb=$((after_size / 1024))
-# 
-#   info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
-# 
-#   info "Moving binary to ${BIN_DIR}/${EXE}..."
-#   mv "${BUILD_DIR}/${EXE}" "${BIN_DIR}/${EXE}"
-# fi
+if [ -f "${BUILD_DIR}/${EXE}" ]; then
+  # before_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
+  # info "Stripping binary ${BUILD_DIR}/${EXE}..."
+  # strip --strip-all "${BUILD_DIR}/${EXE}"
+  # after_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
+
+  # saved=$((before_size - after_size))
+  # saved_kb=$((saved / 1024))
+  # after_kb=$((after_size / 1024))
+
+  # info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
+
+  info "Moving binary to ${BIN_DIR}/${EXE}..."
+  mv "${BUILD_DIR}/${EXE}" "${BIN_DIR}/${EXE}"
+fi
 
 info "Exporting compile_commands.json"
 
