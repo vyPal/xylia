@@ -200,13 +200,6 @@ void init_vm(void) {
   define_builtin("vector", builtin_vector);
   define_builtin("list", builtin_list);
 
-  define_builtin("case_failed", builtin_case_failed);
-
-  define_builtin("assert_true", builtin_assert_true);
-  define_builtin("assert_false", builtin_assert_false);
-  define_builtin("assert_eq", builtin_assert_eq);
-  define_builtin("assert_neq", builtin_assert_neq);
-
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
 }
@@ -229,6 +222,14 @@ void set_args(int argc, char **argv) {
   vm.args = new_list(argc);
   for (int i = 0; i < argc; i++)
     vm.args->values[i] = OBJ_VAL(copy_string(argv[i], strlen(argv[i]), true));
+}
+
+void load_test_functions(void) {
+  define_builtin("case_failed", builtin_case_failed);
+  define_builtin("assert_true", builtin_assert_true);
+  define_builtin("assert_false", builtin_assert_false);
+  define_builtin("assert_eq", builtin_assert_eq);
+  define_builtin("assert_neq", builtin_assert_neq);
 }
 
 void push(value_t value) {

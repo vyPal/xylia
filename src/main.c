@@ -81,20 +81,22 @@ int main(int argc, char **argv) {
   if (argc == 1) {
     repl = true;
     set_args(0, NULL);
+  } else if (argc > 2 && strncmp(argv[2], "test", 4) == 0) {
+    file = argv[2];
+    load_test_functions();
+    set_args(argc - 3, argv + 3);
   } else {
     file = argv[1];
     set_args(argc - 2, argv + 2);
   }
 
-  if (!failed) {
-    if (repl)
-      run_repl();
-    else if (file)
-      run_file(file);
-    else {
-      fprintf(stderr, "Usage [path [flags]]\n");
-      failed = true;
-    }
+  if (repl)
+    run_repl();
+  else if (file)
+    run_file(file);
+  else {
+    fprintf(stderr, "Usage [['test'] path [flags]]\n");
+    failed = true;
   }
 
   int exit_code = failed ? 1 : vm.exit_code;
