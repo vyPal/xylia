@@ -28,9 +28,10 @@ class Suite {
     self.name = name;
   }
 
-  func add_case(case) {
-    assert isinstance(case, Case), "case must be test.Case";
-    self.cases.push(case);
+  func add_case(name, fn) {
+    assert typeof(name) == "string", "name must be string";
+    assert typeof(fn) == "function", "fn must be function";
+    self.cases.push(Case(name, fn));
   }
 
   func run() {

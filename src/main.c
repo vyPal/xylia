@@ -1,10 +1,12 @@
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "memory.h"
+#include "random.h"
 #include "repl.h"
 #include "vm.h"
 
@@ -72,6 +74,9 @@ int main(int argc, char **argv) {
   sa.sa_flags = SA_RESTART;
   sigaction(SIGSEGV, &sa, NULL);
 #endif
+
+  uint64_t seed = get_seed();
+  mt_seed_u64(seed);
 
   init_vm();
 
