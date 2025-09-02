@@ -1,0 +1,6 @@
+let math = import("math");
+
+for (let i = 0; i < 10; i = i + 1) {
+  println(math.random(0, 10));
+  println(math.random());
+}

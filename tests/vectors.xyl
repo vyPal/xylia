@@ -29,10 +29,74 @@ func vec_concat() {
   assert_true(vec3 == vec4);
 }
 
+func vec_push_pop() {
+  let vec = Vector();
+  vec.push(1, 2, 3);
+  assert_eq(vec.size(), 3);
+  assert_eq(vec[0], 1);
+  assert_eq(vec[2], 3);
+
+  let popped = vec.pop();
+  assert_eq(popped, 3);
+  assert_eq(vec.size(), 2);
+}
+
+func vec_insert_remove() {
+  let vec = Vector(0:5);
+  vec.insert(2, 99);
+  assert_eq(vec[2], 99);
+  assert_eq(vec.size(), 6);
+
+  let removed = vec.remove(2);
+  assert_eq(removed, 99);
+  assert_true(vec == {0, 1, 2, 3, 4});
+}
+
+func vec_index_assign() {
+  let vec = Vector(0:3);
+  vec[1] = 42;
+  assert_eq(vec[1], 42);
+}
+
+func vec_edge_cases() {
+  let vec = Vector();
+  assert_eq(vec.size(), 0);
+
+  vec.push();
+  assert_eq(vec.size(), 0);
+
+  vec = Vector(0:4);
+  vec[1:3] = [9, 9];
+  assert_true(vec == {0, 9, 9, 3});
+}
+
+func vec_concat_empty() {
+  let v1 = Vector();
+  let v2 = Vector(0:3);
+
+  assert_true((v1 + v2) == v2);
+  assert_true((v2 + v1) == v2);
+}
+
+func vec_equality() {
+  let v1 = Vector(0:5);
+  let v2 = Vector(0:5);
+  let v3 = Vector(1:6);
+
+  assert_true(v1 == v2);
+  assert_false(v1 == v3);
+}
+
 let suite = test.Suite("vector");
 
-suite.add_case(test.Case("Vector initialization", vec_init));
-suite.add_case(test.Case("Vector slices", vec_slice));
-suite.add_case(test.Case("Vector concat", vec_concat));
+suite.add_case("Vector initialization", vec_init);
+suite.add_case("Vector slices", vec_slice);
+suite.add_case("Vector concat", vec_concat);
+suite.add_case("Vector push/pop", vec_push_pop);
+suite.add_case("Vector insert/remove", vec_insert_remove);
+suite.add_case("Vector index assign", vec_index_assign);
+suite.add_case("Vector edge cases", vec_edge_cases);
+suite.add_case("Vector concat empty", vec_concat_empty);
+suite.add_case("Vector equality", vec_equality);
 
 suite.run();

@@ -200,6 +200,30 @@ void init_vm(void) {
   define_builtin("vector", builtin_vector);
   define_builtin("list", builtin_list);
 
+  define_builtin("__abs", builtin_abs);
+  define_builtin("__min", builtin_min);
+  define_builtin("__max", builtin_max);
+
+  define_builtin("__sin", builtin_sin);
+  define_builtin("__cos", builtin_cos);
+  define_builtin("__tan", builtin_tan);
+  define_builtin("__asin", builtin_asin);
+  define_builtin("__acos", builtin_acos);
+  define_builtin("__atan", builtin_atan);
+  define_builtin("__atan2", builtin_atan2);
+
+  define_builtin("__sqrt", builtin_sqrt);
+  define_builtin("__pow", builtin_pow);
+  define_builtin("__log", builtin_log);
+  define_builtin("__exp", builtin_exp);
+
+  define_builtin("__floor", builtin_floor);
+  define_builtin("__ceil", builtin_ceil);
+  define_builtin("__round", builtin_round);
+
+  define_builtin("__random", builtin_random);
+  define_builtin("__randomseed", builtin_randomseed);
+
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
 }

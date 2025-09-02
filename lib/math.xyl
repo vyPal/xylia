@@ -1,0 +1,53 @@
+let PI = 3.14159265358979323846;
+let E = 2.7182818284590452354;
+let NAN = 0 / 0;
+let INF = 1 / 0;
+
+func abs(x) { return __abs(x); }
+func min(args[]) { return __min(args); }
+func max(args[]) { return __max(args); }
+func clamp(x, lo, hi) {
+  if (x < lo)
+    return lo;
+  if (x > hi)
+    return hi;
+  return x;
+}
+
+func sin(x)  { return __sin(x); }
+func cos(x)  { return __cos(x); }
+func tan(x)  { return __tan(x); }
+func asin(x) { return __asin(x); }
+func acos(x) { return __acos(x); }
+func atan(x) { return __atan(x); }
+func atan2(y, x) { return __atan2(y, x); }
+
+func sqrt(x) { return __sqrt(x); }
+func pow(x, y) { return __pow(x, y); }
+func log(x) { return __log(x); }   -- natural log
+func exp(x) { return __exp(x); }
+
+func floor(x) { return __floor(x); }
+func ceil(x)  { return __ceil(x); }
+func round(x) { return __round(x); }
+
+func random(args[]) {
+  let argc = len(args);
+  if (argc == 0)
+    return __random();
+
+  if (argc == 1) {
+    assert typeof(args[0]) == "number", "Expected argument 'n' to be number in 'random(n)'";
+    return __floor(__random() * args[0]) + 1;
+  }
+
+  if (argc == 2) {
+    assert typeof(args[0]) == "number", "Expected argument 'a' to be number in 'random(a, b)'";
+    assert typeof(args[1]) == "number", "Expected argument 'b' to be number in 'random(a, b)'";
+    return __floor(__random() * (args[1] - args[0] + 1)) + args[0];
+  }
+
+  assert false, "Too many arguments in 'random()'";
+}
+
+func randomseed(seed) { __randomseed(seed); }
