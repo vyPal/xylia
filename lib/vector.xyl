@@ -10,33 +10,16 @@ class Vector {
     }
   }
 
-  func size() {
-    return len(self.data);
-  }
+  func size()               { return len(self.data); }
+  func push(args[])         { append(self.data, ..args); }
+  func pop()                { return pop(self.data); }
+  func insert(index, value) { insert(self.data, index, value); }
+  func remove(index)        { return remove(self.data, index); }
+  func to_string()          { return string(self.data); }
 
-  func push(args[]) {
-    append(self.data, ..args);
-  }
-
-  func pop() {
-    return pop(self.data);
-  }
-
-  func insert(index, value) {
-    insert(self.data, index, value);
-  }
-
-  func remove(index) {
-    return remove(self.data, index);
-  }
-
-  func to_string() {
-    return string(self.data);
-  }
-
-  operator [:] (from, to) {
-    return Vector(..slice(self.data, from, to));
-  }
+  operator [] (index)         { return self.data[index]; }
+  operator []= (index, value) { self.data[index] = value; }
+  operator [:] (from, to)     { return Vector(..slice(self.data, from, to)); }
 
   operator [:]= (from, to, value) {
     for (let i = from; i < to; i = i + 1)
@@ -48,14 +31,6 @@ class Vector {
         insert(self.data, from + i, value[i]);
     } else
       insert(self.data, from, value);
-  }
-
-  operator [] (index) {
-    return self.data[index];
-  }
-
-  operator []= (index, value) {
-    self.data[index] = value;
   }
 
   operator + (other) {
