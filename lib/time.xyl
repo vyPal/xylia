@@ -1,0 +1,3 @@
+func now() { return __now(); }
+func clock() { return __clock(); }
+func sleep(time) { return __sleep(time); }
