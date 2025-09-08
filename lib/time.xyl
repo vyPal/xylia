@@ -1,3 +1,50 @@
+let strings = import("strings");
+
 func now()       { return __now(); }
 func clock()     { return __clock(); }
 func sleep(time) { return __sleep(time); }
+
+class date {
+  func init() {
+    let parts = __localtime(__now());
+
+    self.year = parts[0];
+    self.month = parts[1];
+    self.day = parts[2];
+    self.hour = parts[3];
+    self.min = parts[4];
+    self.sec = parts[5];
+  }
+
+  func format(fmt) {
+    let result = "";
+    let fmt_len = len(fmt);
+
+    for (let i = 0; i < fmt_len; i = i + 1) {
+      if (fmt[i] == "%") {
+        i = i + 1;
+        if (i >= fmt_len)
+          break;
+
+        let c = fmt[i];
+        if (c == "Y")
+          result = result + string(self.year);
+        else if (c == "m")
+          result = result + strings.padl(string(self.month), 2, "0");
+        else if (c == "d")
+          result = result + strings.padl(string(self.day), 2, "0");
+        else if (c == "H")
+          result = result + strings.padl(string(self.hour), 2, "0");
+        else if (c == "M")
+          result = result + strings.padl(string(self.min), 2, "0");
+        else if (c == "S")
+          result = result + strings.padl(string(self.sec), 2, "0");
+        else
+          result = result + "%" + c;
+      } else
+        result = result + fmt[i];
+    }
+
+    return result;
+  }
+}
