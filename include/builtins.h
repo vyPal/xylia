@@ -122,4 +122,9 @@ xyl_builtin(round);
 xyl_builtin(random);
 xyl_builtin(randomseed);
 
+// Time
+xyl_builtin(now);
+xyl_builtin(clock);
+xyl_builtin(sleep);
+
 #endif

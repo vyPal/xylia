@@ -224,6 +224,10 @@ void init_vm(void) {
   define_builtin("__random", builtin_random);
   define_builtin("__randomseed", builtin_randomseed);
 
+  define_builtin("__now", builtin_now);
+  define_builtin("__clock", builtin_clock);
+  define_builtin("__sleep", builtin_sleep);
+
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
 }
