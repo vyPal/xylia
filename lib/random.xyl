@@ -1,0 +1,33 @@
+func random(args[]) {
+  let argc = len(args);
+  if (argc == 0)
+    return __random();
+
+  if (argc == 1) {
+    assert typeof(args[0]) == "number", "Expected argument 'n' to be number in 'random(n)'";
+    return __floor(__random() * args[0]) + 1;
+  }
+
+  if (argc == 2) {
+    assert typeof(args[0]) == "number", "Expected argument 'a' to be number in 'random(a, b)'";
+    assert typeof(args[1]) == "number", "Expected argument 'b' to be number in 'random(a, b)'";
+    return __floor(__random() * (args[1] - args[0] + 1)) + args[0];
+  }
+
+  assert false, "Too many arguments in 'random()'";
+}
+
+func randomseed(seed) { __randomseed(seed); }
+
+func choice(args[]) {
+  let argc = len(args);
+  if (argc == 1) {
+    let arg = args[0];
+    if (typeof(arg) == "vector" || typeof(arg) == "list")
+      return arg[random(len(arg))];
+    else if (isinstance(arg, import("vector").Vector))
+      return arg[random(arg.size())];
+    return arg;
+  } else
+    return args[random(argc)];
+}
