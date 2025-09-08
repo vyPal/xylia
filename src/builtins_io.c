@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "builtins.h"
-#include "table.h"
 #include "value.h"
 #include "vm.h"
 

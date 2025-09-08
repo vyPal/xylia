@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include "builtins.h"
+#include "object.h"
 #include "vm.h"
 
 xyl_builtin(now) {
@@ -45,4 +46,27 @@ xyl_builtin(sleep) {
       "Expected argument 1 in 'sleep' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
+}
+
+xyl_builtin(localtime) {
+  xyl_builtin_signature(localtime, 1, ARGC_EXACT, {VAL_FLOAT, OBJ_ANY});
+
+  double ts = AS_FLOAT(argv[0]);
+  time_t t = (time_t)ts;
+
+  struct tm result;
+  if (!localtime_r(&t, &result)) {
+    runtime_error("localtime() failed");
+    return NIL_VAL;
+  }
+
+  obj_list_t *list = new_list(6);
+  list->values[0] = NUMBER_VAL(result.tm_year + 1900);
+  list->values[1] = NUMBER_VAL(result.tm_mon + 1);
+  list->values[2] = NUMBER_VAL(result.tm_mday);
+  list->values[3] = NUMBER_VAL(result.tm_hour);
+  list->values[4] = NUMBER_VAL(result.tm_min);
+  list->values[5] = NUMBER_VAL(result.tm_sec);
+
+  return OBJ_VAL(list);
 }

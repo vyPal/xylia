@@ -126,5 +126,6 @@ xyl_builtin(randomseed);
 xyl_builtin(now);
 xyl_builtin(clock);
 xyl_builtin(sleep);
+xyl_builtin(localtime);
 
 #endif
