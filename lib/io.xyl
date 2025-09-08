@@ -1,0 +1,22 @@
+class File {
+  func init(path, mode) {
+    self.file = open(path, mode);
+    self.open = true;
+    self.path = path;
+  }
+
+  func close() {
+    self.closed = true;
+    close(self.file);
+  }
+
+  func read() {
+    assert self.open, "File is already closed";
+    return read(self.file);
+  }
+
+  func write(content) {
+    assert self.open, "File is already closed";
+    write(self.file, content);
+  }
+}
