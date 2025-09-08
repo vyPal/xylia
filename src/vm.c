@@ -227,6 +227,7 @@ void init_vm(void) {
   define_builtin("__now", builtin_now);
   define_builtin("__clock", builtin_clock);
   define_builtin("__sleep", builtin_sleep);
+  define_builtin("__localtime", builtin_localtime);
 
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
