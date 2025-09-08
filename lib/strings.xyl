@@ -1,0 +1,13 @@
+func padl(str, n, c) {
+  let result = str;
+  while (len(result) < n)
+    result = c + result;
+  return result;
+}
+
+func padr(str, n, c) {
+  let result = str;
+  while (len(result) < n)
+    result = result + c;
+  return result;
+}
