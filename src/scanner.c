@@ -139,6 +139,8 @@ static token_type_t ident_type(void) {
     return check_keyword(1, 2, "il", TOK_NIL);
   case 'o':
     return check_keyword(1, 7, "perator", TOK_OPERATOR);
+  case 'p':
+    return check_keyword(1, 6, "rivate", TOK_PRIVATE);
   case 'r':
     return check_keyword(1, 5, "eturn", TOK_RETURN);
   case 's':

@@ -29,12 +29,72 @@ class date {
         let c = fmt[i];
         if (c == "Y")
           result = result + string(self.year);
+        else if (c == "y")
+          result = result + slice(strings.padl(self.year), 2, 4);
         else if (c == "m")
           result = result + strings.padl(string(self.month), 2, "0");
-        else if (c == "d")
+        else if (c == "b") {
+          if (self.month == 1)
+            result = result + "Jan";
+          else if (self.month == 2)
+            result = result + "Feb";
+          else if (self.month == 3)
+            result = result + "Mar";
+          else if (self.month == 4)
+            result = result + "Apr";
+          else if (self.month == 5)
+            result = result + "May";
+          else if (self.month == 6)
+            result = result + "Jun";
+          else if (self.month == 7)
+            result = result + "Jul";
+          else if (self.month == 8)
+            result = result + "Aug";
+          else if (self.month == 9)
+            result = result + "Sep";
+          else if (self.month == 10)
+            result = result + "Oct";
+          else if (self.month == 11)
+            result = result + "Nov";
+          else if (self.month == 12)
+            result = result + "Dec";
+        } else if (c == "B") {
+          if (self.month == 1)
+            result = result + "January";
+          else if (self.month == 2)
+            result = result + "February";
+          else if (self.month == 3)
+            result = result + "March";
+          else if (self.month == 4)
+            result = result + "April";
+          else if (self.month == 5)
+            result = result + "May";
+          else if (self.month == 6)
+            result = result + "June";
+          else if (self.month == 7)
+            result = result + "July";
+          else if (self.month == 8)
+            result = result + "August";
+          else if (self.month == 9)
+            result = result + "September";
+          else if (self.month == 10)
+            result = result + "October";
+          else if (self.month == 11)
+            result = result + "November";
+          else if (self.month == 12)
+            result = result + "December";
+        } else if (c == "d")
           result = result + strings.padl(string(self.day), 2, "0");
         else if (c == "H")
           result = result + strings.padl(string(self.hour), 2, "0");
+        else if (c == "I")
+          result = result + strings.padl(string(self.hour % 12), 2, "0");
+        else if (c == "p")
+          if (self.hour < 12) {
+            result = result + "AM";
+          } else {
+            result = result + "PM";
+          }
         else if (c == "M")
           result = result + strings.padl(string(self.min), 2, "0");
         else if (c == "S")
