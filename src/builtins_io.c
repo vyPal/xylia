@@ -91,7 +91,6 @@ xyl_builtin(input) {
 
   buffer[length] = '\0';
   obj_string_t *str = copy_string(buffer, length, false);
-  free(buffer);
 
   return OBJ_VAL(str);
 }
