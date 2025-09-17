@@ -1,0 +1,6 @@
+class Pair {
+  func init(first, second) {
+    self.first = first;
+    self.second = second;
+  }
+}

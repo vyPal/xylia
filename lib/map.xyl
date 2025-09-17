@@ -1,0 +1,22 @@
+let utility = import("utility");
+
+class Map {
+  func init() {
+    self.capacity = 0;
+    self.count = 0;
+    self.values = {};
+  }
+
+  operator [] (key) {
+    let hash;
+    if (typeof(key) == "instance" && hasmethod(getclass(key), "hash"))
+      hash = __builtin_hash(key.hash());
+    else
+      hash = __builtin_hash(key);
+
+    printf("hash = %\n", hash);
+  }
+
+  operator []= (key, value) {
+  }
+}
