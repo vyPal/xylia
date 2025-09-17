@@ -76,8 +76,11 @@ xyl_builtin(slice);
 // Utils
 xyl_builtin(typeof);
 xyl_builtin(isinstance);
+xyl_builtin(hasmethod);
+xyl_builtin(getclass);
 xyl_builtin(exit);
 xyl_builtin(argv);
+xyl_builtin(hash);
 
 xyl_builtin(import);
 

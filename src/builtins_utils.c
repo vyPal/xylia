@@ -4,7 +4,11 @@
 
 #include "builtins.h"
 #include "compiler.h"
+#include "hash.h"
 #include "memory.h"
+#include "object.h"
+#include "table.h"
+#include "value.h"
 #include "vm.h"
 
 xyl_builtin(typeof) {
@@ -68,6 +72,22 @@ xyl_builtin(isinstance) {
   return BOOL_VAL(instance->clas == clas);
 }
 
+xyl_builtin(hasmethod) {
+  xyl_builtin_signature(hasmethod, 2, ARGC_EXACT, {VAL_OBJ, OBJ_CLASS},
+                        {VAL_OBJ, OBJ_STRING});
+
+  obj_class_t *class = AS_CLASS(argv[0]);
+  obj_string_t *method = AS_STRING(argv[1]);
+  value_t value;
+
+  return BOOL_VAL(table_get(&class->methods, method, &value));
+}
+
+xyl_builtin(getclass) {
+  xyl_builtin_signature(getclass, 1, ARGC_EXACT, {VAL_OBJ, OBJ_INSTANCE});
+  return OBJ_VAL(AS_INSTANCE(argv[0])->clas);
+}
+
 xyl_builtin(exit) {
   xyl_builtin_signature(exit, 1, ARGC_LESS_OR_EXACT, {VAL_NUMBER, OBJ_ANY});
 
@@ -80,8 +100,43 @@ xyl_builtin(exit) {
 }
 
 xyl_builtin(argv) {
-  xyl_builtin_signature(argv, 0, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
+  xyl_builtin_signature(argv, 0, ARGC_EXACT, {VAL_OBJ, OBJ_ANY});
   return OBJ_VAL(vm.args);
+}
+
+xyl_builtin(hash) {
+  xyl_builtin_signature(hash, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
+  value_t value = argv[0];
+
+  switch (value.type) {
+  case VAL_BOOL:
+    if (AS_BOOL(value))
+      return NUMBER_VAL(HASH_TRUE);
+    return NUMBER_VAL(HASH_FALSE);
+
+  case VAL_NIL:
+    return NUMBER_VAL(HASH_NIL);
+
+  case VAL_NUMBER:
+    return NUMBER_VAL(hash_number(AS_NUMBER(value)));
+
+  case VAL_FLOAT:
+    return NUMBER_VAL(hash_float(AS_FLOAT(value)));
+
+  case VAL_OBJ:
+    if (AS_OBJ(value)->type == OBJ_STRING) {
+      obj_string_t *string = AS_STRING(value);
+      return NUMBER_VAL(hash_string(string->chars, string->length));
+    }
+
+  case VAL_ANY:
+    break;
+  }
+
+  runtime_error("Argument 1 of tyep '%s' in 'hash' is not hashable",
+                obj_type_to_str(OBJ_TYPE(value)));
+
+  return NIL_VAL;
 }
 
 xyl_builtin(import) {

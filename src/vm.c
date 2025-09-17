@@ -188,8 +188,11 @@ void init_vm(void) {
 
   define_builtin("typeof", builtin_typeof);
   define_builtin("isinstance", builtin_isinstance);
+  define_builtin("hasmethod", builtin_hasmethod);
+  define_builtin("getclass", builtin_getclass);
   define_builtin("exit", builtin_exit);
   define_builtin("argv", builtin_argv);
+  define_builtin("__builtin_hash", builtin_hash);
 
   define_builtin("import", builtin_import);
 
