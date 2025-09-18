@@ -18,7 +18,7 @@ void run_repl(void) {
   char *buffer = (char *)malloc(capacity);
 
   if (!buffer) {
-    runtime_error("Failed to allocate memory for repl");
+    runtime_error(-1, "Failed to allocate memory for repl");
     failed = true;
     return;
   }
@@ -30,7 +30,7 @@ void run_repl(void) {
       capacity *= 2;
       char *new_buffer = realloc(buffer, capacity);
       if (!new_buffer) {
-        runtime_error("Failed to reallocate memory for repl");
+        runtime_error(-1, "Failed to reallocate memory for repl");
         failed = true;
         free(buffer);
         return;

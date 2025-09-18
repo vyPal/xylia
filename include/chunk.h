@@ -86,16 +86,26 @@ typedef enum {
 } op_code_t;
 
 typedef struct {
+  int offset;
+  int row, col;
+} srcpos_t;
+
+typedef struct {
   int count;
   int capacity;
   uint8_t *code;
   value_array_t constants;
+
+  int pos_count;
+  int pos_capacity;
+  srcpos_t *positions;
 } chunk_t;
 
 void init_chunk(chunk_t *chunk);
 void free_chunk(chunk_t *chunk);
-void write_chunk(chunk_t *chunk, uint8_t byte);
+void write_chunk(chunk_t *chunk, uint8_t byte, int row, int col);
 unsigned int add_constant(chunk_t *chunk, value_t value);
 void write_constant(uint8_t op, chunk_t *chunk, value_t value);
+srcpos_t chunk_get_srcpos(chunk_t *chunk, int offset);
 
 #endif

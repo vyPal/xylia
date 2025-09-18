@@ -56,6 +56,30 @@ static int constant_op_long(const char *name, chunk_t *chunk, int offset) {
   return offset + 4;
 }
 
+static int assert_op(const char *name, chunk_t *chunk, int offset) {
+  uint8_t nib1 = chunk->code[offset + 1];
+  uint8_t nib2 = chunk->code[offset + 2];
+  uint8_t nib3 = chunk->code[offset + 3];
+
+  uint8_t nib4 = chunk->code[offset + 4];
+  uint8_t nib5 = chunk->code[offset + 5];
+  uint8_t nib6 = chunk->code[offset + 6];
+
+  uint8_t nib7 = chunk->code[offset + 7];
+  uint8_t nib8 = chunk->code[offset + 8];
+  uint8_t nib9 = chunk->code[offset + 9];
+
+  int row = nib1 | (nib2 << 8) | (nib3 << 16);
+  int col = nib4 | (nib5 << 8) | (nib6 << 16);
+  unsigned int constant = nib7 | (nib8 << 8) | (nib9 << 16);
+
+  printf("%-20s %8d %d:%d '", name, constant, row, col);
+  print_value(chunk->constants.values[constant], true);
+  printf("'\n");
+
+  return offset + 10;
+}
+
 static int invoke_op(const char *name, chunk_t *chunk, int offset) {
   uint8_t constant = chunk->code[offset + 1];
   uint8_t argc = chunk->code[offset + 2];
@@ -240,9 +264,9 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
   case OP_INHERIT:
     return simple_op("OP_INHERIT", offset);
   case OP_ASSERT:
-    return simple_op("OP_ASSERT", offset);
+    return assert_op("OP_ASSERT", chunk, offset);
   case OP_ASSERT_MSG:
-    return simple_op("OP_ASSERT_MSG", offset);
+    return assert_op("OP_ASSERT_MSG", chunk, offset);
   case OP_CALL:
     return byte_op("OP_CALL", chunk, offset);
   case OP_LOOP:

@@ -43,6 +43,7 @@ xyl_builtin(sleep) {
   }
 
   runtime_error(
+      -1,
       "Expected argument 1 in 'sleep' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
@@ -56,7 +57,7 @@ xyl_builtin(localtime) {
 
   struct tm result;
   if (!localtime_r(&t, &result)) {
-    runtime_error("localtime() failed");
+    runtime_error(-1, "localtime() failed");
     return NIL_VAL;
   }
 

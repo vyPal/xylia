@@ -240,7 +240,7 @@ bool check_signature(const builtin_signature_t *signature, int argc,
   switch (comparison) {
   case ARGC_EXACT: {
     if (argc != signature->argc) {
-      runtime_error("Expected %d %s in '%s' but got %d", signature->argc,
+      runtime_error(-1, "Expected %d %s in '%s' but got %d", signature->argc,
                     signature->argc == 1 ? "argument" : "arguments",
                     signature->name, argc);
       return false;
@@ -248,7 +248,7 @@ bool check_signature(const builtin_signature_t *signature, int argc,
   } break;
   case ARGC_MORE_OR_EXACT: {
     if (argc < signature->argc) {
-      runtime_error("Expected at least %d %s in '%s' but got %d",
+      runtime_error(-1, "Expected at least %d %s in '%s' but got %d",
                     signature->argc,
                     signature->argc == 1 ? "argument" : "arguments",
                     signature->name, argc);
@@ -257,7 +257,7 @@ bool check_signature(const builtin_signature_t *signature, int argc,
   } break;
   case ARGC_LESS_OR_EXACT: {
     if (argc > signature->argc) {
-      runtime_error("Expected at most %d %s in '%s' but got %d",
+      runtime_error(-1, "Expected at most %d %s in '%s' but got %d",
                     signature->argc,
                     signature->argc == 1 ? "argument" : "arguments",
                     signature->name, argc);
@@ -274,7 +274,7 @@ bool check_signature(const builtin_signature_t *signature, int argc,
 
     value_type_t got_type = argv[i].type;
     if (got_type != want_type) {
-      runtime_error("Expected argument %d in '%s' to be '%s' but got '%s'",
+      runtime_error(-1, "Expected argument %d in '%s' to be '%s' but got '%s'",
                     i + 1, signature->name, value_type_to_str(want_type),
                     value_type_to_str(got_type));
       return false;
@@ -287,7 +287,8 @@ bool check_signature(const builtin_signature_t *signature, int argc,
 
       obj_type_t got_obj = OBJ_TYPE(argv[i]);
       if (got_obj != want_obj) {
-        runtime_error("Expected argument %d in '%s' to be '%s' but got '%s'",
+        runtime_error(-1,
+                      "Expected argument %d in '%s' to be '%s' but got '%s'",
                       i + 1, signature->name, obj_type_to_str(want_obj),
                       obj_type_to_str(got_obj));
         return false;

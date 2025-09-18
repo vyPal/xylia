@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <threads.h>
 
 #include "builtins.h"
 #include "chunk.h"
@@ -44,13 +43,26 @@ void set_signal(vm_singal_t sig, int exit_code) {
   }
 }
 
-void runtime_error(const char *fmt, ...) {
+void runtime_error(int offset, const char *fmt, ...) {
   fprintf(stderr, "\x1b[31m");
   va_list args;
   va_start(args, fmt);
   vfprintf(stderr, fmt, args);
   va_end(args);
   fputs("\n", stderr);
+
+  if (0 <= offset && vm.frame_count > 0) {
+    call_frame_t *frame = &vm.frames[vm.frame_count - 1];
+    obj_function_t *function = frame->closure->function;
+    srcpos_t pos = chunk_get_srcpos(&function->chunk, offset);
+
+    if (function->name == NULL)
+      fprintf(stderr, "%s in 'script' at row:%d col:%d\n",
+              function->path->chars, pos.row, pos.col);
+    else
+      fprintf(stderr, "%s in '%s' at row:%d col:%d\n", function->path->chars,
+              function->name->chars, pos.row, pos.col);
+  }
 
   for (int i = vm.frame_count - 1; i >= 0; i--) {
     call_frame_t *frame = &vm.frames[i];
@@ -139,9 +151,9 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_OVERLOAD_NEG] = copy_string("__neg__", 7, true);
   vm.vm_strings[VM_STR_OVERLOAD_MOD] = copy_string("__mod__", 7, true);
   vm.vm_strings[VM_STR_OVERLOAD_XOR] = copy_string("__xor__", 7, true);
-  vm.vm_strings[VM_STR_OVERLOAD_BIT_OR] = copy_string("__bin_or__", 10, true);
-  vm.vm_strings[VM_STR_OVERLOAD_BIT_AND] = copy_string("__bin_and__", 11, true);
-  vm.vm_strings[VM_STR_OVERLOAD_BIT_NOT] = copy_string("__bin_not__", 11, true);
+  vm.vm_strings[VM_STR_OVERLOAD_BIT_OR] = copy_string("__bit_or__", 10, true);
+  vm.vm_strings[VM_STR_OVERLOAD_BIT_AND] = copy_string("__bit_and__", 11, true);
+  vm.vm_strings[VM_STR_OVERLOAD_BIT_NOT] = copy_string("__bit_not__", 11, true);
   vm.vm_strings[VM_STR_OVERLOAD_LOG_NOT] = copy_string("__log_not__", 11, true);
   vm.vm_strings[VM_STR_OVERLOAD_SET_INDEX] =
       copy_string("__set_index__", 13, true);
@@ -235,6 +247,8 @@ void init_vm(void) {
   define_builtin("__clock", builtin_clock);
   define_builtin("__sleep", builtin_sleep);
   define_builtin("__localtime", builtin_localtime);
+
+  vm.offset = 0;
 
   set_signal(SIG_NONE, -1);
   vm.update_frame = false;
@@ -332,13 +346,13 @@ static bool call(obj_closure_t *closure, int argc) {
 
   if (closure->function->has_varargs) {
     if (true_argc < closure->function->arity - 1) {
-      runtime_error("Expected at least %d arguments but got %d",
+      runtime_error(vm.offset, "Expected at least %d arguments but got %d",
                     closure->function->arity, true_argc);
       return false;
     }
   } else if (true_argc != closure->function->arity) {
-    runtime_error("Expected %d arguments but got %d", closure->function->arity,
-                  true_argc);
+    runtime_error(vm.offset, "Expected %d arguments but got %d",
+                  closure->function->arity, true_argc);
     return false;
   }
 
@@ -387,7 +401,7 @@ static bool call_value(value_t callee, int argc) {
       if (table_get(&clas->methods, vm.vm_strings[VM_STR_INIT], &initializer))
         return call(AS_CLOSURE(initializer), argc);
       else if (argc != 0) {
-        runtime_error("Expected 0 arguments but got %d", argc);
+        runtime_error(vm.offset, "Expected 0 arguments but got %d", argc);
         return false;
       }
       return true;
@@ -406,14 +420,14 @@ static bool call_value(value_t callee, int argc) {
     }
   }
 
-  runtime_error("Can only call functions and classes");
+  runtime_error(vm.offset, "Can only call functions and classes");
   return false;
 }
 
 static bool invoke_from_class(obj_class_t *clas, obj_string_t *name, int argc) {
   value_t method;
   if (!table_get(&clas->methods, name, &method)) {
-    runtime_error("Undefined property '%s'", name->chars);
+    runtime_error(vm.offset, "Undefined property '%s'", name->chars);
     return false;
   }
   return call(AS_CLOSURE(method), argc);
@@ -423,7 +437,7 @@ static bool invoke(obj_string_t *name, int argc) {
   value_t receiver = peek(argc);
 
   if (!IS_INSTANCE(receiver) && !IS_MODULE(receiver)) {
-    runtime_error("Only instances and modules have methods");
+    runtime_error(vm.offset, "Only instances and modules have methods");
     return false;
   }
 
@@ -447,7 +461,7 @@ static bool invoke(obj_string_t *name, int argc) {
     }
   }
 
-  runtime_error("Only instances and modules have methods");
+  runtime_error(vm.offset, "Only instances and modules have methods");
   return false;
 }
 
@@ -464,7 +478,7 @@ static bool invoke_overload(vm_strings_t overload, int argc) {
 static bool bind_method(obj_class_t *clas, obj_string_t *name) {
   value_t method;
   if (!table_get(&clas->methods, name, &method)) {
-    runtime_error("Undefined property '%s'", name->chars);
+    runtime_error(vm.offset, "Undefined property '%s'", name->chars);
     return false;
   }
 
@@ -536,7 +550,7 @@ static value_t get_index(value_t object, int index) {
   if (IS_STRING(object)) {
     obj_string_t *string = AS_STRING(object);
     if (index < 0 || index >= string->length) {
-      runtime_error("String index '%d' out of bounds", index);
+      runtime_error(vm.offset, "String index '%d' out of bounds", index);
       return NIL_VAL;
     }
     char c[2] = {string->chars[index], '\0'};
@@ -544,20 +558,20 @@ static value_t get_index(value_t object, int index) {
   } else if (IS_VECTOR(object)) {
     obj_vector_t *vector = AS_VECTOR(object);
     if (index < 0 || index >= vector->count) {
-      runtime_error("Vector index '%d' out of bounds", index);
+      runtime_error(vm.offset, "Vector index '%d' out of bounds", index);
       return NIL_VAL;
     }
     return vector->values[index];
   } else if (IS_LIST(object)) {
     obj_list_t *list = AS_LIST(object);
     if (index < 0 || index >= list->count) {
-      runtime_error("List index '%d' out of bounds", index);
+      runtime_error(vm.offset, "List index '%d' out of bounds", index);
       return NIL_VAL;
     }
     return list->values[index];
   }
 
-  runtime_error("Invalid index operation");
+  runtime_error(vm.offset, "Invalid index operation");
   return NIL_VAL;
 }
 
@@ -565,12 +579,12 @@ static void set_index(value_t object, int index, value_t value) {
   if (IS_VECTOR(object)) {
     obj_vector_t *vector = AS_VECTOR(object);
     if (index < 0 || index >= vector->count) {
-      runtime_error("Vector index '%d' out of bounds", index);
+      runtime_error(vm.offset, "Vector index '%d' out of bounds", index);
       return;
     }
     vector->values[index] = value;
   } else {
-    runtime_error("Invalid index operation");
+    runtime_error(vm.offset, "Invalid index operation");
   }
 }
 
@@ -602,14 +616,16 @@ static result_t run(void) {
     disassemble_instruction(&frame->closure->function->chunk,
                             frame->ip - frame->closure->function->chunk.code);
 #endif
-    // table_t *globals = frame->globals == NULL ? &vm.globals : frame->globals;
+    op_code_t op = READ_BYTE();
+    vm.offset = (int)(frame->ip - frame->closure->function->chunk.code);
+
     table_t *globals = frame->globals;
     if (globals == NULL) {
-      runtime_error("No globals table found");
+      runtime_error(vm.offset, "No globals table found");
       return RESULT_RUNTIME_ERROR;
     }
 
-    switch (READ_BYTE()) {
+    switch (op) {
     case OP_CONSTANT:
       push(READ_CONSTANT());
       break;
@@ -631,7 +647,7 @@ static result_t run(void) {
       value_t value;
       if (!table_get(globals, name, &value)) {
         if (!table_get(&vm.builtins, name, &value)) {
-          runtime_error("Undefined variable '%s'", name->chars);
+          runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
           return RESULT_RUNTIME_ERROR;
         }
       }
@@ -642,7 +658,7 @@ static result_t run(void) {
       value_t value;
       if (!table_get(globals, name, &value)) {
         if (!table_get(&vm.builtins, name, &value)) {
-          runtime_error("Undefined variable '%s'", name->chars);
+          runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
           return RESULT_RUNTIME_ERROR;
         }
       }
@@ -652,7 +668,7 @@ static result_t run(void) {
       obj_string_t *name = READ_STRING();
       if (table_set(globals, name, peek(0))) {
         table_delete(globals, name);
-        runtime_error("Undefined variable '%s'", name->chars);
+        runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
         return RESULT_RUNTIME_ERROR;
       }
     } break;
@@ -660,7 +676,7 @@ static result_t run(void) {
       obj_string_t *name = READ_STRING_LONG();
       if (table_set(globals, name, peek(0))) {
         table_delete(globals, name);
-        runtime_error("Undefined variable '%s'", name->chars);
+        runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
         return RESULT_RUNTIME_ERROR;
       }
     } break;
@@ -712,7 +728,7 @@ static result_t run(void) {
     } break;
     case OP_GET_PROPERTY: {
       if (!IS_INSTANCE(peek(0)) && !IS_MODULE(peek(0))) {
-        runtime_error("Only instances and modules have properties");
+        runtime_error(vm.offset, "Only instances and modules have properties");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -740,13 +756,14 @@ static result_t run(void) {
           break;
         }
 
-        runtime_error("Object does not have property '%s'", name->chars);
+        runtime_error(vm.offset, "Object does not have property '%s'",
+                      name->chars);
         return RESULT_RUNTIME_ERROR;
       }
     } break;
     case OP_GET_PROPERTY_LONG: {
       if (!IS_INSTANCE(peek(0)) && !IS_MODULE(peek(0))) {
-        runtime_error("Only instances and modules have properties");
+        runtime_error(vm.offset, "Only instances and modules have properties");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -774,13 +791,14 @@ static result_t run(void) {
           break;
         }
 
-        runtime_error("Object does not have property '%s'", name->chars);
+        runtime_error(vm.offset, "Object does not have property '%s'",
+                      name->chars);
         return RESULT_RUNTIME_ERROR;
       }
     } break;
     case OP_SET_PROPERTY: {
       if (!IS_INSTANCE(peek(1))) {
-        runtime_error("Only instances have fields");
+        runtime_error(vm.offset, "Only instances have fields");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -792,7 +810,7 @@ static result_t run(void) {
     } break;
     case OP_SET_PROPERTY_LONG: {
       if (!IS_INSTANCE(peek(1))) {
-        runtime_error("Only instances have fields");
+        runtime_error(vm.offset, "Only instances have fields");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -822,7 +840,8 @@ static result_t run(void) {
       }
 
       if (!IS_NUMBER(index)) {
-        runtime_error("Index must be a number or object with 'operator []'");
+        runtime_error(vm.offset,
+                      "Index must be a number or object with 'operator []'");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -855,7 +874,8 @@ static result_t run(void) {
       }
 
       if (!IS_NUMBER(index)) {
-        runtime_error("Index must be a number or object with 'operator []='");
+        runtime_error(vm.offset,
+                      "Index must be a number or object with 'operator []='");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -982,7 +1002,7 @@ static result_t run(void) {
       else if (IS_VECTOR(peek(0)))
         AS_VECTOR(peek(0))->spread = true;
       else {
-        runtime_error("Can spread only 'list' and 'vector'");
+        runtime_error(vm.offset, "Can spread only 'list' and 'vector'");
         return RESULT_RUNTIME_ERROR;
       }
     } break;
@@ -1011,6 +1031,7 @@ static result_t run(void) {
           UPDATE_FRAME();
         else {
           runtime_error(
+              vm.offset,
               "Operands must be numbers, floats, strings or objects with "
               "'operator +' defined");
           return RESULT_RUNTIME_ERROR;
@@ -1033,7 +1054,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_SUB, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats, or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats, or objects with "
                         "'operator -' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1055,7 +1077,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_MUL, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator *' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1074,7 +1097,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_DIV, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator /' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1097,7 +1121,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_MOD, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator %' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1112,7 +1137,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_BIT_AND, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers or objects with 'operator "
+          runtime_error(vm.offset,
+                        "Operands must be numbers or objects with 'operator "
                         "&' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1127,7 +1153,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_BIT_OR, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers or objects with 'operator "
+          runtime_error(vm.offset,
+                        "Operands must be numbers or objects with 'operator "
                         "|' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1142,7 +1169,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_XOR, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers or objects with 'operator "
+          runtime_error(vm.offset,
+                        "Operands must be numbers or objects with 'operator "
                         "^' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1176,7 +1204,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_GT, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator >' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1195,7 +1224,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_GE, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator >=' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1214,7 +1244,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_LT, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator <' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1233,7 +1264,8 @@ static result_t run(void) {
         if (invoke_overload(VM_STR_OVERLOAD_LE, 1))
           UPDATE_FRAME();
         else {
-          runtime_error("Operands must be numbers, floats or objects with "
+          runtime_error(vm.offset,
+                        "Operands must be numbers, floats or objects with "
                         "'operator <=' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1247,7 +1279,8 @@ static result_t run(void) {
             break;
           }
         }
-        runtime_error("Operand must be number, float or object with 'operator "
+        runtime_error(vm.offset,
+                      "Operand must be number, float or object with 'operator "
                       "unary-' defined");
         return RESULT_RUNTIME_ERROR;
       }
@@ -1265,6 +1298,7 @@ static result_t run(void) {
           UPDATE_FRAME();
         else {
           runtime_error(
+              vm.offset,
               "Operand must be boolean or object with 'operator !' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1278,6 +1312,7 @@ static result_t run(void) {
           UPDATE_FRAME();
         else {
           runtime_error(
+              vm.offset,
               "Operand must be number or object with 'operator ~' defined");
           return RESULT_RUNTIME_ERROR;
         }
@@ -1290,7 +1325,7 @@ static result_t run(void) {
     case OP_INHERIT: {
       value_t super_class = peek(1);
       if (!IS_CLASS(super_class)) {
-        runtime_error("Superclass must be a class");
+        runtime_error(vm.offset, "Superclass must be a class");
         return RESULT_RUNTIME_ERROR;
       }
 
@@ -1306,7 +1341,7 @@ static result_t run(void) {
       obj_string_t *file = READ_STRING_LONG();
 
       if (is_falsey(value)) {
-        runtime_error("%s at row:%d col:%d", file->chars, row, col);
+        runtime_error(vm.offset, "%s at row:%d col:%d", file->chars, row, col);
         set_signal(SIG_ASSERT_FAIL, -1);
         return RESULT_RUNTIME_ERROR;
       }
@@ -1320,8 +1355,8 @@ static result_t run(void) {
       obj_string_t *file = READ_STRING_LONG();
 
       if (is_falsey(value)) {
-        runtime_error("%s at row:%d col:%d\n  %s", file->chars, row, col,
-                      value_to_string(msg, false)->chars);
+        runtime_error(vm.offset, "%s at row:%d col:%d\n  %s", file->chars, row,
+                      col, value_to_string(msg, false)->chars);
         set_signal(SIG_ASSERT_FAIL, -1);
         return RESULT_RUNTIME_ERROR;
       }

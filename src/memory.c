@@ -78,7 +78,7 @@ void mark_object(obj_t *object) {
     vm.gray_stack =
         (obj_t **)realloc(vm.gray_stack, sizeof(obj_t *) * vm.gray_capacity);
     if (!vm.gray_stack) {
-      runtime_error("Failed to realloc gray_stack");
+      runtime_error(-1, "Failed to realloc gray_stack");
       vm.gray_capacity = 0;
       vm.gray_count = 0;
       vm.gray_stack = NULL;

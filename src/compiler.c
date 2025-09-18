@@ -196,7 +196,7 @@ static bool match(token_type_t type) {
 }
 
 static void emit_byte(uint8_t byte) {
-  write_chunk(current_chunk(), byte);
+  write_chunk(current_chunk(), byte, parser.previous.row, parser.previous.col);
 }
 
 static void emit_bytes(uint8_t byte1, uint8_t byte2) {
@@ -374,11 +374,11 @@ static const char *op_to_name(token_type_t type) {
   case TOK_GRAVE:
     return "__xor__";
   case TOK_BIT_OR:
-    return "__bin_or__";
+    return "__bit_or__";
   case TOK_BIT_AND:
-    return "__bin_and__";
+    return "__bit_and__";
   case TOK_BIT_NOT:
-    return "__bin_not__";
+    return "__bit_not__";
   case TOK_LOG_NOT:
     return "__log_not__";
   default: // Unreachable
@@ -386,41 +386,86 @@ static const char *op_to_name(token_type_t type) {
   }
 }
 
-static void op_overload(token_t *method) {
+static obj_string_t *op_to_func_name(token_type_t type) {
+  switch (type) {
+  case TOK_EQ:
+    return copy_string("operator ==", 11, true);
+  case TOK_GT:
+    return copy_string("operator >", 10, true);
+  case TOK_GE:
+    return copy_string("operator >=", 11, true);
+  case TOK_LT:
+    return copy_string("operator <", 10, true);
+  case TOK_LE:
+    return copy_string("operator <=", 11, true);
+  case TOK_PLUS:
+    return copy_string("operator +", 10, true);
+  case TOK_MINUS:
+    return copy_string("operator -", 10, true);
+  case TOK_ASTERISK:
+    return copy_string("operator *", 10, true);
+  case TOK_SLASH:
+    return copy_string("operator /", 10, true);
+  case TOK_PERCENT:
+    return copy_string("operator %", 10, true);
+  case TOK_GRAVE:
+    return copy_string("operator ^", 10, true);
+  case TOK_BIT_OR:
+    return copy_string("operator |", 10, true);
+  case TOK_BIT_AND:
+    return copy_string("operator &", 10, true);
+  case TOK_BIT_NOT:
+    return copy_string("operator ~", 10, true);
+  case TOK_LOG_NOT:
+    return copy_string("operator !", 10, true);
+  default: // Unreachable
+    return copy_string("invalid operator", 16, true);
+  }
+}
+
+static obj_string_t *op_overload(token_t *method) {
   if (!is_operator(parser.current.type)) {
     if (match(TOK_LBRACKET)) {
       if (match(TOK_COLON)) {
         consume(TOK_RBRACKET, "Expected ']' after ':' symbol");
-        if (match(TOK_ASSIGN))
+        if (match(TOK_ASSIGN)) {
           method->start = "__set_slice__";
-        else
+          method->length = 13;
+          return copy_string("operator [:]=", 13, true);
+        } else {
           method->start = "__get_slice__";
-        method->length = 13;
-        return;
+          method->length = 13;
+          return copy_string("operator [:]", 12, true);
+        }
       } else {
         consume(TOK_RBRACKET, "Expected ']' after '[' symbol");
-        if (match(TOK_ASSIGN))
+        if (match(TOK_ASSIGN)) {
           method->start = "__set_index__";
-        else
+          method->length = 13;
+          return copy_string("operator []=", 12, true);
+        } else {
           method->start = "__get_index__";
-        method->length = 13;
-        return;
+          method->length = 13;
+          return copy_string("operator []", 11, true);
+        }
       }
     } else if (match(TOK_UNARY)) {
       consume(TOK_MINUS, "Expected '-' after 'unary'");
       method->start = "__neg__";
       method->length = 7;
-      return;
+      return copy_string("operator unary-", 15, true);
     }
     error("Expected operator symbol after 'operator'");
-    return;
+    return copy_string("invalid operator", 16, true);
   }
 
   const char *op_name = op_to_name(parser.current.type);
+  obj_string_t *func_name = op_to_func_name(parser.current.type);
   advance();
 
   method->start = op_name;
   method->length = strlen(op_name);
+  return func_name;
 }
 
 static unsigned int ident_constant(token_t *name) {
@@ -955,10 +1000,13 @@ static void define_variable(unsigned int global) {
   emit_var_op(OP_DEFINE_GLOBAL, global);
 }
 
-static void function(function_type_t type) {
+static void function(function_type_t type, obj_string_t *name) {
   compiler_t compiler;
   init_compiler(&compiler, current->path, type, current->globals);
   begin_scope();
+
+  if (name != NULL)
+    compiler.function->name = name;
 
   consume(TOK_LPAREN, "Expected '(' after function name");
   if (!check(TOK_RPAREN)) {
@@ -992,8 +1040,9 @@ static void function(function_type_t type) {
 
 static void method(void) {
   token_t name;
+  obj_string_t *func_name = NULL;
   if (match(TOK_OPERATOR))
-    op_overload(&name);
+    func_name = op_overload(&name);
   else {
     consume(TOK_FUNC, "Expected method declaration");
     consume(TOK_IDENT, "Expected method name");
@@ -1005,7 +1054,8 @@ static void method(void) {
   function_type_t type = TYPE_METHOD;
   if (name.length == 4 && memcmp(name.start, "init", 4) == 0)
     type = TYPE_INITIALIZER;
-  function(type);
+
+  function(type, func_name);
   emit_var_op(OP_METHOD, constant);
 }
 
@@ -1055,7 +1105,7 @@ static void class_declaration(void) {
 static void func_declaration(void) {
   unsigned int global = parse_variable("Expected function name");
   mark_initialized();
-  function(TYPE_FUNCTION);
+  function(TYPE_FUNCTION, NULL);
   define_variable(global);
 }
 
@@ -1107,9 +1157,11 @@ static void assert_statement(void) {
 
   chunk_t *chunk = current_chunk();
   unsigned int constant = add_constant(chunk, OBJ_VAL(current->path));
-  write_chunk(chunk, constant & 0xff);
-  write_chunk(chunk, (constant >> 8) & 0xff);
-  write_chunk(chunk, (constant >> 16) & 0xff);
+  write_chunk(chunk, constant & 0xff, parser.previous.row, parser.previous.col);
+  write_chunk(chunk, (constant >> 8) & 0xff, parser.previous.row,
+              parser.previous.col);
+  write_chunk(chunk, (constant >> 16) & 0xff, parser.previous.row,
+              parser.previous.col);
 
   consume(TOK_SEMICOLON, "Expected ';' after assert statement");
 }

@@ -96,6 +96,8 @@ typedef struct {
   int gray_capacity;
   int gray_count;
 
+  int offset;
+
   vm_singal_t signal;
   int exit_code;
 } vm_t;
@@ -109,7 +111,7 @@ typedef enum {
 extern vm_t vm;
 
 void set_signal(vm_singal_t sig, int exit_code);
-void runtime_error(const char *fmt, ...);
+void runtime_error(int offset, const char *fmt, ...);
 void init_vm(void);
 void free_vm(void);
 void set_args(int argc, char **argv);

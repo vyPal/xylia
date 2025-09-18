@@ -36,7 +36,7 @@ xyl_builtin(printf) {
         putchar(fmt->chars[i++]);
       else {
         if (fmt_argc >= argc) {
-          runtime_error("Not enough arguments in printf");
+          runtime_error(-1, "Not enough arguments in printf");
           return NIL_VAL;
         }
         print_value(argv[fmt_argc++], false);
@@ -59,7 +59,7 @@ xyl_builtin(input) {
   char *buffer = (char *)malloc(capacity);
 
   if (!buffer) {
-    runtime_error("[%s:%s] Failed to allocate memory for input buffer",
+    runtime_error(-1, "[%s:%s] Failed to allocate memory for input buffer",
                   __FILE_NAME__, __PRETTY_FUNCTION__);
     return NIL_VAL;
   }
@@ -70,7 +70,8 @@ xyl_builtin(input) {
       capacity *= 2;
       char *new_buffer = realloc(buffer, capacity);
       if (!new_buffer) {
-        runtime_error("[%s:%s] Failed to reallocate memory for input buffer",
+        runtime_error(-1,
+                      "[%s:%s] Failed to reallocate memory for input buffer",
                       __FILE_NAME__, __PRETTY_FUNCTION__);
         free(buffer);
         return NIL_VAL;
@@ -126,41 +127,41 @@ xyl_builtin(read) {
 
   obj_file_t *file = AS_FILE(argv[0]);
   if (!file->open) {
-    runtime_error("File is closed");
+    runtime_error(-1, "File is closed");
     return NIL_VAL;
   }
 
   if (!file->readable) {
-    runtime_error("File is not readable");
+    runtime_error(-1, "File is not readable");
     return NIL_VAL;
   }
 
   long start_pos = ftell(file->file);
   if (start_pos < 0) {
-    runtime_error("Invalid file position");
+    runtime_error(-1, "Invalid file position");
     return NIL_VAL;
   }
 
   if (fseek(file->file, 0, SEEK_END) != 0) {
-    runtime_error("Failed to determine the end of file");
+    runtime_error(-1, "Failed to determine the end of file");
     return NIL_VAL;
   }
 
   long file_size = ftell(file->file);
   if (file_size < 0) {
-    runtime_error("Invalid file size");
+    runtime_error(-1, "Invalid file size");
     return NIL_VAL;
   }
 
   char *buffer = (char *)malloc(file_size + 1);
   if (!buffer) {
-    runtime_error("[%s:%s] Failed to allocate memory for input buffer",
+    runtime_error(-1, "[%s:%s] Failed to allocate memory for input buffer",
                   __FILE_NAME__, __PRETTY_FUNCTION__);
     return NIL_VAL;
   }
 
   if (fseek(file->file, 0, SEEK_SET) != 0) {
-    runtime_error("Failed to read the file");
+    runtime_error(-1, "Failed to read the file");
     free(buffer);
     return NIL_VAL;
   }
@@ -180,17 +181,17 @@ xyl_builtin(write) {
   obj_file_t *file = AS_FILE(argv[0]);
   const char *data = AS_CSTRING(argv[1]);
   if (!file->open) {
-    runtime_error("File is closed");
+    runtime_error(-1, "File is closed");
     return NIL_VAL;
   }
 
   if (!file->writable) {
-    runtime_error("File is not writable");
+    runtime_error(-1, "File is not writable");
     return NIL_VAL;
   }
 
   if (fputs(data, file->file) == EOF) {
-    runtime_error("Failed to write to file");
+    runtime_error(-1, "Failed to write to file");
     return NIL_VAL;
   }
   fflush(file->file);

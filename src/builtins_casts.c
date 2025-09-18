@@ -22,7 +22,7 @@ xyl_builtin(number) {
   case VAL_BOOL:
     return NUMBER_VAL(AS_BOOL(arg) ? 1 : 0);
   case VAL_NIL:
-    runtime_error("Can not cast 'nil' to 'number'");
+    runtime_error(-1, "Can not cast 'nil' to 'number'");
     break;
   case VAL_NUMBER:
     return arg;
@@ -37,13 +37,13 @@ xyl_builtin(number) {
       long long number = strtoll(str, &end, 10);
       if (errno == ERANGE || number > INT64_MAX || number < INT64_MIN ||
           *end != '\0') {
-        runtime_error("Could not cast '%s' to 'number'", str);
+        runtime_error(-1, "Could not cast '%s' to 'number'", str);
         break;
       }
       return NUMBER_VAL((int64_t)number);
     }
     default:
-      runtime_error("Can not cast '%s' to 'number'",
+      runtime_error(-1, "Can not cast '%s' to 'number'",
                     obj_type_to_str(OBJ_TYPE(arg)));
       break;
     }
@@ -60,10 +60,10 @@ xyl_builtin(float) {
   value_t arg = argv[0];
   switch (arg.type) {
   case VAL_BOOL:
-    runtime_error("Can not cast 'bool' to 'float'");
+    runtime_error(-1, "Can not cast 'bool' to 'float'");
     break;
   case VAL_NIL:
-    runtime_error("Can not cast 'nil' to 'float'");
+    runtime_error(-1, "Can not cast 'nil' to 'float'");
     break;
   case VAL_NUMBER:
     return FLOAT_VAL((double)AS_NUMBER(arg));
@@ -77,13 +77,13 @@ xyl_builtin(float) {
       errno = 0;
       double flt = strtod(str, &end);
       if (errno == ERANGE || isnan(flt) || isinf(flt) || *end != '\0') {
-        runtime_error("Could not cast '%s' to 'float'", str);
+        runtime_error(-1, "Could not cast '%s' to 'float'", str);
         break;
       }
       return FLOAT_VAL(flt);
     }
     default:
-      runtime_error("Can not cast '%s' to 'float'",
+      runtime_error(-1, "Can not cast '%s' to 'float'",
                     obj_type_to_str(OBJ_TYPE(arg)));
       break;
     }
@@ -115,10 +115,10 @@ xyl_builtin(bool) {
         return BOOL_VAL(true);
       else if (str->length == 5 && strncmp(str->chars, "false", 5) == 0)
         return BOOL_VAL(false);
-      runtime_error("Could not cast '%s' to 'bool'", str->chars);
+      runtime_error(-1, "Could not cast '%s' to 'bool'", str->chars);
     }
     default:
-      runtime_error("Can not cast '%s' to 'bool'",
+      runtime_error(-1, "Can not cast '%s' to 'bool'",
                     obj_type_to_str(OBJ_TYPE(arg)));
       break;
     }
@@ -147,7 +147,7 @@ xyl_builtin(vector) {
   } else if (IS_RANGE(arg)) {
     obj_range_t *range = AS_RANGE(arg);
     if (!IS_NUMBER(range->from) || !IS_NUMBER(range->to)) {
-      runtime_error("Range must be 'number':'number' but got '%s':'%s'",
+      runtime_error(-1, "Range must be 'number':'number' but got '%s':'%s'",
                     value_type_to_str(range->from.type),
                     value_type_to_str(range->to.type));
       return NIL_VAL;
@@ -171,7 +171,8 @@ xyl_builtin(vector) {
     return OBJ_VAL(vector);
   }
 
-  runtime_error("Expected argument 1 in 'vector' to be 'list', 'vector' or "
+  runtime_error(-1,
+                "Expected argument 1 in 'vector' to be 'list', 'vector' or "
                 "'range' but got '%s'",
                 obj_type_to_str(OBJ_TYPE(arg)));
 
@@ -195,7 +196,7 @@ xyl_builtin(list) {
   } else if (IS_RANGE(arg)) {
     obj_range_t *range = AS_RANGE(arg);
     if (!IS_NUMBER(range->from) || !IS_NUMBER(range->to)) {
-      runtime_error("Range must be 'number':'number' but got '%s':'%s'",
+      runtime_error(-1, "Range must be 'number':'number' but got '%s':'%s'",
                     value_type_to_str(range->from.type),
                     value_type_to_str(range->to.type));
       return NIL_VAL;
@@ -218,7 +219,8 @@ xyl_builtin(list) {
     return OBJ_VAL(list);
   }
 
-  runtime_error("Expected argument 1 in 'list' to be 'vector', 'list' or "
+  runtime_error(-1,
+                "Expected argument 1 in 'list' to be 'vector', 'list' or "
                 "'range' but got '%s'",
                 obj_type_to_str(OBJ_TYPE(arg)));
 

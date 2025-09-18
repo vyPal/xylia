@@ -12,7 +12,7 @@ xyl_builtin(len) {
   else if (IS_LIST(argv[0]))
     return NUMBER_VAL(AS_LIST(argv[0])->count);
 
-  runtime_error("Expected first argument in len to be string or vector");
+  runtime_error(-1, "Expected first argument in len to be string or vector");
   return NIL_VAL;
 }
 
@@ -65,7 +65,7 @@ xyl_builtin(pop) {
 
   obj_vector_t *vector = AS_VECTOR(argv[0]);
   if (vector->count == 0) {
-    runtime_error("pop called on empty vector");
+    runtime_error(-1, "pop called on empty vector");
     return NIL_VAL;
   }
 
@@ -82,7 +82,7 @@ xyl_builtin(insert) {
   value_t value = argv[2];
 
   if (index < 0 || index > vector->count) {
-    runtime_error("Index %d out of range", index);
+    runtime_error(-1, "Index %d out of range", index);
     return NIL_VAL;
   }
 
@@ -109,7 +109,7 @@ xyl_builtin(remove) {
   int64_t index = AS_NUMBER(argv[1]);
 
   if (index < 0 || index >= vector->count) {
-    runtime_error("Index %d out of range", index);
+    runtime_error(-1, "Index %d out of range", index);
     return NIL_VAL;
   }
 
@@ -132,17 +132,17 @@ xyl_builtin(slice) {
     int64_t to = AS_NUMBER(argv[2]);
 
     if (from > to) {
-      runtime_error("Start index can not be bigger than end index");
+      runtime_error(-1, "Start index can not be bigger than end index");
       return NIL_VAL;
     }
 
     if (from < 0 || from > vector->count) {
-      runtime_error("Index %d out of range", from);
+      runtime_error(-1, "Index %d out of range", from);
       return NIL_VAL;
     }
 
     if (to < 0 || to > vector->count) {
-      runtime_error("Index %d out of range", to);
+      runtime_error(-1, "Index %d out of range", to);
       return NIL_VAL;
     }
 
@@ -160,22 +160,22 @@ xyl_builtin(slice) {
     int64_t to = AS_NUMBER(argv[2]);
 
     if (from > to) {
-      runtime_error("Start index can not be bigger than end index");
+      runtime_error(-1, "Start index can not be bigger than end index");
       return NIL_VAL;
     }
 
     if (from < 0 || from > list->count) {
-      runtime_error("Index %d out of range", from);
+      runtime_error(-1, "Index %d out of range", from);
       return NIL_VAL;
     }
 
     if (to < 0 || to > list->count) {
-      runtime_error("Index %d out of range", to);
+      runtime_error(-1, "Index %d out of range", to);
       return NIL_VAL;
     }
 
     if (from == to) {
-      runtime_error("Can not create empty list slice");
+      runtime_error(-1, "Can not create empty list slice");
       return NIL_VAL;
     }
 
@@ -190,17 +190,17 @@ xyl_builtin(slice) {
     int64_t to = AS_NUMBER(argv[2]);
 
     if (from > to) {
-      runtime_error("Start index can not be bigger than end index");
+      runtime_error(-1, "Start index can not be bigger than end index");
       return NIL_VAL;
     }
 
     if (from < 0 || from > string->length) {
-      runtime_error("Index %d out of range", from);
+      runtime_error(-1, "Index %d out of range", from);
       return NIL_VAL;
     }
 
     if (to < 0 || to > string->length) {
-      runtime_error("Index %d out of range", to);
+      runtime_error(-1, "Index %d out of range", to);
       return NIL_VAL;
     }
 
@@ -211,6 +211,6 @@ xyl_builtin(slice) {
     return OBJ_VAL(new_str);
   }
 
-  runtime_error("Can call slice only on vecor, list and string");
+  runtime_error(-1, "Can call slice only on vecor, list and string");
   return NIL_VAL;
 }

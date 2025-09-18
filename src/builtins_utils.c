@@ -133,7 +133,7 @@ xyl_builtin(hash) {
     break;
   }
 
-  runtime_error("Argument 1 of tyep '%s' in 'hash' is not hashable",
+  runtime_error(-1, "Argument 1 of tyep '%s' in 'hash' is not hashable",
                 obj_type_to_str(OBJ_TYPE(value)));
 
   return NIL_VAL;
@@ -151,7 +151,7 @@ xyl_builtin(import) {
       memcmp(path->chars + path->length - EXT_LEN, EXT, EXT_LEN) != 0) {
     const char *xyl_home = getenv("XYL_HOME");
     if (!xyl_home) {
-      runtime_error("Could not find $XYL_HOME env variable");
+      runtime_error(-1, "Could not find $XYL_HOME env variable");
       return NIL_VAL;
     }
 
@@ -173,7 +173,7 @@ xyl_builtin(import) {
     obj_module_t *module = compile(source, path, lib_path_str);
     free(source);
     if (module == NULL) {
-      runtime_error("Failed to compile module '%s'", path->chars);
+      runtime_error(-1, "Failed to compile module '%s'", path->chars);
       return NIL_VAL;
     }
 
@@ -203,7 +203,7 @@ xyl_builtin(import) {
   obj_module_t *module = compile(source, path, full_path_str);
   free(source);
   if (module == NULL) {
-    runtime_error("Failed to compile module '%s'", path->chars);
+    runtime_error(-1, "Failed to compile module '%s'", path->chars);
     return NIL_VAL;
   }
 

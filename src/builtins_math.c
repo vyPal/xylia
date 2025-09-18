@@ -16,7 +16,7 @@ xyl_builtin(abs) {
     return FLOAT_VAL(fabs(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'abs' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'abs' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }
@@ -27,7 +27,8 @@ xyl_builtin(min) {
   value_t min = NIL_VAL;
   for (int i = 0; i < list->count; i++) {
     if (!IS_NUMBER(list->values[i]) && !IS_FLOAT(list->values[i])) {
-      runtime_error("Expected argument %d in 'min' to be 'number' or 'float' "
+      runtime_error(-1,
+                    "Expected argument %d in 'min' to be 'number' or 'float' "
                     "but got '%s'",
                     i + 1, value_type_to_str(list->values[i].type));
       return NIL_VAL;
@@ -52,7 +53,8 @@ xyl_builtin(max) {
   value_t max = NIL_VAL;
   for (int i = 0; i < list->count; i++) {
     if (!IS_NUMBER(list->values[i]) && !IS_FLOAT(list->values[i])) {
-      runtime_error("Expected argument %d in 'max' to be 'number' or 'float' "
+      runtime_error(-1,
+                    "Expected argument %d in 'max' to be 'number' or 'float' "
                     "but got '%s'",
                     i + 1, value_type_to_str(list->values[i].type));
       return NIL_VAL;
@@ -79,7 +81,7 @@ xyl_builtin(sin) {
     return FLOAT_VAL(sin(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'sin' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'sin' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }
@@ -92,7 +94,7 @@ xyl_builtin(cos) {
     return FLOAT_VAL(cos(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'cos' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'cos' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }
@@ -105,7 +107,7 @@ xyl_builtin(tan) {
     return FLOAT_VAL(tan(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'tan' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'tan' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }
@@ -118,6 +120,7 @@ xyl_builtin(asin) {
     return FLOAT_VAL(asin(AS_FLOAT(argv[0])));
 
   runtime_error(
+      -1,
       "Expected argument 1 in 'asin' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
@@ -131,6 +134,7 @@ xyl_builtin(acos) {
     return FLOAT_VAL(acos(AS_FLOAT(argv[0])));
 
   runtime_error(
+      -1,
       "Expected argument 1 in 'acos' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
@@ -144,6 +148,7 @@ xyl_builtin(atan) {
     return FLOAT_VAL(atan(AS_FLOAT(argv[0])));
 
   runtime_error(
+      -1,
       "Expected argument 1 in 'atan' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
@@ -163,6 +168,7 @@ xyl_builtin(sqrt) {
     return FLOAT_VAL(sqrt(AS_FLOAT(argv[0])));
 
   runtime_error(
+      -1,
       "Expected argument 1 in 'sqrt' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
@@ -173,6 +179,7 @@ xyl_builtin(pow) {
                         {VAL_ANY, OBJ_ANY});
   if (!IS_NUMBER(argv[0]) && !IS_FLOAT(argv[0])) {
     runtime_error(
+        -1,
         "Expected argument 1 in 'pow' to be 'number' or 'float' but got '%s'",
         value_type_to_str(argv[0].type));
     return NIL_VAL;
@@ -180,6 +187,7 @@ xyl_builtin(pow) {
 
   if (!IS_NUMBER(argv[1]) && !IS_FLOAT(argv[1])) {
     runtime_error(
+        -1,
         "Expected argument 2 in 'pow' to be 'number' or 'float' but got '%s'",
         value_type_to_str(argv[1].type));
     return NIL_VAL;
@@ -199,7 +207,7 @@ xyl_builtin(log) {
     return FLOAT_VAL(log(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'log' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'log' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }
@@ -212,7 +220,7 @@ xyl_builtin(exp) {
     return FLOAT_VAL(exp(AS_FLOAT(argv[0])));
 
   runtime_error(
-      "Expected argument 1 in 'exp' to be 'number' or 'float' but got '%s'",
+      -1, "Expected argument 1 in 'exp' to be 'number' or 'float' but got '%s'",
       value_type_to_str(argv[0].type));
   return NIL_VAL;
 }

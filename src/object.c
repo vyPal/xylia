@@ -168,7 +168,7 @@ obj_file_t *new_file(const char *path, const char *mode) {
   file->writable = false;
 
   if (!file->file) {
-    runtime_error("Failed to open file '%s'", path);
+    runtime_error(-1, "Failed to open file '%s'", path);
     return file;
   }
 
