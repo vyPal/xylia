@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <threads.h>
 
@@ -44,7 +45,7 @@ void set_signal(vm_singal_t sig, int exit_code) {
 }
 
 void runtime_error(const char *fmt, ...) {
-  fprintf(stderr, "[RUNTIME ERROR] ");
+  fprintf(stderr, "\x1b[31m");
   va_list args;
   va_start(args, fmt);
   vfprintf(stderr, fmt, args);
@@ -55,11 +56,14 @@ void runtime_error(const char *fmt, ...) {
     call_frame_t *frame = &vm.frames[i];
     obj_function_t *function = frame->closure->function;
     if (function->name == NULL)
-      fprintf(stderr, "in script\n");
+      fprintf(stderr, "%s in 'script' at row:%d col:%d\n",
+              function->path->chars, function->row, function->col);
     else
-      fprintf(stderr, "in %s()\n", function->name->chars);
+      fprintf(stderr, "%s in '%s' at row:%d col:%d\n", function->path->chars,
+              function->name->chars, function->row, function->col);
   }
 
+  fprintf(stderr, "\x1b[0m");
   set_signal(SIG_RUNTIME_ERROR, -1);
 }
 
@@ -1296,8 +1300,13 @@ static result_t run(void) {
     } break;
     case OP_ASSERT: {
       value_t value = pop();
+
+      int row = READ_LONG();
+      int col = READ_LONG();
+      obj_string_t *file = READ_STRING_LONG();
+
       if (is_falsey(value)) {
-        runtime_error("Assertion failed!");
+        runtime_error("%s at row:%d col:%d", file->chars, row, col);
         set_signal(SIG_ASSERT_FAIL, -1);
         return RESULT_RUNTIME_ERROR;
       }
@@ -1305,10 +1314,14 @@ static result_t run(void) {
     case OP_ASSERT_MSG: {
       value_t msg = pop();
       value_t value = pop();
+
+      int row = READ_LONG();
+      int col = READ_LONG();
+      obj_string_t *file = READ_STRING_LONG();
+
       if (is_falsey(value)) {
-        runtime_error("Assertion failed with:");
-        print_value(msg, false);
-        printf("\n");
+        runtime_error("%s at row:%d col:%d\n  %s", file->chars, row, col,
+                      value_to_string(msg, false)->chars);
         set_signal(SIG_ASSERT_FAIL, -1);
         return RESULT_RUNTIME_ERROR;
       }
@@ -1381,8 +1394,16 @@ static result_t run(void) {
 #undef READ_BYTE
 }
 
-result_t interpret(const char *source) {
-  obj_module_t *module = compile(source, NULL);
+result_t interpret(const char *source, const char *file) {
+  char *full_path = realpath(file, NULL);
+  obj_string_t *full_path_str;
+  if (full_path) {
+    full_path_str = copy_string(full_path, strlen(full_path), true);
+    free(full_path);
+  } else
+    full_path_str = copy_string(file, strlen(file), true);
+
+  obj_module_t *module = compile(source, NULL, full_path_str);
   if (module == NULL)
     return RESULT_COMPILE_ERROR;
 

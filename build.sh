@@ -15,20 +15,22 @@ success() {
 BUILD_DIR="build"
 BIN_DIR="bin"
 EXE="xylia"
+OUT_PATH="${BUILD_DIR}/${EXE}"
+BIN_PATH="${BIN_DIR}/${EXE}"
 
-if [ ! -d "$BUILD_DIR" ]; then
-  info "Creating build directory: ${BUILD_DIR}"
-  mkdir -p "$BUILD_DIR"
+BUILD_TYPE="Release"
+if [ $# -ge 1 ]; then
+    BUILD_TYPE="$1"
 fi
 
-if [ ! -d "$BIN_DIR" ]; then
-  info "Creating bin directory: ${BIN_DIR}"
-  mkdir -p "$BIN_DIR"
-fi
+info "Using build type: ${BUILD_TYPE}"
+
+[ ! -d "$BUILD_DIR" ] && mkdir -p "$BUILD_DIR" && info "Created build directory: ${BUILD_DIR}"
+[ ! -d "$BIN_DIR" ] && mkdir -p "$BIN_DIR" && info "Created bin directory: ${BIN_DIR}"
 
 info "Configuring CMake for Ninja build..."
 cmake -S . -B "${BUILD_DIR}" -G "Ninja" \
-  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
   -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 if [ $? -ne 0 ]; then
@@ -38,35 +40,34 @@ fi
 
 info "Building with Ninja"
 ninja -C "${BUILD_DIR}"
-
 if [ $? -ne 0 ]; then
   error "Ninja build failed. Aborting."
   exit 1
 fi
 
-if [ -f "${BUILD_DIR}/${EXE}" ]; then
-  before_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
-  info "Stripping binary ${BUILD_DIR}/${EXE}..."
-  strip --strip-all "${BUILD_DIR}/${EXE}"
-  after_size=$(stat -c%s "${BUILD_DIR}/${EXE}")
+if [ -f "${OUT_PATH}" ]; then
+  if [ "$BUILD_TYPE" != "Debug" ]; then
+    before_size=$(stat -c%s "${OUT_PATH}")
+    info "Stripping binary ${OUT_PATH}..."
+    strip --strip-all "${OUT_PATH}"
+    after_size=$(stat -c%s "${OUT_PATH}")
+    
+    saved=$((before_size - after_size))
+    saved_kb=$((saved / 1024))
+    after_kb=$((after_size / 1024))
+    
+    info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
+  fi
 
-  saved=$((before_size - after_size))
-  saved_kb=$((saved / 1024))
-  after_kb=$((after_size / 1024))
-
-  info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
-
-  info "Moving binary to ${BIN_DIR}/${EXE}..."
-  mv "${BUILD_DIR}/${EXE}" "${BIN_DIR}/${EXE}"
+  info "Moving binary to ${BIN_PATH}..."
+  cp "${OUT_PATH}" "${BIN_PATH}"
 fi
 
 info "Exporting compile_commands.json"
-
 if [ ! -f "$BUILD_DIR/compile_commands.json" ]; then
   error "Exporting compile_commands.json failed. Aborting."
   exit 1
 fi
-
 mv "${BUILD_DIR}/compile_commands.json" .
 
 success "Build complete!"

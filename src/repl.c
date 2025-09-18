@@ -45,7 +45,7 @@ void run_repl(void) {
       if (count != 1) {
         if (count >= 2 && buffer[count - 2] != ';' && buffer[count - 2] != '}')
           buffer[count - 1] = ';';
-        interpret(buffer);
+        interpret(buffer, "stdin");
         if (vm.signal != SIG_NONE)
           break;
       }

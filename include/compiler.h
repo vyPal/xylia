@@ -4,7 +4,8 @@
 #include "object.h"
 #include "value.h"
 
-obj_module_t *compile(const char *source, obj_string_t *path);
+obj_module_t *compile(const char *source, obj_string_t *path,
+                      obj_string_t *file);
 void mark_compiler_roots(void);
 
 #endif

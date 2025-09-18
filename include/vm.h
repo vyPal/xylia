@@ -114,7 +114,7 @@ void init_vm(void);
 void free_vm(void);
 void set_args(int argc, char **argv);
 void load_test_functions(void);
-result_t interpret(const char *source);
+result_t interpret(const char *source, const char *file);
 void push(value_t value);
 void push_frame(obj_closure_t *closure, int argc);
 value_t pop(void);

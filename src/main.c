@@ -59,7 +59,7 @@ static void run_file(const char *path) {
     return;
   }
 
-  result_t result = interpret(source);
+  result_t result = interpret(source, path);
   free(source);
 
   if (result != RESULT_OK)

@@ -79,7 +79,7 @@ typedef struct {
   token_type_t type;
   const char *start;
   int length;
-  int line;
+  int row, col;
 } token_t;
 
 void init_scanner(const char *source);

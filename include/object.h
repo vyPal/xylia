@@ -66,6 +66,8 @@ typedef struct {
   int upvalue_count;
   chunk_t chunk;
   obj_string_t *name;
+  obj_string_t *path;
+  int row, col;
   table_t *globals;
   bool has_varargs;
 } obj_function_t;

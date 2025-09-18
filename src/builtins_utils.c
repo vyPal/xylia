@@ -163,13 +163,14 @@ xyl_builtin(import) {
     memcpy(lib_path + xyl_home_len + LIB_LEN, path->chars, path->length);
     memcpy(lib_path + xyl_home_len + LIB_LEN + path->length, EXT, EXT_LEN);
     lib_path[xyl_home_len + LIB_LEN + path->length + EXT_LEN] = '\0';
+    obj_string_t *lib_path_str = copy_string(lib_path, strlen(lib_path), true);
 
     char *source = read_file(lib_path);
     free(lib_path);
     if (!source)
       return NIL_VAL;
 
-    obj_module_t *module = compile(source, path);
+    obj_module_t *module = compile(source, path, lib_path_str);
     free(source);
     if (module == NULL) {
       runtime_error("Failed to compile module '%s'", path->chars);
@@ -191,7 +192,15 @@ xyl_builtin(import) {
   if (!source)
     return NIL_VAL;
 
-  obj_module_t *module = compile(source, path);
+  char *full_path = realpath(path->chars, NULL);
+  obj_string_t *full_path_str;
+  if (full_path) {
+    full_path_str = copy_string(full_path, strlen(full_path), true);
+    free(full_path);
+  } else
+    full_path_str = path;
+
+  obj_module_t *module = compile(source, path, full_path_str);
   free(source);
   if (module == NULL) {
     runtime_error("Failed to compile module '%s'", path->chars);

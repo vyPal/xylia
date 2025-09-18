@@ -6,7 +6,7 @@
 typedef struct {
   const char *start;
   const char *current;
-  int line;
+  int row, col;
 } scanner_t;
 
 scanner_t scanner;
@@ -14,7 +14,8 @@ scanner_t scanner;
 void init_scanner(const char *source) {
   scanner.start = source;
   scanner.current = source;
-  scanner.line = 1;
+  scanner.row = 1;
+  scanner.col = 1;
 }
 
 static bool is_alpha(char c) {
@@ -31,6 +32,7 @@ static bool is_at_end(void) {
 
 static char advance(void) {
   scanner.current++;
+  scanner.col++;
   return scanner.current[-1];
 }
 
@@ -58,7 +60,8 @@ static token_t make_token(token_type_t type) {
   token.type = type;
   token.start = scanner.start;
   token.length = (int)(scanner.current - scanner.start);
-  token.line = scanner.line;
+  token.row = scanner.row;
+  token.col = scanner.col;
   return token;
 }
 
@@ -67,7 +70,8 @@ static token_t error_token(const char *msg) {
   token.type = TOK_ERROR;
   token.start = msg;
   token.length = strlen(msg);
-  token.line = scanner.line;
+  token.row = scanner.row;
+  token.col = scanner.col;
   return token;
 }
 
@@ -75,7 +79,8 @@ static void skip_whitespace(void) {
   while (true) {
     switch (peek()) {
     case '\n':
-      scanner.line++;
+      scanner.row++;
+      scanner.col = 0;
       // fallthrough
     case ' ':
     case '\t':
@@ -187,7 +192,8 @@ static token_t number(void) {
 static token_t string(void) {
   while (peek() != '"' && !is_at_end()) {
     if (peek() == '\n') {
-      scanner.line++;
+      scanner.col = 0;
+      scanner.row++;
       return error_token("Unterminated string");
     }
 

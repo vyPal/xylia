@@ -71,6 +71,7 @@ typedef struct {
 
 typedef struct compiler {
   struct compiler *enclosing;
+  obj_string_t *path;
   obj_function_t *function;
   function_type_t type;
   table_t *globals;
@@ -103,9 +104,10 @@ class_compiler_t *current_class = NULL;
 chunk_t *compiling_chunk = NULL;
 loop_t *current_loop = NULL;
 
-static void init_compiler(compiler_t *compiler, function_type_t type,
-                          table_t *globals) {
+static void init_compiler(compiler_t *compiler, obj_string_t *path,
+                          function_type_t type, table_t *globals) {
   compiler->enclosing = current;
+  compiler->path = path;
   compiler->function = NULL;
   compiler->type = type;
   compiler->local_capacity = 8;
@@ -120,6 +122,9 @@ static void init_compiler(compiler_t *compiler, function_type_t type,
   if (type != TYPE_SCRIPT)
     current->function->name =
         copy_string(parser.previous.start, parser.previous.length, true);
+  compiler->function->path = path;
+  compiler->function->row = parser.previous.row;
+  compiler->function->col = parser.previous.col;
 
   local_t *local = &current->locals[current->local_count++];
   local->depth = 0;
@@ -142,7 +147,8 @@ static void error_at(token_t *token, const char *msg) {
     return;
 
   parser.panic_mode = true;
-  fprintf(stderr, "[line %d] Error", token->line);
+  fprintf(stderr, "Error in '%s' at row:%d col:%d", current->path->chars,
+          token->row, token->col);
 
   if (token->type == TOK_EOF)
     fprintf(stderr, " at end");
@@ -951,7 +957,7 @@ static void define_variable(unsigned int global) {
 
 static void function(function_type_t type) {
   compiler_t compiler;
-  init_compiler(&compiler, type, current->globals);
+  init_compiler(&compiler, current->path, type, current->globals);
   begin_scope();
 
   consume(TOK_LPAREN, "Expected '(' after function name");
@@ -1080,6 +1086,9 @@ static void declaration(void) {
 }
 
 static void assert_statement(void) {
+  int row = parser.previous.row;
+  int col = parser.previous.col;
+
   expression();
 
   if (match(TOK_COMMA)) {
@@ -1087,6 +1096,20 @@ static void assert_statement(void) {
     emit_byte(OP_ASSERT_MSG);
   } else
     emit_byte(OP_ASSERT);
+
+  emit_byte(row & 0xff);
+  emit_byte((row >> 8) & 0xff);
+  emit_byte((row >> 16) & 0xff);
+
+  emit_byte(col & 0xff);
+  emit_byte((col >> 8) & 0xff);
+  emit_byte((col >> 16) & 0xff);
+
+  chunk_t *chunk = current_chunk();
+  unsigned int constant = add_constant(chunk, OBJ_VAL(current->path));
+  write_chunk(chunk, constant & 0xff);
+  write_chunk(chunk, (constant >> 8) & 0xff);
+  write_chunk(chunk, (constant >> 16) & 0xff);
 
   consume(TOK_SEMICOLON, "Expected ';' after assert statement");
 }
@@ -1267,14 +1290,15 @@ static void statement(void) {
     expression_statement();
 }
 
-obj_module_t *compile(const char *source, obj_string_t *path) {
+obj_module_t *compile(const char *source, obj_string_t *path,
+                      obj_string_t *file) {
   obj_module_t *module =
       new_module(path == NULL ? copy_string("main", 4, true) : path);
   push(OBJ_VAL(module));
 
   init_scanner(source);
   compiler_t compiler;
-  init_compiler(&compiler, TYPE_SCRIPT, &module->globals);
+  init_compiler(&compiler, file, TYPE_SCRIPT, &module->globals);
 
   parser.had_error = false;
   parser.panic_mode = false;
