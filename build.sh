@@ -19,8 +19,12 @@ OUT_PATH="${BUILD_DIR}/${EXE}"
 BIN_PATH="${BIN_DIR}/${EXE}"
 
 BUILD_TYPE="Release"
+EXTRA_ARGS=()
+
 if [ $# -ge 1 ]; then
     BUILD_TYPE="$1"
+    shift
+    EXTRA_ARGS=("$@")
 fi
 
 info "Using build type: ${BUILD_TYPE}"
@@ -31,7 +35,8 @@ info "Using build type: ${BUILD_TYPE}"
 info "Configuring CMake for Ninja build..."
 cmake -S . -B "${BUILD_DIR}" -G "Ninja" \
   -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
-  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+  "${EXTRA_ARGS[@]}"
 
 if [ $? -ne 0 ]; then
   error "CMake configuration failed. Aborting."

@@ -7,6 +7,7 @@
 #include "chunk.h"
 #include "table.h"
 #include "value.h"
+#include "xyl_ffi.h"
 
 #define OBJ_TYPE(value) (AS_OBJ(value)->type)
 
@@ -22,6 +23,9 @@
 #define IS_FILE(value) is_obj_type(value, OBJ_FILE)
 #define IS_MODULE(value) is_obj_type(value, OBJ_MODULE)
 #define IS_RANGE(value) is_obj_type(value, OBJ_RANGE)
+#define IS_C_LIB(value) is_obj_type(value, OBJ_C_LIB)
+#define IS_C_FUNC(value) is_obj_type(value, OBJ_C_FUNC)
+#define IS_REF(value) is_obj_type(value, OBJ_REF)
 
 #define AS_BOUND_METHOD(value) ((obj_bound_method_t *)AS_OBJ(value))
 #define AS_CLASS(value) ((obj_class_t *)AS_OBJ(value))
@@ -36,6 +40,9 @@
 #define AS_FILE(value) ((obj_file_t *)AS_OBJ(value))
 #define AS_MODULE(value) ((obj_module_t *)AS_OBJ(value))
 #define AS_RANGE(value) ((obj_range_t *)AS_OBJ(value))
+#define AS_C_LIB(value) ((obj_c_lib_t *)AS_OBJ(value))
+#define AS_C_FUNC(value) ((obj_c_func_t *)AS_OBJ(value))
+#define AS_REF(value) ((obj_ref_t *)AS_OBJ(value))
 
 typedef enum {
   OBJ_STRING,
@@ -51,6 +58,9 @@ typedef enum {
   OBJ_BUILTIN,
   OBJ_UPVALUE,
   OBJ_MODULE,
+  OBJ_C_LIB,
+  OBJ_C_FUNC,
+  OBJ_REF,
   OBJ_ANY,
 } obj_type_t;
 
@@ -155,6 +165,21 @@ typedef struct {
   value_t to;
 } obj_range_t;
 
+typedef struct {
+  obj_t obj;
+  c_lib_t *lib;
+} obj_c_lib_t;
+
+typedef struct {
+  obj_t obj;
+  c_func_t *func;
+} obj_c_func_t;
+
+typedef struct {
+  obj_t obj;
+  value_t val;
+} obj_ref_t;
+
 obj_bound_method_t *new_bound_method(value_t receiver, obj_closure_t *method);
 obj_class_t *new_class(obj_string_t *name);
 obj_closure_t *new_closure(obj_function_t *function);
@@ -169,6 +194,9 @@ obj_list_t *new_list(int count);
 obj_file_t *new_file(const char *path, const char *mode);
 obj_module_t *new_module(obj_string_t *name);
 obj_range_t *new_range(value_t from, value_t to);
+obj_c_lib_t *new_c_lib(c_lib_t *lib);
+obj_c_func_t *new_c_func(c_func_t *func);
+obj_ref_t *new_ref(value_t val);
 void print_object(value_t value, bool literally);
 
 static inline bool is_obj_type(value_t value, obj_type_t type) {

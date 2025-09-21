@@ -209,6 +209,24 @@ obj_range_t *new_range(value_t from, value_t to) {
   return range;
 }
 
+obj_c_lib_t *new_c_lib(c_lib_t *lib) {
+  obj_c_lib_t *c_lib = ALLOCATE_OBJ(obj_c_lib_t, OBJ_C_LIB);
+  c_lib->lib = lib;
+  return c_lib;
+}
+
+obj_c_func_t *new_c_func(c_func_t *func) {
+  obj_c_func_t *c_func = ALLOCATE_OBJ(obj_c_func_t, OBJ_C_FUNC);
+  c_func->func = func;
+  return c_func;
+}
+
+obj_ref_t *new_ref(value_t val) {
+  obj_ref_t *ref = ALLOCATE_OBJ(obj_ref_t, OBJ_REF);
+  ref->val = val;
+  return ref;
+}
+
 static void print_function(obj_function_t *function) {
   if (function->name == NULL)
     printf("<script>");
@@ -320,6 +338,18 @@ void print_object(value_t value, bool literally) {
     printf(":");
     print_value(AS_RANGE(value)->to, true);
     printf(">");
+    break;
+  case OBJ_C_LIB:
+    printf("<c lib>");
+    break;
+  case OBJ_C_FUNC:
+    printf("<c func>");
+    break;
+  case OBJ_REF:
+    printf("<ref ");
+    print_value(AS_REF(value)->val, true);
+    printf(">");
+    break;
   case OBJ_ANY:
     break;
   }

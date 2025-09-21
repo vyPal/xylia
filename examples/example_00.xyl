@@ -1,0 +1,3 @@
+let io = import("io");
+
+io.println("Hello, World!");
