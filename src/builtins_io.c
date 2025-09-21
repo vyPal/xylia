@@ -2,44 +2,60 @@
 #include <stdlib.h>
 
 #include "builtins.h"
+#include "object.h"
 #include "value.h"
 #include "vm.h"
 
 xyl_builtin(print) {
-  for (int i = 0; i < argc; i++) {
+  xyl_builtin_signature(print, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
+  obj_list_t *args = AS_LIST(argv[0]);
+
+  for (int i = 0; i < args->count; i++) {
     if (i != 0)
       putchar(' ');
-    print_value(argv[i], false);
+    print_value(args->values[i], false);
   }
+
   return NIL_VAL;
 }
 
 xyl_builtin(println) {
-  for (int i = 0; i < argc; i++) {
+  xyl_builtin_signature(println, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
+  obj_list_t *args = AS_LIST(argv[0]);
+
+  for (int i = 0; i < args->count; i++) {
     if (i != 0)
       putchar(' ');
-    print_value(argv[i], false);
+    print_value(args->values[i], false);
   }
   putchar('\n');
+
   return NIL_VAL;
 }
 
 xyl_builtin(printf) {
-  xyl_builtin_signature(printf, 1, ARGC_MORE_OR_EXACT, {VAL_OBJ, OBJ_STRING});
+  xyl_builtin_signature(printf, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
+  obj_list_t *args = AS_LIST(argv[0]);
 
-  obj_string_t *fmt = AS_STRING(argv[0]);
-  int fmt_argc = 1;
+  if (args->count == 0 || !IS_STRING(args->values[0])) {
+    runtime_error(-1, "Expected at least 1 argument in 'printf' but got %d",
+                  args->count);
+    return NIL_VAL;
+  }
+
+  obj_string_t *fmt = AS_STRING(args->values[0]);
+  int fmt_count = 1;
 
   for (int i = 0; i < fmt->length; i++) {
     if (fmt->chars[i] == '%') {
       if (i + 1 < fmt->length && fmt->chars[i + 1] == '%')
         putchar(fmt->chars[i++]);
       else {
-        if (fmt_argc >= argc) {
+        if (fmt_count >= args->count) {
           runtime_error(-1, "Not enough arguments in printf");
           return NIL_VAL;
         }
-        print_value(argv[fmt_argc++], false);
+        print_value(args->values[fmt_count++], false);
       }
     } else
       putchar(fmt->chars[i]);

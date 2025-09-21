@@ -4,17 +4,29 @@ class Map {
   func init() {
     self.capacity = 0;
     self.count = 0;
-    self.values = {};
+
+    self.__max_load = 0.7;
+    self.__seed = __builtin___floor(__builtin___random() * 9223372036854775807);
+  }
+
+  func get_index(key) {
+    let hash;
+    if (typeof(key) == "instance" && hasmethod(getclass(key), "hash"))
+      hash = __builtin___hash(key.hash());
+    else
+      hash = __builtin___hash(key);
+
+    hash = hash ^ self.__seed;
+    return hash % self.capacity;
+  }
+
+  func insert(key, value) {
+    if (self.count + 1 > self.capacity * self.__max_load) {
+    }    
   }
 
   operator [] (key) {
-    let hash;
-    if (typeof(key) == "instance" && hasmethod(getclass(key), "hash"))
-      hash = __builtin_hash(key.hash());
-    else
-      hash = __builtin_hash(key);
-
-    printf("hash = %\n", hash);
+    __builtin___printf("key = % | hash = %\n", key, hash);
   }
 
   operator []= (key, value) {

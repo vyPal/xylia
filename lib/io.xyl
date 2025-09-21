@@ -1,22 +1,38 @@
+func print(args[])   { __builtin___print(args); }
+func println(args[]) { __builtin___println(args); }
+func printf(args[])  {
+  assert len(args) >= 1, "Expected at least 1 argumetn in 'printf'";
+  __builtin___printf(args);
+}
+
+func input(prompt[]) {
+  assert len(prompt) <= 1, "Too many arguments in 'input'";
+  if (len(prompt) == 0)
+    __builtin___input();
+  else
+    __builtin___input(prompt[0]);
+}
+
 class File {
   func init(path, mode) {
-    self.file = open(path, mode);
-    self.open = true;
-    self.path = path;
+    self.__file = __builtin___open(path, mode);
+    self.__open = true;
   }
 
   func close() {
-    self.closed = true;
-    close(self.file);
+    if (self.__open) {
+      self.__open = false;
+      __builtin___close(self.__file);
+    }
   }
 
   func read() {
-    assert self.open, "File is already closed";
-    return read(self.file);
+    assert self.__open, "File is already closed";
+    return __builtin___read(self.__file);
   }
 
   func write(content) {
-    assert self.open, "File is already closed";
-    write(self.file, content);
+    assert self.__open, "File is already closed";
+    __builtin___write(self.__file, content);
   }
 }

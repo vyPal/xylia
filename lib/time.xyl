@@ -1,12 +1,12 @@
 let strings = import("strings");
 
-func now()       { return __now(); }
-func clock()     { return __clock(); }
-func sleep(time) { return __sleep(time); }
+func now()       { return __builtin___now(); }
+func clock()     { return __builtin___clock(); }
+func sleep(time) { return __builtin___sleep(time); }
 
 class date {
   func init() {
-    let parts = __localtime(__now());
+    let parts = __builtin___localtime(__builtin___now());
 
     self.year = parts[0];
     self.month = parts[1];
@@ -30,7 +30,7 @@ class date {
         if (c == "Y")
           result = result + string(self.year);
         else if (c == "y")
-          result = result + slice(strings.padl(self.year), 2, 4);
+          result = result + __builtin___slice(strings.padl(self.year), 2, 4);
         else if (c == "m")
           result = result + strings.padl(string(self.month), 2, "0");
         else if (c == "b") {

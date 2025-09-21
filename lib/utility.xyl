@@ -3,4 +3,26 @@ class Pair {
     self.first = first;
     self.second = second;
   }
+
+  func to_string() {
+    return "Pair{" + string(self.first) + ", " + string(self.second) + "}";
+  }
+
+  operator + (other) {
+    assert isinstance(other, Pair),
+            "Pair can be added only with Pair but got '" + typeof(other) + "' instead";
+    return Pair(self.first + other.first, self.second + other.second);
+  }
+
+  operator - (other) {
+    assert isinstance(other, Pair),
+            "Pair can be subtracted only with Pair but got '" + typeof(other) + "' instead";
+    return Pair(self.first - other.first, self.second - other.second);
+  }
+
+  operator == (other) {
+    if (isinstance(other, Pair))
+      return self.first == other.first && self.second == other.second;
+    return false;
+  }
 }

@@ -185,68 +185,80 @@ void init_vm(void) {
 
   init_vm_string();
 
-  define_builtin("print", builtin_print);
-  define_builtin("println", builtin_println);
-  define_builtin("printf", builtin_printf);
-  define_builtin("input", builtin_input);
+#define BUILTIN(name) define_builtin("__builtin___" #name, builtin_##name)
+#define BUILTIN_CLEAN(name) define_builtin(#name, builtin_##name)
 
-  define_builtin("open", builtin_open);
-  define_builtin("close", builtin_close);
-  define_builtin("read", builtin_read);
-  define_builtin("write", builtin_write);
+  // IO
+  BUILTIN(print);
+  BUILTIN(println);
+  BUILTIN(printf);
+  BUILTIN(input);
 
-  define_builtin("len", builtin_len);
-  define_builtin("append", builtin_append);
-  define_builtin("pop", builtin_pop);
-  define_builtin("insert", builtin_insert);
-  define_builtin("remove", builtin_remove);
-  define_builtin("slice", builtin_slice);
+  BUILTIN(open);
+  BUILTIN(close);
+  BUILTIN(read);
+  BUILTIN(write);
 
-  define_builtin("typeof", builtin_typeof);
-  define_builtin("isinstance", builtin_isinstance);
-  define_builtin("hasmethod", builtin_hasmethod);
-  define_builtin("getclass", builtin_getclass);
-  define_builtin("exit", builtin_exit);
-  define_builtin("argv", builtin_argv);
-  define_builtin("__builtin_hash", builtin_hash);
+  // Vectors
+  BUILTIN_CLEAN(len);
+  BUILTIN(append);
+  BUILTIN(pop);
+  BUILTIN(insert);
+  BUILTIN(remove);
+  BUILTIN(slice);
 
-  define_builtin("import", builtin_import);
+  // Utils
+  BUILTIN_CLEAN(typeof);
+  BUILTIN_CLEAN(isinstance);
+  BUILTIN_CLEAN(hasmethod);
+  BUILTIN_CLEAN(getclass);
+  BUILTIN_CLEAN(exit);
+  BUILTIN_CLEAN(argv);
+  BUILTIN(hash);
+  BUILTIN_CLEAN(import);
 
-  define_builtin("string", builtin_string);
-  define_builtin("number", builtin_number);
-  define_builtin("float", builtin_float);
-  define_builtin("bool", builtin_bool);
-  define_builtin("vector", builtin_vector);
-  define_builtin("list", builtin_list);
+  // Casts
+  BUILTIN_CLEAN(string);
+  BUILTIN_CLEAN(number);
+  BUILTIN_CLEAN(float);
+  BUILTIN_CLEAN(bool);
+  BUILTIN_CLEAN(vector);
+  BUILTIN_CLEAN(list);
 
-  define_builtin("__abs", builtin_abs);
-  define_builtin("__min", builtin_min);
-  define_builtin("__max", builtin_max);
+  // Math
+  BUILTIN(abs);
+  BUILTIN(min);
+  BUILTIN(max);
 
-  define_builtin("__sin", builtin_sin);
-  define_builtin("__cos", builtin_cos);
-  define_builtin("__tan", builtin_tan);
-  define_builtin("__asin", builtin_asin);
-  define_builtin("__acos", builtin_acos);
-  define_builtin("__atan", builtin_atan);
-  define_builtin("__atan2", builtin_atan2);
+  BUILTIN(sin);
+  BUILTIN(cos);
+  BUILTIN(tan);
+  BUILTIN(asin);
+  BUILTIN(acos);
+  BUILTIN(atan);
+  BUILTIN(atan2);
 
-  define_builtin("__sqrt", builtin_sqrt);
-  define_builtin("__pow", builtin_pow);
-  define_builtin("__log", builtin_log);
-  define_builtin("__exp", builtin_exp);
+  BUILTIN(sqrt);
+  BUILTIN(pow);
+  BUILTIN(log);
+  BUILTIN(exp);
 
-  define_builtin("__floor", builtin_floor);
-  define_builtin("__ceil", builtin_ceil);
-  define_builtin("__round", builtin_round);
+  BUILTIN(floor);
+  BUILTIN(ceil);
+  BUILTIN(round);
 
-  define_builtin("__random", builtin_random);
-  define_builtin("__randomseed", builtin_randomseed);
+  // Random
+  BUILTIN(random);
+  BUILTIN(randomseed);
 
-  define_builtin("__now", builtin_now);
-  define_builtin("__clock", builtin_clock);
-  define_builtin("__sleep", builtin_sleep);
-  define_builtin("__localtime", builtin_localtime);
+  // Time
+  BUILTIN(now);
+  BUILTIN(clock);
+  BUILTIN(sleep);
+  BUILTIN(localtime);
+
+#undef BUILTIN_CLEAN
+#undef BUILTIN
 
   vm.offset = 0;
 

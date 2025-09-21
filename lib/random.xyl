@@ -1,23 +1,23 @@
 func random(args[]) {
   let argc = len(args);
   if (argc == 0)
-    return __random();
+    return __builtin___random();
 
   if (argc == 1) {
     assert typeof(args[0]) == "number", "Expected argument 'n' to be number in 'random(n)'";
-    return __floor(__random() * args[0]) + 1;
+    return __builtin___floor(__builtin___random() * args[0]) + 1;
   }
 
   if (argc == 2) {
     assert typeof(args[0]) == "number", "Expected argument 'a' to be number in 'random(a, b)'";
     assert typeof(args[1]) == "number", "Expected argument 'b' to be number in 'random(a, b)'";
-    return __floor(__random() * (args[1] - args[0] + 1)) + args[0];
+    return __builtin___floor(__builtin___random() * (args[1] - args[0] + 1)) + args[0];
   }
 
   assert false, "Too many arguments in 'random()'";
 }
 
-func randomseed(seed) { __randomseed(seed); }
+func randomseed(seed) { __builtin___randomseed(seed); }
 
 func choice(args[]) {
   let argc = len(args);
