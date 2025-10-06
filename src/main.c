@@ -74,14 +74,13 @@ int main(int argc, char **argv) {
   sa.sa_flags = SA_RESTART;
   sigaction(SIGSEGV, &sa, NULL);
 #endif
+  const char *file = NULL;
+  bool repl = false;
 
   uint64_t seed = get_seed();
   mt_seed_u64(seed);
 
   init_vm();
-
-  char *file = NULL;
-  bool repl = false;
 
   if (argc == 1) {
     repl = true;

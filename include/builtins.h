@@ -131,12 +131,4 @@ xyl_builtin(clock);
 xyl_builtin(sleep);
 xyl_builtin(localtime);
 
-// FFI
-xyl_builtin(dll_open);
-xyl_builtin(dll_function);
-
-xyl_builtin(ref);
-xyl_builtin(deref);
-xyl_builtin(setref);
-
 #endif

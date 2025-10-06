@@ -8,7 +8,6 @@
 #include "table.h"
 #include "value.h"
 #include "vm.h"
-#include "xyl_ffi.h"
 
 #define GC_HEAP_GROW_FACTOR 2
 
@@ -105,8 +104,6 @@ static void blacken_object(obj_t *object) {
   case OBJ_STRING:
   case OBJ_BUILTIN:
   case OBJ_FILE:
-  case OBJ_C_LIB:
-  case OBJ_C_FUNC:
   case OBJ_ANY:
     break;
   case OBJ_VECTOR: {
@@ -161,10 +158,6 @@ static void blacken_object(obj_t *object) {
     obj_range_t *range = (obj_range_t *)object;
     mark_value(range->from);
     mark_value(range->to);
-  } break;
-  case OBJ_REF: {
-    obj_ref_t *ref = (obj_ref_t *)object;
-    mark_value(ref->val);
   } break;
   }
 }
@@ -234,22 +227,6 @@ static void free_object(obj_t *object) {
   case OBJ_RANGE:
     FREE(obj_range_t, object);
     break;
-  case OBJ_C_LIB: {
-    obj_c_lib_t *c_lib = (obj_c_lib_t *)object;
-    clib_unload(c_lib->lib);
-    FREE(obj_c_lib_t, object);
-  } break;
-  case OBJ_C_FUNC: {
-    obj_c_func_t *c_func = (obj_c_func_t *)object;
-    cfunc_free(c_func->func);
-    FREE(obj_c_func_t, object);
-  } break;
-  case OBJ_REF: {
-    obj_ref_t *ref = (obj_ref_t *)object;
-    if (IS_OBJ(ref->val))
-      free_object(AS_OBJ(ref->val));
-    FREE(obj_ref_t, object);
-  } break;
   case OBJ_ANY:
     break;
   }

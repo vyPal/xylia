@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(
   xylia
-  LANGUAGES C
+  LANGUAGES C CXX
   VERSION 0.0.1
 )
 
@@ -12,11 +12,12 @@ if(DECOMPILE)
   add_compile_definitions(DECOMPILE)
 endif()
 
+add_subdirectory(replxx)
 file(GLOB_RECURSE SOURCES "src/*.c")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/include")
-target_link_libraries(${PROJECT_NAME} PRIVATE m ffi)
+target_link_libraries(${PROJECT_NAME} PRIVATE m ffi replxx)
 
 target_compile_options(${PROJECT_NAME} PRIVATE
   $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -g -rdynamic -no-pie -DDEBUG>

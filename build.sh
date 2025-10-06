@@ -22,9 +22,9 @@ BUILD_TYPE="Release"
 EXTRA_ARGS=()
 
 if [ $# -ge 1 ]; then
-    BUILD_TYPE="$1"
-    shift
-    EXTRA_ARGS=("$@")
+  BUILD_TYPE="$1"
+  shift
+  EXTRA_ARGS=("$@")
 fi
 
 info "Using build type: ${BUILD_TYPE}"
@@ -44,7 +44,7 @@ if [ $? -ne 0 ]; then
 fi
 
 info "Building with Ninja"
-ninja -C "${BUILD_DIR}"
+ninja -C "${BUILD_DIR}" -j8
 if [ $? -ne 0 ]; then
   error "Ninja build failed. Aborting."
   exit 1

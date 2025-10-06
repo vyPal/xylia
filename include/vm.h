@@ -28,9 +28,6 @@ typedef enum {
   VM_STR_RANGE,
   VM_STR_TRUE,
   VM_STR_FALSE,
-  VM_STR_C_LIB,
-  VM_STR_C_FUNC,
-  VM_STR_REF,
   VM_STR_OVERLOAD_EQ,        // ==
   VM_STR_OVERLOAD_GT,        // >
   VM_STR_OVERLOAD_GE,        // >=

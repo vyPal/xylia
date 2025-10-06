@@ -1,4 +1,3 @@
-#include <ffi.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -16,7 +15,6 @@
 #include "table.h"
 #include "value.h"
 #include "vm.h"
-#include "xyl_ffi.h"
 
 #ifdef DECOMPILE
 #include "debug.h"
@@ -141,9 +139,6 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_NAN] = copy_string("nan", 3, true);
   vm.vm_strings[VM_STR_MODULE] = copy_string("module", 6, true);
   vm.vm_strings[VM_STR_RANGE] = copy_string("range", 5, true);
-  vm.vm_strings[VM_STR_C_LIB] = copy_string("clib", 4, true);
-  vm.vm_strings[VM_STR_C_FUNC] = copy_string("cfunc", 5, true);
-  vm.vm_strings[VM_STR_REF] = copy_string("ref", 3, true);
   vm.vm_strings[VM_STR_OVERLOAD_EQ] = copy_string("__eq__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GT] = copy_string("__gt__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GE] = copy_string("__ge__", 6, true);
@@ -261,14 +256,6 @@ void init_vm(void) {
   BUILTIN(clock);
   BUILTIN(sleep);
   BUILTIN(localtime);
-
-  // FFI
-  BUILTIN(dll_open);
-  BUILTIN(dll_function);
-
-  BUILTIN(ref);
-  BUILTIN(deref);
-  BUILTIN(setref);
 
 #undef BUILTIN_CLEAN
 #undef BUILTIN
@@ -411,92 +398,6 @@ static bool call(obj_closure_t *closure, int argc) {
   return true;
 }
 
-static bool call_ffi(c_func_t *func, int argc, value_t *argv, value_t *result) {
-  if (!cfunc_is_valid(func)) {
-    runtime_error(vm.offset, "FFI: invalid cfunc");
-    return false;
-  }
-
-  if (argc != func->argc) {
-    runtime_error(vm.offset, "FFI: expected %d args, got %d", func->argc, argc);
-    return false;
-  }
-
-  marshal_buffer_t buf;
-  marshal_buffer_init(&buf);
-
-  void **ffi_args = malloc(sizeof(void *) * argc);
-  if (!ffi_args) {
-    runtime_error(vm.offset, "FFI: failed to allocate argumetn array");
-    marshal_buffer_free(&buf);
-    return false;
-  }
-
-  for (int i = 0; i < argc; i++) {
-    if (!marshal_value(&argv[i], func->arg_types[i], &ffi_args[i], &buf,
-                       true)) {
-      runtime_error(vm.offset, "FFI: failed to marshal argument %d", i + 1);
-      free(ffi_args);
-      marshal_buffer_free(&buf);
-      return false;
-    }
-  }
-
-  void *ret_storage = NULL;
-  if (func->ret_type->type != C_TYPE_VOID) {
-    if (!func->ret_type->ffi_t) {
-      runtime_error(vm.offset, "FFI: return type not initialized");
-      free(ffi_args);
-      marshal_buffer_free(&buf);
-      return false;
-    }
-
-    size_t size = func->ret_type->ffi_t->size > sizeof(long)
-                      ? func->ret_type->ffi_t->size
-                      : sizeof(ffi_arg);
-    ret_storage = malloc(size);
-    if (!ret_storage) {
-      runtime_error(vm.offset, "FFI: failed to allocate return storage");
-      free(ffi_args);
-      marshal_buffer_free(&buf);
-      return false;
-    }
-  }
-
-  ffi_call(&func->cif, FFI_FN(func->func_ptr), ret_storage, ffi_args);
-
-  if (func->ret_type->type != C_TYPE_VOID) {
-    switch (func->ret_type->type) {
-    case C_TYPE_INT:
-      *result = NUMBER_VAL(*(int32_t *)ret_storage);
-      break;
-    case C_TYPE_LONG:
-      *result = NUMBER_VAL(*(int64_t *)ret_storage);
-      break;
-    case C_TYPE_FLOAT:
-      *result = FLOAT_VAL(*(float *)ret_storage);
-      break;
-    case C_TYPE_DOUBLE:
-      *result = FLOAT_VAL(*(double *)ret_storage);
-      break;
-    case C_TYPE_PTR:
-      // TODO: handle pointer returns if needed
-      *result = NIL_VAL;
-      break;
-    default:
-      *result = NIL_VAL;
-      break;
-    }
-  }
-
-  if (argc > 0)
-    free(ret_storage);
-  free(ffi_args);
-  marshal_buffer_free(&buf);
-
-  return true;
-}
-
 static bool call_value(value_t callee, int argc) {
   if (IS_OBJ(callee)) {
     switch (OBJ_TYPE(callee)) {
@@ -525,15 +426,6 @@ static bool call_value(value_t callee, int argc) {
       vm.stack_top -= argc + 1;
       push(result);
       return true;
-    }
-    case OBJ_C_FUNC: {
-      value_t result;
-      bool success =
-          call_ffi(AS_C_FUNC(callee)->func, argc, vm.stack_top - argc, &result);
-      vm.stack_top -= argc + 1;
-      if (success)
-        push(result);
-      return success;
     }
     default:
       break;

@@ -63,7 +63,6 @@ typedef enum {
   TOK_IF,
   TOK_LET,
   TOK_OPERATOR,
-  TOK_PRIVATE,
   TOK_RETURN,
   TOK_SELF,
   TOK_SUPER,
