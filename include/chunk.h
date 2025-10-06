@@ -26,8 +26,8 @@ typedef enum {
   OP_GET_SUPER_LONG,
   OP_GET_PROPERTY,      // todo: add module support - done
   OP_GET_PROPERTY_LONG, // todo: add module support - done
-  OP_SET_PROPERTY,      // todo: add module support
-  OP_SET_PROPERTY_LONG, // todo: add module support
+  OP_SET_PROPERTY,      // todo: add module support - done
+  OP_SET_PROPERTY_LONG, // todo: add module support - done
   OP_GET_INDEX,
   OP_SET_INDEX,
   OP_INVOKE,      // todo: add module support - done
