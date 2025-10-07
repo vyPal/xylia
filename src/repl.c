@@ -235,6 +235,12 @@ void xylia_highlighter(const char *input, ReplxxColor *colors, int size,
           j++;
         if (j < size && input[j] == '(')
           color = REPLXX_COLOR_BRIGHTCYAN;
+
+        if (color != REPLXX_COLOR_BRIGHTCYAN) {
+          if (j < size && input[j] == ':' && j + 1 < size &&
+              input[j + 1] == ':')
+            color = REPLXX_COLOR_BRIGHTRED;
+        }
       }
 
       for (int k = start; k < i; ++k)
