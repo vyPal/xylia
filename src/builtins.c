@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "builtins.h"
+#include "object.h"
 #include "vm.h"
 
 void sb_init(string_builder_t *sb) {
@@ -90,6 +91,21 @@ obj_string_t *value_to_string(value_t value, bool literal) {
       sb_free(&sb);
       return res;
     }
+    case OBJ_ARRAY: {
+      obj_array_t *array = AS_ARRAY(value);
+      sb_init(&sb);
+      sb_append(&sb, "<", 1);
+      for (int i = 0; i < array->count; i++) {
+        if (i != 0)
+          sb_append(&sb, ", ", 2);
+        obj_string_t *str_val = value_to_string(array->values[i], true);
+        sb_append(&sb, str_val->chars, str_val->length);
+      }
+      sb_append(&sb, ">", 1);
+      obj_string_t *res = copy_string(sb.data, sb.length, true);
+      sb_free(&sb);
+      return res;
+    } break;
     case OBJ_FILE:
       return copy_string("<file>", 6, true);
     case OBJ_RANGE: {
@@ -212,6 +228,8 @@ const char *obj_type_to_str(obj_type_t type) {
     return "vector";
   case OBJ_LIST:
     return "list";
+  case OBJ_ARRAY:
+    return "array";
   case OBJ_FILE:
     return "file";
   case OBJ_CLASS:

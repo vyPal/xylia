@@ -117,6 +117,12 @@ static void blacken_object(obj_t *object) {
       for (int i = 0; i < list->count; i++)
         mark_value(list->values[i]);
   } break;
+  case OBJ_ARRAY: {
+    obj_array_t *array = (obj_array_t *)object;
+    if (array->values != NULL)
+      for (int i = 0; i < array->count; i++)
+        mark_value(array->values[i]);
+  } break;
   case OBJ_CLASS: {
     obj_class_t *clas = (obj_class_t *)object;
     mark_object((obj_t *)clas->name);
@@ -179,6 +185,12 @@ static void free_object(obj_t *object) {
     if (list->count != 0)
       FREE_ARRAY(value_t, list->values, list->count);
     FREE(obj_list_t, object);
+  } break;
+  case OBJ_ARRAY: {
+    obj_array_t *array = (obj_array_t *)object;
+    if (array->count != 0)
+      FREE_ARRAY(value_t, array->values, array->count);
+    FREE(obj_array_t, object);
   } break;
   case OBJ_FILE: {
     obj_file_t *file = (obj_file_t *)object;

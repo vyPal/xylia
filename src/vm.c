@@ -135,6 +135,7 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_UPVALUE] = copy_string("upvalue", 7, true);
   vm.vm_strings[VM_STR_VECTOR] = copy_string("vector", 6, true);
   vm.vm_strings[VM_STR_LIST] = copy_string("list", 4, true);
+  vm.vm_strings[VM_STR_ARRAY] = copy_string("array", 5, true);
   vm.vm_strings[VM_STR_FILE] = copy_string("file", 4, true);
   vm.vm_strings[VM_STR_NAN] = copy_string("nan", 3, true);
   vm.vm_strings[VM_STR_MODULE] = copy_string("module", 6, true);
@@ -208,6 +209,10 @@ void init_vm(void) {
   BUILTIN(insert);
   BUILTIN(remove);
   BUILTIN(slice);
+
+  // Arrays
+  BUILTIN(array);
+  BUILTIN(resize);
 
   // Utils
   BUILTIN_CLEAN(typeof);
@@ -583,6 +588,13 @@ static value_t get_index(value_t object, int index) {
       return NIL_VAL;
     }
     return list->values[index];
+  } else if (IS_ARRAY(object)) {
+    obj_array_t *array = AS_ARRAY(object);
+    if (index < 0 || index >= array->count) {
+      runtime_error(vm.offset, "Array index '%d' out of bounds", index);
+      return NIL_VAL;
+    }
+    return array->values[index];
   }
 
   runtime_error(vm.offset, "Invalid index operation");
@@ -597,6 +609,13 @@ static void set_index(value_t object, int index, value_t value) {
       return;
     }
     vector->values[index] = value;
+  } else if (IS_ARRAY(object)) {
+    obj_array_t *array = AS_ARRAY(object);
+    if (index < 0 || index >= array->count) {
+      runtime_error(vm.offset, "Array index '%d' out of bounds", index);
+      return;
+    }
+    array->values[index] = value;
   } else {
     runtime_error(vm.offset, "Invalid index operation");
   }

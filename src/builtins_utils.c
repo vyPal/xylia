@@ -34,6 +34,8 @@ xyl_builtin(typeof) {
       return OBJ_VAL(vm.vm_strings[VM_STR_VECTOR]);
     case OBJ_LIST:
       return OBJ_VAL(vm.vm_strings[VM_STR_LIST]);
+    case OBJ_ARRAY:
+      return OBJ_VAL(vm.vm_strings[VM_STR_ARRAY]);
     case OBJ_FILE:
       return OBJ_VAL(vm.vm_strings[VM_STR_FILE]);
     case OBJ_CLASS:

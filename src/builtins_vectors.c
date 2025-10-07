@@ -11,6 +11,8 @@ xyl_builtin(len) {
     return NUMBER_VAL(AS_VECTOR(argv[0])->count);
   else if (IS_LIST(argv[0]))
     return NUMBER_VAL(AS_LIST(argv[0])->count);
+  else if (IS_ARRAY(argv[0]))
+    return NUMBER_VAL(AS_ARRAY(argv[0])->count);
 
   runtime_error(-1, "Expected first argument in len to be string or vector");
   return NIL_VAL;

@@ -1,8 +1,7 @@
-let utility = import("utility");
-
 class Map {
   func init() {
-    self.capacity = 0;
+    self.data = __builtin___array(8);
+    self.capacity = 8;
     self.count = 0;
 
     self.__max_load = 0.7;
@@ -20,15 +19,86 @@ class Map {
     return hash % self.capacity;
   }
 
+  func resize_table(new_capacity) {
+    let old_data = self.data;
+    let old_capacity = self.capacity;
+
+    self.data = __builtin___array(new_capacity);
+    self.capacity = new_capacity;
+    self.count = 0;
+
+    for (let i = 0; i < old_capacity; i = i + 1) {
+      let entry = old_data[i];
+      if (entry != nil && entry[2] == false)
+        self.insert(entry[0], entry[1]);
+    }
+  }
+
   func insert(key, value) {
-    if (self.count + 1 > self.capacity * self.__max_load) {
-    }    
+    if ((self.count + 1) / self.capacity > self.__max_load)
+      self.resize_table(self.capacity * 2);
+
+    let index = self.get_index(key);
+    let tombstone_index = -1;
+
+    while (true) {
+      let entry = self.data[index];
+
+      if (entry == nil) {
+        let insert_index;
+        if (tombstone_index == -1)
+          insert_index = index;
+        else
+          insert_index = tombstone_index;
+        self.data[insert_index] = [key, value, false];
+        self.count = self.count + 1;
+        return;
+      }
+
+      if (entry[2] == true) {
+        if (tombstone_index == -1)
+          tombstone_index = index;
+      } else if (entry[0] == key) {
+        self.data[index] = [key, value, false];
+        return;
+      }
+
+      index = (index + 1) % self.capacity;
+    }
   }
 
-  operator [] (key) {
-    __builtin___printf(["key = {} | hash = {}\n", key, hash]);
+  func delete(key) {
+    let index = self.get_index(key);
+
+    while (true) {
+      let entry = self.data[index];
+      
+      if (entry == nil)
+        return false;
+
+      if (entry[2] == false && entry[0] == key) {
+        self.data[index] = [nil, nil, true];
+        self.count = self.count - 1;
+        return true;
+      }
+
+      index = (index + 1) % self.capacity;
+    }
   }
 
-  operator []= (key, value) {
+  func get(key) {
+    let index = self.get_index(key);
+
+    while (true) {
+      let entry = self.data[index];
+      if (entry == nil)
+        return nil;
+      if (entry[2] == false && entry[0] == key)
+        return entry[1];
+      index = (index + 1) % self.capacity;
+    }
   }
+
+  operator [] (key)         { return self.get(key); }
+  operator []= (key, value) { self.insert(key, value); }
 }

@@ -160,6 +160,21 @@ obj_list_t *new_list(int count) {
   return list;
 }
 
+obj_array_t *new_array(int count) {
+  obj_array_t *array = ALLOCATE_OBJ(obj_array_t, OBJ_ARRAY);
+  array->values = NULL;
+  array->count = count;
+
+  push(OBJ_VAL(array));
+  if (count != 0)
+    array->values = ALLOCATE(value_t, count);
+  pop();
+
+  for (int i = 0; i < count; i++)
+    array->values[i] = NIL_VAL;
+  return array;
+}
+
 obj_file_t *new_file(const char *path, const char *mode) {
   obj_file_t *file = ALLOCATE_OBJ(obj_file_t, OBJ_FILE);
   file->file = fopen(path, mode);
@@ -236,6 +251,16 @@ static void print_list(obj_list_t *list) {
   printf("]");
 }
 
+static void print_array(obj_array_t *array) {
+  printf("<");
+  for (int i = 0; i < array->count; i++) {
+    if (i != 0)
+      printf(", ");
+    print_value(array->values[i], true);
+  }
+  printf(">");
+}
+
 static void print_literal(const char *s) {
   putchar('"');
   for (; *s; s++)
@@ -307,6 +332,9 @@ void print_object(value_t value, bool literally) {
     break;
   case OBJ_LIST:
     print_list(AS_LIST(value));
+    break;
+  case OBJ_ARRAY:
+    print_array(AS_ARRAY(value));
     break;
   case OBJ_FILE:
     printf("<file>");

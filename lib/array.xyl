@@ -1,0 +1,17 @@
+class Array {
+  func init(size) {
+    self.size = size;
+    self.data = __builtin___array(size);
+  }
+
+  func size()      { return self.size; }
+  func to_string() { return __builtin___string(self.data); }
+
+  func resize(new_size) {
+    __builtin___resize(self.data, new_size);
+    self.size = new_size;
+  }
+
+  operator [] (index)         { return self.data[index]; }
+  operator []= (index, value) { self.data[index] = value; }
+}

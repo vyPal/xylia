@@ -22,6 +22,7 @@ typedef enum {
   VM_STR_UPVALUE,
   VM_STR_VECTOR,
   VM_STR_LIST,
+  VM_STR_ARRAY,
   VM_STR_FILE,
   VM_STR_NAN,
   VM_STR_MODULE,

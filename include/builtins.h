@@ -73,6 +73,10 @@ xyl_builtin(insert);
 xyl_builtin(remove);
 xyl_builtin(slice);
 
+// Array
+xyl_builtin(array);
+xyl_builtin(resize);
+
 // Utils
 xyl_builtin(typeof);
 xyl_builtin(isinstance);

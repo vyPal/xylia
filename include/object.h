@@ -19,6 +19,7 @@
 #define IS_STRING(value) is_obj_type(value, OBJ_STRING)
 #define IS_VECTOR(value) is_obj_type(value, OBJ_VECTOR)
 #define IS_LIST(value) is_obj_type(value, OBJ_LIST)
+#define IS_ARRAY(value) is_obj_type(value, OBJ_ARRAY)
 #define IS_FILE(value) is_obj_type(value, OBJ_FILE)
 #define IS_MODULE(value) is_obj_type(value, OBJ_MODULE)
 #define IS_RANGE(value) is_obj_type(value, OBJ_RANGE)
@@ -33,6 +34,7 @@
 #define AS_CSTRING(value) (((obj_string_t *)AS_OBJ(value))->chars)
 #define AS_VECTOR(value) ((obj_vector_t *)AS_OBJ(value))
 #define AS_LIST(value) ((obj_list_t *)AS_OBJ(value))
+#define AS_ARRAY(value) ((obj_array_t *)AS_OBJ(value))
 #define AS_FILE(value) ((obj_file_t *)AS_OBJ(value))
 #define AS_MODULE(value) ((obj_module_t *)AS_OBJ(value))
 #define AS_RANGE(value) ((obj_range_t *)AS_OBJ(value))
@@ -41,6 +43,7 @@ typedef enum {
   OBJ_STRING,
   OBJ_VECTOR,
   OBJ_LIST,
+  OBJ_ARRAY,
   OBJ_FILE,
   OBJ_RANGE,
   OBJ_CLASS,
@@ -136,6 +139,12 @@ typedef struct {
 
 typedef struct {
   obj_t obj;
+  value_t *values;
+  int count;
+} obj_array_t;
+
+typedef struct {
+  obj_t obj;
   FILE *file;
   bool open;
   bool readable;
@@ -166,6 +175,7 @@ obj_string_t *copy_string(const char *chars, int length, bool intern);
 obj_upvalue_t *new_upvalue(value_t *slot);
 obj_vector_t *new_vector(int initial_capacity);
 obj_list_t *new_list(int count);
+obj_array_t *new_array(int count);
 obj_file_t *new_file(const char *path, const char *mode);
 obj_module_t *new_module(obj_string_t *name);
 obj_range_t *new_range(value_t from, value_t to);
