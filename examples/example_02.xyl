@@ -1,4 +1,4 @@
 let io = import("io");
 
 let name = io::input("Enter your name: ");
-io::printf("Hello, %!\n", name);
+io::printf("Hello, {}!\n", name);

@@ -43,19 +43,19 @@ class Suite {
     let cases_len = self.cases.size();
     for (let i = 0; i < cases_len; i = i + 1) {
       if (self.cases[i].run()) {
-        __builtin___printf(["  \x1b[1;31m[FAILED]\x1b[0m %\n", self.cases[i].name]);
+        __builtin___printf(["  \x1b[1;31m[FAILED]\x1b[0m {}\n", self.cases[i].name]);
         failed = failed + 1;
       } else {
         if (verbose)
-          __builtin___printf(["  \x1b[1;32m[PASSED]\x1b[0m %\n", self.cases[i].name]);
+          __builtin___printf(["  \x1b[1;32m[PASSED]\x1b[0m {}\n", self.cases[i].name]);
         passed = passed + 1;
       }
     }
 
     __builtin___print(["\nSummary: "]);
-    __builtin___printf(["\x1b[1;32m%\x1b[0m passed, ", passed]);
-    __builtin___printf(["\x1b[1;31m%\x1b[0m failed, ", failed]);
-    __builtin___printf(["\x1b[1;34m%\x1b[0m total\n", cases_len]);
+    __builtin___printf(["\x1b[1;32m{}\x1b[0m passed, ", passed]);
+    __builtin___printf(["\x1b[1;31m{}\x1b[0m failed, ", failed]);
+    __builtin___printf(["\x1b[1;34m{}\x1b[0m total\n", cases_len]);
   }
 }
 

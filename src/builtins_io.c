@@ -47,16 +47,18 @@ xyl_builtin(printf) {
   int fmt_count = 1;
 
   for (int i = 0; i < fmt->length; i++) {
-    if (fmt->chars[i] == '%') {
-      if (i + 1 < fmt->length && fmt->chars[i + 1] == '%')
-        putchar(fmt->chars[i++]);
-      else {
-        if (fmt_count >= args->count) {
-          runtime_error(-1, "Not enough arguments in printf");
-          return NIL_VAL;
-        }
-        print_value(args->values[fmt_count++], false);
+    if (fmt->chars[i] == '\\' && i + 1 < fmt->length &&
+        fmt->chars[i + 1] == '{') {
+      putchar('{');
+      i++;
+    } else if (fmt->chars[i] == '{' && i + 1 < fmt->length &&
+               fmt->chars[i + 1] == '}') {
+      if (fmt_count >= args->count) {
+        runtime_error(-1, "Not enough arguments in printf");
+        return NIL_VAL;
       }
+      print_value(args->values[fmt_count++], false);
+      i++;
     } else
       putchar(fmt->chars[i]);
   }
