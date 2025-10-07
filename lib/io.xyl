@@ -8,9 +8,9 @@ func printf(args[])  {
 func input(prompt[]) {
   assert len(prompt) <= 1, "Too many arguments in 'input'";
   if (len(prompt) == 0)
-    __builtin___input();
+    return __builtin___input();
   else
-    __builtin___input(prompt[0]);
+    return __builtin___input(prompt[0]);
 }
 
 class File {

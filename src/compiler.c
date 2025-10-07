@@ -39,7 +39,7 @@ typedef enum {
   PREC_TERM,       // + -
   PREC_FACTOR,     // * /
   PREC_UNARY,      // ! - ~ ..
-  PREC_CALL,       // . () []
+  PREC_CALL,       // . :: () []
   PREC_PRIMARY,
 } precedence_t;
 
