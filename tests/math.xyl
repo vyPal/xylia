@@ -2,27 +2,27 @@ let test = import("test");
 let math = import("math");
 
 func math_constants() {
-  assert_neq(math.NAN, math.NAN);
-  assert_true(math.PI - 3.14159 < 0.00001);
-  assert_true(math.E - 2.71828 < 0.00001);
+  assert_neq(math::NAN, math::NAN);
+  assert_true(math::PI - 3.14159 < 0.00001);
+  assert_true(math::E - 2.71828 < 0.00001);
 }
 
 func math_general() {
-  assert_eq(math.abs(-10), 10);
-  assert_eq(math.min(20, 10, 30, -10, 40, 0), -10);
-  assert_eq(math.max(20, 10, 30, -10, 40, 0), 40);
-  assert_eq(math.clamp(-10, 10, 100), 10);
-  assert_eq(math.clamp(100, 10, 100), 100);
+  assert_eq(math::abs(-10), 10);
+  assert_eq(math::min(20, 10, 30, -10, 40, 0), -10);
+  assert_eq(math::max(20, 10, 30, -10, 40, 0), 40);
+  assert_eq(math::clamp(-10, 10, 100), 10);
+  assert_eq(math::clamp(100, 10, 100), 100);
 }
 
 func math_rounding() {
-  assert_eq(math.floor(2.8), 2);
-  assert_eq(math.ceil(2.2), 3);
-  assert_eq(math.round(2.8), 3);
-  assert_eq(math.round(2.2), 2);
+  assert_eq(math::floor(2.8), 2);
+  assert_eq(math::ceil(2.2), 3);
+  assert_eq(math::round(2.8), 3);
+  assert_eq(math::round(2.2), 2);
 }
 
-let suite = test.Suite("math");
+let suite = test::Suite("math");
 
 suite.add_case("math constants", math_constants);
 suite.add_case("math general", math_general);

@@ -739,74 +739,42 @@ static result_t run(void) {
         return RESULT_RUNTIME_ERROR;
     } break;
     case OP_GET_PROPERTY: {
-      if (!IS_INSTANCE(peek(0)) && !IS_MODULE(peek(0))) {
-        runtime_error(vm.offset, "Only instances and modules have properties");
+      if (!IS_INSTANCE(peek(0))) {
+        runtime_error(vm.offset, "Only instances have properties");
         return RESULT_RUNTIME_ERROR;
       }
 
-      if (IS_INSTANCE(peek(0))) {
-        obj_instance_t *instance = AS_INSTANCE(peek(0));
-        obj_string_t *name = READ_STRING();
+      obj_instance_t *instance = AS_INSTANCE(peek(0));
+      obj_string_t *name = READ_STRING();
 
-        value_t value;
-        if (table_get(&instance->fields, name, &value)) {
-          pop();
-          push(value);
-          break;
-        }
-
-        if (!bind_method(instance->clas, name))
-          return RESULT_RUNTIME_ERROR;
-      } else if (IS_MODULE(peek(0))) {
-        obj_module_t *module = AS_MODULE(peek(0));
-        obj_string_t *name = READ_STRING();
-
-        value_t value;
-        if (table_get(&module->globals, name, &value)) {
-          pop();
-          push(value);
-          break;
-        }
-
-        runtime_error(vm.offset, "Object does not have property '%s'",
-                      name->chars);
-        return RESULT_RUNTIME_ERROR;
+      value_t value;
+      if (table_get(&instance->fields, name, &value)) {
+        pop();
+        push(value);
+        break;
       }
+
+      if (!bind_method(instance->clas, name))
+        return RESULT_RUNTIME_ERROR;
     } break;
     case OP_GET_PROPERTY_LONG: {
-      if (!IS_INSTANCE(peek(0)) && !IS_MODULE(peek(0))) {
-        runtime_error(vm.offset, "Only instances and modules have properties");
+      if (!IS_INSTANCE(peek(0))) {
+        runtime_error(vm.offset, "Only instances have properties");
         return RESULT_RUNTIME_ERROR;
       }
 
-      if (IS_INSTANCE(peek(0))) {
-        obj_instance_t *instance = AS_INSTANCE(peek(0));
-        obj_string_t *name = READ_STRING_LONG();
+      obj_instance_t *instance = AS_INSTANCE(peek(0));
+      obj_string_t *name = READ_STRING_LONG();
 
-        value_t value;
-        if (table_get(&instance->fields, name, &value)) {
-          pop();
-          push(value);
-          break;
-        }
-
-        if (!bind_method(instance->clas, name))
-          return RESULT_RUNTIME_ERROR;
-      } else if (IS_MODULE(peek(0))) {
-        obj_module_t *module = AS_MODULE(peek(0));
-        obj_string_t *name = READ_STRING_LONG();
-
-        value_t value;
-        if (table_get(&module->globals, name, &value)) {
-          pop();
-          push(value);
-          break;
-        }
-
-        runtime_error(vm.offset, "Object does not have property '%s'",
-                      name->chars);
-        return RESULT_RUNTIME_ERROR;
+      value_t value;
+      if (table_get(&instance->fields, name, &value)) {
+        pop();
+        push(value);
+        break;
       }
+
+      if (!bind_method(instance->clas, name))
+        return RESULT_RUNTIME_ERROR;
     } break;
     case OP_SET_PROPERTY: {
       if (!IS_INSTANCE(peek(1))) {
@@ -831,6 +799,46 @@ static result_t run(void) {
       value_t value = pop();
       pop();
       push(value);
+    } break;
+    case OP_GET_ACCESS: {
+      if (!IS_MODULE(peek(0))) {
+        runtime_error(vm.offset, "Only modules have accessors");
+        return RESULT_RUNTIME_ERROR;
+      }
+
+      obj_module_t *module = AS_MODULE(peek(0));
+      obj_string_t *name = READ_STRING();
+
+      value_t value;
+      if (table_get(&module->globals, name, &value)) {
+        pop();
+        push(value);
+        break;
+      }
+
+      runtime_error(vm.offset, "Object does not have property '%s'",
+                    name->chars);
+      return RESULT_RUNTIME_ERROR;
+    } break;
+    case OP_GET_ACCESS_LONG: {
+      if (!IS_MODULE(peek(0))) {
+        runtime_error(vm.offset, "Only modules have accessors");
+        return RESULT_RUNTIME_ERROR;
+      }
+
+      obj_module_t *module = AS_MODULE(peek(0));
+      obj_string_t *name = READ_STRING_LONG();
+
+      value_t value;
+      if (table_get(&module->globals, name, &value)) {
+        pop();
+        push(value);
+        break;
+      }
+
+      runtime_error(vm.offset, "Object does not have property '%s'",
+                    name->chars);
+      return RESULT_RUNTIME_ERROR;
     } break;
     case OP_GET_INDEX: {
       value_t index = peek(0);
@@ -901,6 +909,13 @@ static result_t run(void) {
     case OP_INVOKE: {
       obj_string_t *method = READ_STRING();
       unsigned int argc = READ_BYTE();
+
+      value_t receiver = peek(argc);
+      if (!IS_INSTANCE(receiver)) {
+        runtime_error(vm.offset, "Only instances have methods");
+        return false;
+      }
+
       if (!invoke(method, argc))
         return RESULT_RUNTIME_ERROR;
       UPDATE_FRAME();
@@ -908,6 +923,41 @@ static result_t run(void) {
     case OP_INVOKE_LONG: {
       obj_string_t *method = READ_STRING_LONG();
       unsigned int argc = READ_BYTE();
+
+      value_t receiver = peek(argc);
+      if (!IS_INSTANCE(receiver)) {
+        runtime_error(vm.offset, "Only instances have methods");
+        return false;
+      }
+
+      if (!invoke(method, argc))
+        return RESULT_RUNTIME_ERROR;
+      UPDATE_FRAME();
+    } break;
+    case OP_INVOKE_ACCESS: {
+      obj_string_t *method = READ_STRING();
+      unsigned int argc = READ_BYTE();
+
+      value_t receiver = peek(argc);
+      if (!IS_MODULE(receiver)) {
+        runtime_error(vm.offset, "Only modules have accessors");
+        return false;
+      }
+
+      if (!invoke(method, argc))
+        return RESULT_RUNTIME_ERROR;
+      UPDATE_FRAME();
+    } break;
+    case OP_INVOKE_ACCESS_LONG: {
+      obj_string_t *method = READ_STRING_LONG();
+      unsigned int argc = READ_BYTE();
+
+      value_t receiver = peek(argc);
+      if (!IS_MODULE(receiver)) {
+        runtime_error(vm.offset, "Only modules have accessors");
+        return false;
+      }
+
       if (!invoke(method, argc))
         return RESULT_RUNTIME_ERROR;
       UPDATE_FRAME();

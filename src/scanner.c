@@ -239,7 +239,7 @@ token_t scan_token(void) {
   case '.':
     return make_token(match('.') ? TOK_SPREAD : TOK_DOT);
   case ':':
-    return make_token(TOK_COLON);
+    return make_token(match(':') ? TOK_ACCESS : TOK_COLON);
   case ';':
     return make_token(TOK_SEMICOLON);
   case '=':

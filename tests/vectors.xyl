@@ -1,5 +1,5 @@
 let test = import("test");
-let Vector = import("vector").Vector;
+let Vector = import("vector")::Vector;
 
 func vec_init() {
   let vec = Vector(0:10);
@@ -87,7 +87,7 @@ func vec_equality() {
   assert_false(v1 == v3);
 }
 
-let suite = test.Suite("vector");
+let suite = test::Suite("vector");
 
 suite.add_case("Vector initialization", vec_init);
 suite.add_case("Vector slices", vec_slice);

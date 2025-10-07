@@ -846,6 +846,20 @@ static void dot(bool can_assign) {
     emit_var_op(OP_GET_PROPERTY, name);
 }
 
+static void access(bool can_assign) {
+  consume(TOK_IDENT, "Expected property name after '::'");
+  unsigned int name = ident_constant(&parser.previous);
+
+  if (can_assign && match(TOK_ASSIGN))
+    error("Invalid assignment target");
+  else if (match(TOK_LPAREN)) {
+    uint8_t count = argument_list();
+    emit_var_op(OP_INVOKE_ACCESS, name);
+    emit_byte(count);
+  } else
+    emit_var_op(OP_GET_ACCESS, name);
+}
+
 static void and_(bool _) {
   int end_jump = emit_jump(OP_JUMP_IF_FALSE);
 
@@ -876,6 +890,7 @@ parse_rule_t rules[] = {
     [TOK_COMMA] = {NULL, NULL, PREC_NONE},
     [TOK_DOT] = {NULL, dot, PREC_CALL},
     [TOK_COLON] = {NULL, binary, PREC_RANGE},
+    [TOK_ACCESS] = {NULL, access, PREC_CALL},
     [TOK_SEMICOLON] = {NULL, NULL, PREC_NONE},
     [TOK_ASSIGN] = {NULL, NULL, PREC_NONE},
     [TOK_SPREAD] = {unary, NULL, PREC_UNARY},

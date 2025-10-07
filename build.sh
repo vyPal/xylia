@@ -13,10 +13,8 @@ success() {
 }
 
 BUILD_DIR="build"
-BIN_DIR="bin"
 EXE="xylia"
 OUT_PATH="${BUILD_DIR}/${EXE}"
-BIN_PATH="${BIN_DIR}/${EXE}"
 
 BUILD_TYPE="Release"
 EXTRA_ARGS=()
@@ -30,7 +28,6 @@ fi
 info "Using build type: ${BUILD_TYPE}"
 
 [ ! -d "$BUILD_DIR" ] && mkdir -p "$BUILD_DIR" && info "Created build directory: ${BUILD_DIR}"
-[ ! -d "$BIN_DIR" ] && mkdir -p "$BIN_DIR" && info "Created bin directory: ${BIN_DIR}"
 
 info "Configuring CMake for Ninja build..."
 cmake -S . -B "${BUILD_DIR}" -G "Ninja" \
@@ -63,9 +60,6 @@ if [ -f "${OUT_PATH}" ]; then
     
     info "Stripped $(printf "%.2f" "$saved_kb") KB, final size: $(printf "%.2f" "$after_kb") KB"
   fi
-
-  info "Moving binary to ${BIN_PATH}..."
-  cp "${OUT_PATH}" "${BIN_PATH}"
 fi
 
 info "Exporting compile_commands.json"

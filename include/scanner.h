@@ -11,6 +11,7 @@ typedef enum {
   TOK_COMMA,     // ,
   TOK_DOT,       // .
   TOK_COLON,     // :
+  TOK_ACCESS,    // ::
   TOK_SEMICOLON, // ;
   TOK_ASSIGN,    // =
   TOK_SPREAD,    // ..

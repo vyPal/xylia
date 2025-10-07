@@ -30,9 +30,9 @@ class date {
         if (c == "Y")
           result = result + string(self.year);
         else if (c == "y")
-          result = result + __builtin___slice(strings.padl(self.year), 2, 4);
+          result = result + __builtin___slice(strings::padl(self.year), 2, 4);
         else if (c == "m")
-          result = result + strings.padl(string(self.month), 2, "0");
+          result = result + strings::padl(string(self.month), 2, "0");
         else if (c == "b") {
           if (self.month == 1)
             result = result + "Jan";
@@ -84,11 +84,11 @@ class date {
           else if (self.month == 12)
             result = result + "December";
         } else if (c == "d")
-          result = result + strings.padl(string(self.day), 2, "0");
+          result = result + strings::padl(string(self.day), 2, "0");
         else if (c == "H")
-          result = result + strings.padl(string(self.hour), 2, "0");
+          result = result + strings::padl(string(self.hour), 2, "0");
         else if (c == "I")
-          result = result + strings.padl(string(self.hour % 12), 2, "0");
+          result = result + strings::padl(string(self.hour % 12), 2, "0");
         else if (c == "p")
           if (self.hour < 12) {
             result = result + "AM";
@@ -96,9 +96,9 @@ class date {
             result = result + "PM";
           }
         else if (c == "M")
-          result = result + strings.padl(string(self.min), 2, "0");
+          result = result + strings::padl(string(self.min), 2, "0");
         else if (c == "S")
-          result = result + strings.padl(string(self.sec), 2, "0");
+          result = result + strings::padl(string(self.sec), 2, "0");
         else
           result = result + "%" + c;
       } else
