@@ -183,6 +183,8 @@ void init_vm(void) {
   init_table(&vm.builtins);
   init_table(&vm.strings);
 
+  vm.globals = NULL;
+
   init_vm_string();
 
 #define BUILTIN(name) define_builtin("__builtin___" #name, builtin_##name)
@@ -616,6 +618,9 @@ static result_t run(void) {
 #define IS_NUM_OR_FLT(value) (IS_NUMBER(value) || IS_FLOAT(value))
 #define UPDATE_FRAME() frame = &vm.frames[vm.frame_count - 1]
 
+  if (vm.globals != NULL && frame->globals != NULL)
+    table_add_all(vm.globals, frame->globals);
+
   while (true) {
 #ifdef DECOMPILE
     printf("     ");
@@ -631,8 +636,9 @@ static result_t run(void) {
     op_code_t op = READ_BYTE();
     vm.offset = (int)(frame->ip - frame->closure->function->chunk.code);
 
-    table_t *globals = frame->globals;
-    if (globals == NULL) {
+    // table_t *globals = frame->globals;
+    vm.globals = frame->globals;
+    if (vm.globals == NULL) {
       runtime_error(vm.offset, "No globals table found");
       return RESULT_RUNTIME_ERROR;
     }
@@ -646,18 +652,18 @@ static result_t run(void) {
       break;
     case OP_DEFINE_GLOBAL: {
       obj_string_t *name = READ_STRING();
-      table_set(globals, name, peek(0));
+      table_set(vm.globals, name, peek(0));
       pop();
     } break;
     case OP_DEFINE_GLOBAL_LONG: {
       obj_string_t *name = READ_STRING_LONG();
-      table_set(globals, name, peek(0));
+      table_set(vm.globals, name, peek(0));
       pop();
     } break;
     case OP_GET_GLOBAL: {
       obj_string_t *name = READ_STRING();
       value_t value;
-      if (!table_get(globals, name, &value)) {
+      if (!table_get(vm.globals, name, &value)) {
         if (!table_get(&vm.builtins, name, &value)) {
           runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
           return RESULT_RUNTIME_ERROR;
@@ -668,7 +674,7 @@ static result_t run(void) {
     case OP_GET_GLOBAL_LONG: {
       obj_string_t *name = READ_STRING_LONG();
       value_t value;
-      if (!table_get(globals, name, &value)) {
+      if (!table_get(vm.globals, name, &value)) {
         if (!table_get(&vm.builtins, name, &value)) {
           runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
           return RESULT_RUNTIME_ERROR;
@@ -678,16 +684,16 @@ static result_t run(void) {
     } break;
     case OP_SET_GLOBAL: {
       obj_string_t *name = READ_STRING();
-      if (table_set(globals, name, peek(0))) {
-        table_delete(globals, name);
+      if (table_set(vm.globals, name, peek(0))) {
+        table_delete(vm.globals, name);
         runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
         return RESULT_RUNTIME_ERROR;
       }
     } break;
     case OP_SET_GLOBAL_LONG: {
       obj_string_t *name = READ_STRING_LONG();
-      if (table_set(globals, name, peek(0))) {
-        table_delete(globals, name);
+      if (table_set(vm.globals, name, peek(0))) {
+        table_delete(vm.globals, name);
         runtime_error(vm.offset, "Undefined variable '%s'", name->chars);
         return RESULT_RUNTIME_ERROR;
       }

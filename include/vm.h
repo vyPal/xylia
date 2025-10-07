@@ -83,6 +83,8 @@ typedef struct {
   table_t builtins;
   table_t strings;
 
+  table_t *globals;
+
   obj_string_t *vm_strings[VM_STR_MAX];
   obj_list_t *args;
 
