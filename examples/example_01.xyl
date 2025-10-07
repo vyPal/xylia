@@ -1,4 +1,4 @@
 let io = import("io");
 let math = import("math");
 
-io.printf("Square root of 9 is %\n", math.sqrt(9));
+io::printf("Square root of 9 is %\n", math::sqrt(9));

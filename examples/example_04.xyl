@@ -1,7 +1,7 @@
 let io = import("io");
 
 func greet(name) {
-  io.printf("Hello, %!\n", name);
+  io::printf("Hello, %!\n", name);
 }
 
 greet("Xylia");

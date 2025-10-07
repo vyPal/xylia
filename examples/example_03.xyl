@@ -1,6 +1,6 @@
 let io = import("io");
 let math = import("math");
 
-let x = math.PI;
-io.printf("cos(%) = %\n", x, math.cos(x));
-io.printf("pow(2, 10) = %\n", math.pow(2, 10));
+let x = math::PI;
+io::printf("cos(%) = %\n", x, math::cos(x));
+io::printf("pow(2, 10) = %\n", math::pow(2, 10));
