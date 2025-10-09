@@ -50,7 +50,8 @@ xyl_builtin(unwrap) {
 // unwrap_or(result, default) -> any
 // Returns the value inside an Ok result, or the default value for Err
 xyl_builtin(unwrap_or) {
-  xyl_builtin_signature(unwrap_or, 2, ARGC_EXACT, {VAL_OBJ, OBJ_RESULT}, {VAL_ANY, OBJ_ANY});
+  xyl_builtin_signature(unwrap_or, 2, ARGC_EXACT, {VAL_OBJ, OBJ_RESULT},
+                        {VAL_ANY, OBJ_ANY});
   obj_result_t *result = AS_RESULT(argv[0]);
 
   if (result->is_ok) {
@@ -61,7 +62,8 @@ xyl_builtin(unwrap_or) {
 }
 
 // unwrap_err(result) -> any
-// Returns the error value inside an Err result, or causes a runtime error for Ok
+// Returns the error value inside an Err result, or causes a runtime error for
+// Ok
 xyl_builtin(unwrap_err) {
   xyl_builtin_signature(unwrap_err, 1, ARGC_EXACT, {VAL_OBJ, OBJ_RESULT});
   obj_result_t *result = AS_RESULT(argv[0]);
@@ -75,9 +77,11 @@ xyl_builtin(unwrap_err) {
 }
 
 // expect(result, message) -> any
-// Returns the value inside an Ok result, or causes a runtime error with custom message for Err
+// Returns the value inside an Ok result, or causes a runtime error with custom
+// message for Err
 xyl_builtin(expect) {
-  xyl_builtin_signature(expect, 2, ARGC_EXACT, {VAL_OBJ, OBJ_RESULT}, {VAL_OBJ, OBJ_STRING});
+  xyl_builtin_signature(expect, 2, ARGC_EXACT, {VAL_OBJ, OBJ_RESULT},
+                        {VAL_OBJ, OBJ_STRING});
   obj_result_t *result = AS_RESULT(argv[0]);
   obj_string_t *message = AS_STRING(argv[1]);
 
