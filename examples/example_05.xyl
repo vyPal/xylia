@@ -1,0 +1,21 @@
+let io = import("io");
+
+let success = ok(42);
+let failure = err("Something went wrong");
+
+io::printf("Testing Result method syntax:\n");
+
+io::printf("success.is_ok(): {}\n", success.is_ok());
+io::printf("success.is_err(): {}\n", success.is_err());
+io::printf("failure.is_ok(): {}\n", failure.is_ok());
+io::printf("failure.is_err(): {}\n", failure.is_err());
+
+io::printf("success.unwrap(): {}\n", success.unwrap());
+
+io::printf("success.unwrap_or('default'): {}\n", success.unwrap_or("default"));
+io::printf("failure.unwrap_or('default'): {}\n", failure.unwrap_or("default"));
+
+io::printf("failure.unwrap_err(): {}\n", failure.unwrap_err());
+
+let success2 = ok("Hello");
+io::printf("success2.expect('Should work'): {}\n", success2.expect("Should work"));

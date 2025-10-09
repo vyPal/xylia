@@ -225,6 +225,20 @@ obj_range_t *new_range(value_t from, value_t to) {
   return range;
 }
 
+obj_result_t *new_result_ok(value_t value) {
+  obj_result_t *result = ALLOCATE_OBJ(obj_result_t, OBJ_RESULT);
+  result->is_ok = true;
+  result->value = value;
+  return result;
+}
+
+obj_result_t *new_result_err(value_t error) {
+  obj_result_t *result = ALLOCATE_OBJ(obj_result_t, OBJ_RESULT);
+  result->is_ok = false;
+  result->value = error;
+  return result;
+}
+
 static void print_function(FILE *stream, obj_function_t *function) {
   if (function->name == NULL)
     fputs("<script>", stream);
@@ -349,6 +363,17 @@ void print_object(FILE *stream, value_t value, bool literally) {
     fputs(":", stream);
     print_value(stream, AS_RANGE(value)->to, true);
     fputs(">", stream);
+    break;
+  case OBJ_RESULT:
+    if (AS_RESULT(value)->is_ok) {
+      fputs("Ok(", stream);
+      print_value(stream, AS_RESULT(value)->value, true);
+      fputs(")", stream);
+    } else {
+      fputs("Err(", stream);
+      print_value(stream, AS_RESULT(value)->value, true);
+      fputs(")", stream);
+    }
     break;
   case OBJ_ANY:
     break;

@@ -140,6 +140,7 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_NAN] = copy_string("nan", 3, true);
   vm.vm_strings[VM_STR_MODULE] = copy_string("module", 6, true);
   vm.vm_strings[VM_STR_RANGE] = copy_string("range", 5, true);
+  vm.vm_strings[VM_STR_RESULT] = copy_string("result", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_EQ] = copy_string("__eq__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GT] = copy_string("__gt__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GE] = copy_string("__ge__", 6, true);
@@ -242,6 +243,16 @@ void init_vm(void) {
   BUILTIN_CLEAN(bool);
   BUILTIN_CLEAN(vector);
   BUILTIN_CLEAN(list);
+
+  // Results
+  BUILTIN_CLEAN(ok);
+  BUILTIN_CLEAN(err);
+  BUILTIN_CLEAN(is_ok);
+  BUILTIN_CLEAN(is_err);
+  BUILTIN_CLEAN(unwrap);
+  BUILTIN_CLEAN(unwrap_or);
+  BUILTIN_CLEAN(unwrap_err);
+  BUILTIN_CLEAN(expect);
 
   // Math
   BUILTIN(abs);
@@ -466,9 +477,69 @@ static bool invoke_from_class(obj_class_t *clas, obj_string_t *name, int argc) {
 static bool invoke(obj_string_t *name, int argc) {
   value_t receiver = peek(argc);
 
-  if (!IS_INSTANCE(receiver) && !IS_MODULE(receiver)) {
-    runtime_error(vm.offset, "Only instances and modules have methods");
+  if (!IS_INSTANCE(receiver) && !IS_MODULE(receiver) && !IS_RESULT(receiver)) {
+    runtime_error(vm.offset, "Only instances, modules, and results have methods");
     return false;
+  }
+
+  if (IS_RESULT(receiver)) {
+    obj_result_t *result = AS_RESULT(receiver);
+
+    if (strcmp(name->chars, "is_ok") == 0 && argc == 0) {
+      pop(); // Remove receiver
+      push(BOOL_VAL(result->is_ok));
+      return true;
+    } else if (strcmp(name->chars, "is_err") == 0 && argc == 0) {
+      pop(); // Remove receiver
+      push(BOOL_VAL(!result->is_ok));
+      return true;
+    } else if (strcmp(name->chars, "unwrap") == 0 && argc == 0) {
+      pop(); // Remove receiver
+      if (result->is_ok) {
+        push(result->value);
+        return true;
+      } else {
+        runtime_error(vm.offset, "Called unwrap on an Err result");
+        return false;
+      }
+    } else if (strcmp(name->chars, "unwrap_or") == 0 && argc == 1) {
+      value_t default_val = peek(0);
+      pop(); // Remove argument
+      pop(); // Remove receiver
+      if (result->is_ok) {
+        push(result->value);
+      } else {
+        push(default_val);
+      }
+      return true;
+    } else if (strcmp(name->chars, "unwrap_err") == 0 && argc == 0) {
+      pop(); // Remove receiver
+      if (!result->is_ok) {
+        push(result->value);
+        return true;
+      } else {
+        runtime_error(vm.offset, "Called unwrap_err on an Ok result");
+        return false;
+      }
+    } else if (strcmp(name->chars, "expect") == 0 && argc == 1) {
+      value_t message = peek(0);
+      if (!IS_STRING(message)) {
+        runtime_error(vm.offset, "expect() requires a string message");
+        return false;
+      }
+      pop(); // Remove argument
+      pop(); // Remove receiver
+      if (result->is_ok) {
+        push(result->value);
+        return true;
+      } else {
+        runtime_error(vm.offset, "%s", AS_CSTRING(message));
+        return false;
+      }
+    } else {
+      runtime_error(vm.offset, "Result has no method '%s'", name->chars);
+      return false;
+    }
   }
 
   if (IS_INSTANCE(receiver)) {
@@ -491,7 +562,7 @@ static bool invoke(obj_string_t *name, int argc) {
     }
   }
 
-  runtime_error(vm.offset, "Only instances and modules have methods");
+  runtime_error(vm.offset, "Only instances, modules, and results have methods");
   return false;
 }
 
@@ -947,9 +1018,9 @@ static result_t run(void) {
       unsigned int argc = READ_BYTE();
 
       value_t receiver = peek(argc);
-      if (!IS_INSTANCE(receiver)) {
-        runtime_error(vm.offset, "Only instances have methods");
-        return false;
+      if (!IS_INSTANCE(receiver) && !IS_RESULT(receiver)) {
+        runtime_error(vm.offset, "Only instances and results have methods");
+        return RESULT_RUNTIME_ERROR;
       }
 
       if (!invoke(method, argc))
@@ -961,9 +1032,9 @@ static result_t run(void) {
       unsigned int argc = READ_BYTE();
 
       value_t receiver = peek(argc);
-      if (!IS_INSTANCE(receiver)) {
-        runtime_error(vm.offset, "Only instances have methods");
-        return false;
+      if (!IS_INSTANCE(receiver) && !IS_RESULT(receiver)) {
+        runtime_error(vm.offset, "Only instances and results have methods");
+        return RESULT_RUNTIME_ERROR;
       }
 
       if (!invoke(method, argc))

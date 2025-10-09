@@ -23,6 +23,7 @@
 #define IS_FILE(value) is_obj_type(value, OBJ_FILE)
 #define IS_MODULE(value) is_obj_type(value, OBJ_MODULE)
 #define IS_RANGE(value) is_obj_type(value, OBJ_RANGE)
+#define IS_RESULT(value) is_obj_type(value, OBJ_RESULT)
 
 #define AS_BOUND_METHOD(value) ((obj_bound_method_t *)AS_OBJ(value))
 #define AS_CLASS(value) ((obj_class_t *)AS_OBJ(value))
@@ -38,6 +39,7 @@
 #define AS_FILE(value) ((obj_file_t *)AS_OBJ(value))
 #define AS_MODULE(value) ((obj_module_t *)AS_OBJ(value))
 #define AS_RANGE(value) ((obj_range_t *)AS_OBJ(value))
+#define AS_RESULT(value) ((obj_result_t *)AS_OBJ(value))
 
 typedef enum {
   OBJ_STRING,
@@ -46,6 +48,7 @@ typedef enum {
   OBJ_ARRAY,
   OBJ_FILE,
   OBJ_RANGE,
+  OBJ_RESULT,
   OBJ_CLASS,
   OBJ_BOUND_METHOD,
   OBJ_INSTANCE,
@@ -165,6 +168,12 @@ typedef struct {
   value_t to;
 } obj_range_t;
 
+typedef struct {
+  obj_t obj;
+  bool is_ok;
+  value_t value;
+} obj_result_t;
+
 obj_bound_method_t *new_bound_method(value_t receiver, obj_closure_t *method);
 obj_class_t *new_class(obj_string_t *name);
 obj_closure_t *new_closure(obj_function_t *function);
@@ -180,6 +189,8 @@ obj_array_t *new_array(int count);
 obj_file_t *new_file(const char *path, const char *mode);
 obj_module_t *new_module(obj_string_t *name);
 obj_range_t *new_range(value_t from, value_t to);
+obj_result_t *new_result_ok(value_t value);
+obj_result_t *new_result_err(value_t error);
 void print_object(FILE *stream, value_t value, bool literally);
 
 static inline bool is_obj_type(value_t value, obj_type_t type) {

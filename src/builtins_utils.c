@@ -54,6 +54,8 @@ xyl_builtin(typeof) {
       return OBJ_VAL(vm.vm_strings[VM_STR_MODULE]);
     case OBJ_RANGE:
       return OBJ_VAL(vm.vm_strings[VM_STR_RANGE]);
+    case OBJ_RESULT:
+      return OBJ_VAL(vm.vm_strings[VM_STR_RESULT]);
     case OBJ_ANY: // Unreachable
       break;
     }
