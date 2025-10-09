@@ -23,7 +23,7 @@ class File {
       self.__file = __builtin___open(args[0], args[1]);
       self.__open = true;
     } else
-      assert false, "Expected at 1 or 2 arguments";
+      assert false, "Expected 1 or 2 arguments";
   }
 
   func close() {
