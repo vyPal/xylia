@@ -122,6 +122,21 @@ obj_string_t *value_to_string(value_t value, bool literal) {
       sb_free(&sb);
       return res;
     }
+    case OBJ_RESULT: {
+      obj_result_t *result = AS_RESULT(value);
+      sb_init(&sb);
+      if (result->is_ok) {
+          sb_append(&sb, "Ok(", 3);
+      } else {
+          sb_append(&sb, "Err(", 4);
+      }
+      obj_string_t *val = value_to_string(result->value, true);
+      sb_append(&sb, val->chars, val->length);
+      sb_append(&sb, ")", 1);
+      obj_string_t *res = copy_string(sb.data, sb.length, true);
+      sb_free(&sb);
+      return res;
+    }
     case OBJ_CLASS: {
       obj_class_t *clas = AS_CLASS(value);
       sb_init(&sb);
@@ -248,6 +263,8 @@ const char *obj_type_to_str(obj_type_t type) {
     return "module";
   case OBJ_RANGE:
     return "range";
+  case OBJ_RESULT:
+    return "result";
   case OBJ_ANY:
     return "any";
   }

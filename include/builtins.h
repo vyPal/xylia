@@ -105,6 +105,16 @@ xyl_builtin(bool);
 xyl_builtin(vector);
 xyl_builtin(list);
 
+// Results
+xyl_builtin(ok);
+xyl_builtin(err);
+xyl_builtin(is_ok);
+xyl_builtin(is_err);
+xyl_builtin(unwrap);
+xyl_builtin(unwrap_or);
+xyl_builtin(unwrap_err);
+xyl_builtin(expect);
+
 // Tests
 xyl_builtin(case_failed);
 
