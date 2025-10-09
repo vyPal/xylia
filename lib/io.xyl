@@ -44,7 +44,7 @@ class File {
   }
 
   operator << (other) {
-    if (typeof(other) == "class" && hasmethod(getclass(other), "to_string"))
+    if (typeof(other) == "instance" && hasmethod(getclass(other), "to_string"))
       self.write(other.to_string());
     else
       self.write(string(other));
