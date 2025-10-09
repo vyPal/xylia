@@ -7,11 +7,11 @@
 
 ## Overview
 
-The `array` module provides a wrapper around Xylia’s built-in array type.  
+The `array` module provides a wrapper around Xylia's built-in array type.  
 While Xylia includes a low-level `__builtin___array` type, this module offers a safer, higher-level `Array` class with convenience methods and operator overloads.
 
 Arrays, vectors, and files are built on internal data structures provided by the runtime.  
-It’s generally recommended to use these wrapper classes instead of directly manipulating built-ins.
+It's generally recommended to use these wrapper classes instead of directly manipulating built-ins.
 
 ---
 
