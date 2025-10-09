@@ -155,6 +155,10 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
     return constant_op("OP_GET_PROPERTY", chunk, offset);
   case OP_GET_PROPERTY_LONG:
     return constant_op_long("OP_GET_PORPERTY_LONG", chunk, offset);
+  case OP_GET_ACCESS:
+    return constant_op("OP_GET_ACCESS", chunk, offset);
+  case OP_GET_ACCESS_LONG:
+    return constant_op_long("OP_GET_ACCESS_LONG", chunk, offset);
   case OP_SET_PROPERTY:
     return constant_op("OP_SET_PROPERTY", chunk, offset);
   case OP_SET_PROPERTY_LONG:
@@ -167,6 +171,10 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
     return invoke_op("OP_INVOKE", chunk, offset);
   case OP_INVOKE_LONG:
     return invoke_op_long("OP_INVOKE_LONG", chunk, offset);
+  case OP_INVOKE_ACCESS:
+    return invoke_op("OP_INVOKE_ACCESS", chunk, offset);
+  case OP_INVOKE_ACCESS_LONG:
+    return invoke_op_long("OP_INVOKE_ACCESS_LONG", chunk, offset);
   case OP_SUPER_INVOKE:
     return invoke_op("OP_SUPER_INVOKE", chunk, offset);
   case OP_SUPER_INVOKE_LONG:
@@ -237,6 +245,10 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
     return simple_op("OP_DIV", offset);
   case OP_MOD:
     return simple_op("OP_MOD", offset);
+  case OP_SHIFTL:
+    return simple_op("OP_SHIFTL", offset);
+  case OP_SHIFTR:
+    return simple_op("OP_SHIFTR", offset);
   case OP_BIT_AND:
     return simple_op("OP_BIT_AND", offset);
   case OP_BIT_OR:
