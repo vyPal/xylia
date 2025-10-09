@@ -38,7 +38,7 @@ static int constant_op(const char *name, chunk_t *chunk, int offset) {
   uint8_t constant = chunk->code[offset + 1];
 
   printf("%-20s %8d '", name, constant);
-  print_value(chunk->constants.values[constant], true);
+  print_value(stdout, chunk->constants.values[constant], true);
   printf("'\n");
   return offset + 2;
 }
@@ -51,7 +51,7 @@ static int constant_op_long(const char *name, chunk_t *chunk, int offset) {
   unsigned int constant = nib1 | (nib2 << 8) | (nib3 << 16);
 
   printf("%-20s %8d '", name, constant);
-  print_value(chunk->constants.values[constant], true);
+  print_value(stdout, chunk->constants.values[constant], true);
   printf("'\n");
   return offset + 4;
 }
@@ -74,7 +74,7 @@ static int assert_op(const char *name, chunk_t *chunk, int offset) {
   unsigned int constant = nib7 | (nib8 << 8) | (nib9 << 16);
 
   printf("%-20s %8d %d:%d '", name, constant, row, col);
-  print_value(chunk->constants.values[constant], true);
+  print_value(stdout, chunk->constants.values[constant], true);
   printf("'\n");
 
   return offset + 10;
@@ -85,7 +85,7 @@ static int invoke_op(const char *name, chunk_t *chunk, int offset) {
   uint8_t argc = chunk->code[offset + 2];
 
   printf("%-20s (%d args) %8d '", name, argc, constant);
-  print_value(chunk->constants.values[constant], true);
+  print_value(stdout, chunk->constants.values[constant], true);
   printf("'\n");
   return offset + 3;
 }
@@ -99,7 +99,7 @@ static int invoke_op_long(const char *name, chunk_t *chunk, int offset) {
   uint8_t argc = chunk->code[offset + 4];
 
   printf("%-20s (%d args) %8d '", name, argc, constant);
-  print_value(chunk->constants.values[constant], true);
+  print_value(stdout, chunk->constants.values[constant], true);
   printf("'\n");
   return offset + 5;
 }
@@ -183,7 +183,7 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
     offset++;
     int constant = chunk->code[offset++];
     printf("%-20s %8d ", "OP_CLOSURE", constant);
-    print_value(chunk->constants.values[constant], true);
+    print_value(stdout, chunk->constants.values[constant], true);
     printf("\n");
 
     obj_function_t *function = AS_FUNCTION(chunk->constants.values[constant]);
@@ -202,7 +202,7 @@ int disassemble_instruction(chunk_t *chunk, int offset) {
                    (chunk->code[offset + 2] << 16);
     offset += 3;
     printf("%-20s %8d ", "OP_CLOSURE_LONG", constant);
-    print_value(chunk->constants.values[constant], true);
+    print_value(stdout, chunk->constants.values[constant], true);
     printf("\n");
 
     obj_function_t *function = AS_FUNCTION(chunk->constants.values[constant]);

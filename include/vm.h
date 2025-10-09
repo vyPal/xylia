@@ -41,6 +41,8 @@ typedef enum {
   VM_STR_OVERLOAD_NEG,       // -
   VM_STR_OVERLOAD_MOD,       // %
   VM_STR_OVERLOAD_XOR,       // ^
+  VM_STR_OVERLOAD_SHIFTL,    // <<
+  VM_STR_OVERLOAD_SHIFTR,    // >>
   VM_STR_OVERLOAD_BIT_OR,    // |
   VM_STR_OVERLOAD_BIT_AND,   // &
   VM_STR_OVERLOAD_BIT_NOT,   // ~

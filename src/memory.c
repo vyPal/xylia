@@ -194,7 +194,7 @@ static void free_object(obj_t *object) {
   } break;
   case OBJ_FILE: {
     obj_file_t *file = (obj_file_t *)object;
-    if (file->open) {
+    if (file->open && file->can_close) {
       fclose(file->file);
       file->open = false;
       file->readable = false;

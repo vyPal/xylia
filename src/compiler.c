@@ -338,6 +338,8 @@ static bool is_operator(token_type_t type) {
   case TOK_ASTERISK:
   case TOK_SLASH:
   case TOK_PERCENT:
+  case TOK_SHIFTL:
+  case TOK_SHIFTR:
   case TOK_GRAVE:
   case TOK_BIT_OR:
   case TOK_BIT_AND:
@@ -371,6 +373,10 @@ static const char *op_to_name(token_type_t type) {
     return "__div__";
   case TOK_PERCENT:
     return "__mod__";
+  case TOK_SHIFTL:
+    return "__shl__";
+  case TOK_SHIFTR:
+    return "__shr__";
   case TOK_GRAVE:
     return "__xor__";
   case TOK_BIT_OR:
@@ -595,6 +601,12 @@ static void binary(bool _) {
     break;
   case TOK_PERCENT:
     emit_byte(OP_MOD);
+    break;
+  case TOK_SHIFTL:
+    emit_byte(OP_SHIFTL);
+    break;
+  case TOK_SHIFTR:
+    emit_byte(OP_SHIFTR);
     break;
   case TOK_BIT_AND:
     emit_byte(OP_BIT_AND);
@@ -899,6 +911,8 @@ parse_rule_t rules[] = {
     [TOK_ASTERISK] = {NULL, binary, PREC_FACTOR},
     [TOK_SLASH] = {NULL, binary, PREC_FACTOR},
     [TOK_PERCENT] = {NULL, binary, PREC_FACTOR},
+    [TOK_SHIFTL] = {NULL, binary, PREC_SHIFT},
+    [TOK_SHIFTR] = {NULL, binary, PREC_SHIFT},
     [TOK_BIT_AND] = {NULL, binary, PREC_BIN_AND},
     [TOK_BIT_OR] = {NULL, binary, PREC_BIN_OR},
     [TOK_BIT_NOT] = {unary, NULL, PREC_TERM},

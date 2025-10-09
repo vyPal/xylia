@@ -22,6 +22,8 @@ typedef enum {
   TOK_ASTERISK, // *
   TOK_SLASH,    // /
   TOK_PERCENT,  // %
+  TOK_SHIFTL,   // <<
+  TOK_SHIFTR,   // >>
 
   // Bitwise operators
   TOK_BIT_AND, // &

@@ -14,9 +14,16 @@ func input(prompt[]) {
 }
 
 class File {
-  func init(path, mode) {
-    self.__file = __builtin___open(path, mode);
-    self.__open = true;
+  func init(args[]) {
+    if (len(args) == 1) {
+      assert typeof(args[0]) == "file", "File must be type of file";
+      self.__file = args[0];
+      self.__open = true;
+    } else if (len(args) == 2) {
+      self.__file = __builtin___open(args[0], args[1]);
+      self.__open = true;
+    } else
+      assert false, "Expected at 1 or 2 arguments";
   }
 
   func close() {
@@ -34,5 +41,45 @@ class File {
   func write(content) {
     assert self.__open, "File is already closed";
     __builtin___write(self.__file, content);
+  }
+
+  operator << (other) {
+    if (typeof(other) == "class" && hasmethod(getclass(other), "to_string"))
+      self.write(other.to_string());
+    else
+      self.write(string(other));
+    return self;
+  }
+}
+
+let stdin = File(__builtin___stdin());
+let stdout = File(__builtin___stdout());
+let stderr = File(__builtin___stderr());
+
+func fprint(stream, args[]) {
+  if (typeof(stream) == "file")
+    __builtin___fprint(stream, args);
+  else {
+    assert isinstance(stream, File), "Stream must be file";
+    __builtin___fprint(stream.__file, args);
+  }
+}
+
+func fprintln(stream, args[]) {
+  if (typeof(stream) == "file")
+    __builtin___fprintln(stream, args);
+  else {
+    assert isinstance(stream, File), "Stream must be file";
+    __builtin___fprintln(stream.__file, args);
+  }
+}
+
+func fprintf(stream, args[]) {
+  assert len(args) >= 1, "Expected at least 1 argument in 'fprintf'";
+  if (typeof(stream) == "file")
+    __builtin___fprintf(stream, args);
+  else {
+    assert isinstance(stream, File), "Stream must be file";
+    __builtin___fprintf(stream.__file, args);
   }
 }

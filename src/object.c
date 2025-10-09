@@ -181,6 +181,7 @@ obj_file_t *new_file(const char *path, const char *mode) {
   file->open = false;
   file->readable = false;
   file->writable = false;
+  file->can_close = true;
 
   if (!file->file) {
     runtime_error(-1, "Failed to open file '%s'", path);
@@ -224,130 +225,130 @@ obj_range_t *new_range(value_t from, value_t to) {
   return range;
 }
 
-static void print_function(obj_function_t *function) {
+static void print_function(FILE *stream, obj_function_t *function) {
   if (function->name == NULL)
-    printf("<script>");
+    fputs("<script>", stream);
   else
-    printf("<fn %s>", function->name->chars);
+    fprintf(stream, "<fn %s>", function->name->chars);
 }
 
-static void print_vector(obj_vector_t *vector) {
-  printf("{");
+static void print_vector(FILE *stream, obj_vector_t *vector) {
+  fputc('{', stream);
   for (int i = 0; i < vector->count; i++) {
     if (i != 0)
-      printf(", ");
-    print_value(vector->values[i], true);
+      fputs(", ", stream);
+    print_value(stream, vector->values[i], true);
   }
-  printf("}");
+  fputc('}', stream);
 }
 
-static void print_list(obj_list_t *list) {
-  printf("[");
+static void print_list(FILE *stream, obj_list_t *list) {
+  fputc('[', stream);
   for (int i = 0; i < list->count; i++) {
     if (i != 0)
-      printf(", ");
-    print_value(list->values[i], true);
+      fputs(", ", stream);
+    print_value(stream, list->values[i], true);
   }
-  printf("]");
+  fputc(']', stream);
 }
 
-static void print_array(obj_array_t *array) {
-  printf("<");
+static void print_array(FILE *stream, obj_array_t *array) {
+  fputc('<', stream);
   for (int i = 0; i < array->count; i++) {
     if (i != 0)
-      printf(", ");
-    print_value(array->values[i], true);
+      fputs(", ", stream);
+    print_value(stream, array->values[i], true);
   }
-  printf(">");
+  fputc('>', stream);
 }
 
-static void print_literal(const char *s) {
-  putchar('"');
+static void print_literal(FILE *stream, const char *s) {
+  fputc('"', stream);
   for (; *s; s++)
     switch (*s) {
     case '\n':
-      printf("\\n");
+      fputs("\\n", stream);
       break;
     case '\t':
-      printf("\\t");
+      fputs("\\t", stream);
       break;
     case '\r':
-      printf("\\r");
+      fputs("\\r", stream);
       break;
     case '\v':
-      printf("\\v");
+      fputs("\\v", stream);
       break;
     case '\f':
-      printf("\\f");
+      fputs("\\f", stream);
       break;
     case '\b':
-      printf("\\b");
+      fputs("\\b", stream);
       break;
     case '\\':
-      printf("\\\\");
+      fputs("\\\\", stream);
       break;
     case '\"':
-      printf("\\\"");
+      fputs("\\\"", stream);
       break;
     default:
       if ((unsigned char)*s < 32 || (unsigned char)*s == 127)
-        printf("\\x%02X", (unsigned char)*s);
+        fprintf(stream, "\\x%02X", (unsigned char)*s);
       else
-        putchar(*s);
+        fputc(*s, stream);
     }
-  putchar('"');
+  fputc('"', stream);
 }
 
-void print_object(value_t value, bool literally) {
+void print_object(FILE *stream, value_t value, bool literally) {
   switch (OBJ_TYPE(value)) {
   case OBJ_BOUND_METHOD:
-    print_function(AS_BOUND_METHOD(value)->method->function);
+    print_function(stream, AS_BOUND_METHOD(value)->method->function);
     break;
   case OBJ_CLASS:
-    printf("<class %s>", AS_CLASS(value)->name->chars);
+    fprintf(stream, "<class %s>", AS_CLASS(value)->name->chars);
     break;
   case OBJ_CLOSURE:
-    print_function(AS_CLOSURE(value)->function);
+    print_function(stream, AS_CLOSURE(value)->function);
     break;
   case OBJ_FUNCTION:
-    print_function(AS_FUNCTION(value));
+    print_function(stream, AS_FUNCTION(value));
     break;
   case OBJ_INSTANCE:
-    printf("<instance %s>", AS_INSTANCE(value)->clas->name->chars);
+    fprintf(stream, "<instance %s>", AS_INSTANCE(value)->clas->name->chars);
     break;
   case OBJ_BUILTIN:
-    printf("<fn builtin>");
+    fputs("<fn builtin>", stream);
     break;
   case OBJ_STRING:
     if (literally)
-      print_literal(AS_CSTRING(value));
+      print_literal(stream, AS_CSTRING(value));
     else
-      printf("%s", AS_CSTRING(value));
+      fprintf(stream, "%s", AS_CSTRING(value));
     break;
   case OBJ_UPVALUE:
-    printf("<upvalue>");
+    fputs("<upvalue>", stream);
     break;
   case OBJ_VECTOR:
-    print_vector(AS_VECTOR(value));
+    print_vector(stream, AS_VECTOR(value));
     break;
   case OBJ_LIST:
-    print_list(AS_LIST(value));
+    print_list(stream, AS_LIST(value));
     break;
   case OBJ_ARRAY:
-    print_array(AS_ARRAY(value));
+    print_array(stream, AS_ARRAY(value));
     break;
   case OBJ_FILE:
-    printf("<file>");
+    fputs("<file>", stream);
     break;
   case OBJ_MODULE:
-    printf("<module %s>", AS_MODULE(value)->name->chars);
+    fprintf(stream, "<module %s>", AS_MODULE(value)->name->chars);
     break;
   case OBJ_RANGE:
-    printf("<range ");
-    print_value(AS_RANGE(value)->from, true);
-    printf(":");
-    print_value(AS_RANGE(value)->to, true);
-    printf(">");
+    fputs("<range ", stream);
+    print_value(stream, AS_RANGE(value)->from, true);
+    fputs(":", stream);
+    print_value(stream, AS_RANGE(value)->to, true);
+    fputs(">", stream);
     break;
   case OBJ_ANY:
     break;

@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
 typedef struct obj obj_t;
 typedef struct obj_string obj_string_t;
@@ -53,6 +54,6 @@ bool values_equal(value_t a, value_t b);
 void init_value_array(value_array_t *array);
 void write_value_array(value_array_t *array, value_t value);
 void free_value_array(value_array_t *array);
-void print_value(value_t value, bool literally);
+void print_value(FILE *stream, value_t value, bool literally);
 
 #endif

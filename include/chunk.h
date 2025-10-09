@@ -61,6 +61,8 @@ typedef enum {
   OP_MUL,
   OP_DIV,
   OP_MOD,
+  OP_SHIFTL,
+  OP_SHIFTR,
   OP_BIT_AND,
   OP_BIT_OR,
   OP_XOR,

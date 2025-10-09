@@ -2,34 +2,57 @@
 #include <stdlib.h>
 
 #include "builtins.h"
+#include "memory.h"
 #include "object.h"
 #include "value.h"
 #include "vm.h"
 
-xyl_builtin(print) {
-  xyl_builtin_signature(print, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
-  obj_list_t *args = AS_LIST(argv[0]);
-
+static void xyl_fprint(FILE *stream, obj_list_t *args) {
   for (int i = 0; i < args->count; i++) {
     if (i != 0)
-      putchar(' ');
-    print_value(args->values[i], false);
+      fputc(' ', stream);
+    print_value(stream, args->values[i], false);
   }
+}
 
+static void xyl_fprintln(FILE *stream, obj_list_t *args) {
+  for (int i = 0; i < args->count; i++) {
+    if (i != 0)
+      fputc(' ', stream);
+    print_value(stream, args->values[i], false);
+  }
+  fputc('\n', stream);
+}
+
+static void xyl_fprintf(FILE *stream, obj_string_t *fmt, obj_list_t *args) {
+  int fmt_count = 1;
+  for (int i = 0; i < fmt->length; i++) {
+    if (fmt->chars[i] == '\\' && i + 1 < fmt->length &&
+        fmt->chars[i + 1] == '{') {
+      fputc('{', stream);
+      i++;
+    } else if (fmt->chars[i] == '{' && i + 1 < fmt->length &&
+               fmt->chars[i + 1] == '}') {
+      if (fmt_count >= args->count) {
+        runtime_error(-1, "Not enough arguments in printf");
+        return;
+      }
+      print_value(stream, args->values[fmt_count++], false);
+      i++;
+    } else
+      fputc(fmt->chars[i], stream);
+  }
+}
+
+xyl_builtin(print) {
+  xyl_builtin_signature(print, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
+  xyl_fprint(stdout, AS_LIST(argv[0]));
   return NIL_VAL;
 }
 
 xyl_builtin(println) {
   xyl_builtin_signature(println, 1, ARGC_EXACT, {VAL_OBJ, OBJ_LIST});
-  obj_list_t *args = AS_LIST(argv[0]);
-
-  for (int i = 0; i < args->count; i++) {
-    if (i != 0)
-      putchar(' ');
-    print_value(args->values[i], false);
-  }
-  putchar('\n');
-
+  xyl_fprintln(stdout, AS_LIST(argv[0]));
   return NIL_VAL;
 }
 
@@ -44,33 +67,101 @@ xyl_builtin(printf) {
   }
 
   obj_string_t *fmt = AS_STRING(args->values[0]);
-  int fmt_count = 1;
-
-  for (int i = 0; i < fmt->length; i++) {
-    if (fmt->chars[i] == '\\' && i + 1 < fmt->length &&
-        fmt->chars[i + 1] == '{') {
-      putchar('{');
-      i++;
-    } else if (fmt->chars[i] == '{' && i + 1 < fmt->length &&
-               fmt->chars[i + 1] == '}') {
-      if (fmt_count >= args->count) {
-        runtime_error(-1, "Not enough arguments in printf");
-        return NIL_VAL;
-      }
-      print_value(args->values[fmt_count++], false);
-      i++;
-    } else
-      putchar(fmt->chars[i]);
-  }
+  xyl_fprintf(stdout, fmt, args);
 
   return NIL_VAL;
+}
+
+xyl_builtin(fprint) {
+  xyl_builtin_signature(fprint, 2, ARGC_EXACT, {VAL_OBJ, OBJ_FILE},
+                        {VAL_OBJ, OBJ_LIST});
+  xyl_fprint(AS_FILE(argv[0])->file, AS_LIST(argv[1]));
+  return NIL_VAL;
+}
+
+xyl_builtin(fprintln) {
+  xyl_builtin_signature(fprintln, 2, ARGC_EXACT, {VAL_OBJ, OBJ_FILE},
+                        {VAL_OBJ, OBJ_LIST});
+  xyl_fprintln(AS_FILE(argv[0])->file, AS_LIST(argv[1]));
+  return NIL_VAL;
+}
+
+xyl_builtin(fprintf) {
+  xyl_builtin_signature(fprintf, 2, ARGC_EXACT, {VAL_OBJ, OBJ_FILE},
+                        {VAL_OBJ, OBJ_LIST});
+  obj_list_t *args = AS_LIST(argv[1]);
+
+  if (args->count == 0 || !IS_STRING(args->values[0])) {
+    runtime_error(-1, "Expected at least 1 argument in 'printf' but got %d",
+                  args->count);
+    return NIL_VAL;
+  }
+
+  obj_string_t *fmt = AS_STRING(args->values[0]);
+  xyl_fprintf(AS_FILE(argv[0])->file, fmt, args);
+
+  return NIL_VAL;
+}
+
+xyl_builtin(stdin) {
+  xyl_builtin_signature(stdin, 0, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
+  obj_t *object = (obj_t *)reallocate(NULL, 0, sizeof(obj_file_t));
+  object->type = OBJ_FILE;
+  object->is_marked = false;
+  object->next = vm.objects;
+  vm.objects = object;
+
+  obj_file_t *file = (obj_file_t *)object;
+  file->file = stdin;
+  file->open = true;
+  file->readable = true;
+  file->writable = true;
+  file->can_close = false;
+
+  return OBJ_VAL(file);
+}
+
+xyl_builtin(stdout) {
+  xyl_builtin_signature(stdout, 0, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
+  obj_t *object = (obj_t *)reallocate(NULL, 0, sizeof(obj_file_t));
+  object->type = OBJ_FILE;
+  object->is_marked = false;
+  object->next = vm.objects;
+  vm.objects = object;
+
+  obj_file_t *file = (obj_file_t *)object;
+  file->file = stdout;
+  file->open = true;
+  file->readable = true;
+  file->writable = true;
+  file->can_close = false;
+
+  return OBJ_VAL(file);
+}
+
+xyl_builtin(stderr) {
+  obj_t *object = (obj_t *)reallocate(NULL, 0, sizeof(obj_file_t));
+  object->type = OBJ_FILE;
+  object->is_marked = false;
+  object->next = vm.objects;
+  vm.objects = object;
+
+  obj_file_t *file = (obj_file_t *)object;
+  file->file = stderr;
+  file->open = true;
+  file->readable = true;
+  file->writable = true;
+  file->can_close = false;
+
+  return OBJ_VAL(file);
+  xyl_builtin_signature(stderr, 0, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
 }
 
 xyl_builtin(input) {
   xyl_builtin_signature(input, 1, ARGC_LESS_OR_EXACT, {VAL_OBJ, OBJ_STRING});
 
   if (argc == 1)
-    print_value(argv[0], false);
+    print_value(stdout, argv[0], false);
 
   size_t capacity = 64;
   size_t length = 0;

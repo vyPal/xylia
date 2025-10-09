@@ -27,22 +27,22 @@ void free_value_array(value_array_t *array) {
   init_value_array(array);
 }
 
-void print_value(value_t value, bool literally) {
+void print_value(FILE *stream, value_t value, bool literally) {
   switch (value.type) {
   case VAL_BOOL:
-    printf(AS_BOOL(value) ? "true" : "false");
+    fputs(AS_BOOL(value) ? "true" : "false", stream);
     break;
   case VAL_NIL:
-    printf("nil");
+    fputs("nil", stream);
     break;
   case VAL_NUMBER:
-    printf("%ld", AS_NUMBER(value));
+    fprintf(stream, "%ld", AS_NUMBER(value));
     break;
   case VAL_FLOAT:
-    printf("%g", AS_FLOAT(value));
+    fprintf(stream, "%g", AS_FLOAT(value));
     break;
   case VAL_OBJ:
-    print_object(value, literally);
+    print_object(stream, value, literally);
     break;
   case VAL_ANY:
     break;

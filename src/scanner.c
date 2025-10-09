@@ -265,8 +265,12 @@ token_t scan_token(void) {
   case '!':
     return make_token(match('=') ? TOK_NEQ : TOK_LOG_NOT);
   case '<':
+    if (match('<'))
+      return make_token(TOK_SHIFTL);
     return make_token(match('=') ? TOK_LE : TOK_LT);
   case '>':
+    if (match('>'))
+      return make_token(TOK_SHIFTR);
     return make_token(match('=') ? TOK_GE : TOK_GT);
   case '"':
     return string();

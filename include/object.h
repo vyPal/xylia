@@ -149,6 +149,7 @@ typedef struct {
   bool open;
   bool readable;
   bool writable;
+  bool can_close;
 } obj_file_t;
 
 typedef struct {
@@ -179,7 +180,7 @@ obj_array_t *new_array(int count);
 obj_file_t *new_file(const char *path, const char *mode);
 obj_module_t *new_module(obj_string_t *name);
 obj_range_t *new_range(value_t from, value_t to);
-void print_object(value_t value, bool literally);
+void print_object(FILE *stream, value_t value, bool literally);
 
 static inline bool is_obj_type(value_t value, obj_type_t type) {
   return IS_OBJ(value) && AS_OBJ(value)->type == type;

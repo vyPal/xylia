@@ -152,6 +152,8 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_OVERLOAD_NEG] = copy_string("__neg__", 7, true);
   vm.vm_strings[VM_STR_OVERLOAD_MOD] = copy_string("__mod__", 7, true);
   vm.vm_strings[VM_STR_OVERLOAD_XOR] = copy_string("__xor__", 7, true);
+  vm.vm_strings[VM_STR_OVERLOAD_SHIFTL] = copy_string("__shl__", 7, true);
+  vm.vm_strings[VM_STR_OVERLOAD_SHIFTR] = copy_string("__shr__", 7, true);
   vm.vm_strings[VM_STR_OVERLOAD_BIT_OR] = copy_string("__bit_or__", 10, true);
   vm.vm_strings[VM_STR_OVERLOAD_BIT_AND] = copy_string("__bit_and__", 11, true);
   vm.vm_strings[VM_STR_OVERLOAD_BIT_NOT] = copy_string("__bit_not__", 11, true);
@@ -195,6 +197,15 @@ void init_vm(void) {
   BUILTIN(print);
   BUILTIN(println);
   BUILTIN(printf);
+
+  BUILTIN(fprint);
+  BUILTIN(fprintln);
+  BUILTIN(fprintf);
+
+  BUILTIN(stdin);
+  BUILTIN(stdout);
+  BUILTIN(stderr);
+
   BUILTIN(input);
 
   BUILTIN(open);
@@ -446,7 +457,7 @@ static bool call_value(value_t callee, int argc) {
 static bool invoke_from_class(obj_class_t *clas, obj_string_t *name, int argc) {
   value_t method;
   if (!table_get(&clas->methods, name, &method)) {
-    runtime_error(vm.offset, "Undefined property '%s'", name->chars);
+    // runtime_error(vm.offset, "Undefined property '%s'", name->chars);
     return false;
   }
   return call(AS_CLOSURE(method), argc);
@@ -1193,9 +1204,9 @@ static result_t run(void) {
     } break;
     case OP_MOD: {
       if (IS_NUMBER(peek(0)) && IS_NUMBER(peek(1))) {
-        value_t b = pop();
-        value_t a = pop();
-        push(NUMBER_VAL(AS_NUMBER(a) % AS_NUMBER(b)));
+        int64_t b = AS_NUMBER(pop());
+        int64_t a = AS_NUMBER(pop());
+        push(NUMBER_VAL(a % b));
       } else if (IS_NUM_OR_FLT(peek(0)) && IS_NUM_OR_FLT(peek(1))) {
         value_t b = pop();
         value_t a = pop();
@@ -1211,6 +1222,38 @@ static result_t run(void) {
           runtime_error(vm.offset,
                         "Operands must be numbers, floats or objects with "
                         "'operator %' defined");
+          return RESULT_RUNTIME_ERROR;
+        }
+      }
+    } break;
+    case OP_SHIFTL: {
+      if (IS_NUMBER(peek(0)) && IS_NUMBER(peek(1))) {
+        int64_t b = AS_NUMBER(pop());
+        int64_t a = AS_NUMBER(pop());
+        push(NUMBER_VAL(a << b));
+      } else {
+        if (invoke_overload(VM_STR_OVERLOAD_SHIFTL, 1))
+          UPDATE_FRAME();
+        else {
+          runtime_error(
+              vm.offset,
+              "Operands must be numbers or objects with 'operator <<' defined");
+          return RESULT_RUNTIME_ERROR;
+        }
+      }
+    } break;
+    case OP_SHIFTR: {
+      if (IS_NUMBER(peek(0)) && IS_NUMBER(peek(1))) {
+        int64_t b = AS_NUMBER(pop());
+        int64_t a = AS_NUMBER(pop());
+        push(NUMBER_VAL(a >> b));
+      } else {
+        if (invoke_overload(VM_STR_OVERLOAD_SHIFTR, 1))
+          UPDATE_FRAME();
+        else {
+          runtime_error(
+              vm.offset,
+              "Operands must be numbers or objects with 'operator >>' defined");
           return RESULT_RUNTIME_ERROR;
         }
       }

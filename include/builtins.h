@@ -58,6 +58,15 @@ bool check_signature(const builtin_signature_t *signature, int argc,
 xyl_builtin(print);
 xyl_builtin(println);
 xyl_builtin(printf);
+
+xyl_builtin(fprint);
+xyl_builtin(fprintln);
+xyl_builtin(fprintf);
+
+xyl_builtin(stdin);
+xyl_builtin(stdout);
+xyl_builtin(stderr);
+
 xyl_builtin(input);
 
 xyl_builtin(open);
