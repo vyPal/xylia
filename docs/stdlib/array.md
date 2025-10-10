@@ -31,37 +31,37 @@ utilities for resizing and converting to string representations.
 
 A wrapper type for builtin arrays, providing common operations and size management.
 
-### Array::`init`
+### `Array::init`
 
 **Signature:** `init(size: number) -> Array`  
 
 Initializes a new array with the given size.
 
-### Array::`size`
+### `Array::size`
 
 **Signature:** `size() -> number`  
 
 Returns the current size of the array.
 
-### Array::`to_string`
+### `Array::to_string`
 
 **Signature:** `to_string() -> string`  
 
 Returns a string representation of the array contents.
 
-### Array::`resize`
+### `Array::resize`
 
 **Signature:** `resize(new_size: number)`  
 
 Resizes the array to `new_size`, truncating or extending it as needed.
 
-### Array::`[]`
+### `Array::[]`
 
 **Signature:** `[](index: number) -> any`  
 
 Accesses the value at the specified `index`.
 
-### Array::`[]=`
+### `Array::[]=`
 
 **Signature:** `[]=(index: number, value: any)`  
 

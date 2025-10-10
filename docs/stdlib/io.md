@@ -73,31 +73,31 @@ Reads input from standard input, optionally displaying a prompt.
 
 Represents an open file handle.
 
-### File::`init`
+### `File::init`
 
 **Signature:** `init(path: string, mode: string) -> File`  
 
 Opens a file with the specified mode.
 
-### File::`close`
+### `File::close`
 
 **Signature:** `close()`  
 
 Closes the file handle.
 
-### File::`read`
+### `File::read`
 
 **Signature:** `read() -> string`  
 
 Reads the file contents.
 
-### File::`write`
+### `File::write`
 
 **Signature:** `write(content: string)`  
 
 Writes content to the file.
 
-### File::`<<`
+### `File::<<`
 
 **Signature:** `<<(value: any)`  
 

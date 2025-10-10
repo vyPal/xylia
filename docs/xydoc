@@ -160,7 +160,7 @@ def render_markdown(module: ModuleDoc) -> str:
 
     # Detailed documentation
     def section(sym: Symbol, prefix=""):
-        out.append(f"### {prefix}`{sym.name}`\n\n")
+        out.append(f"### `{prefix}{sym.name}`\n\n")
         if sym.signature:
             out.append(f"**Signature:** `{sym.name}{sym.signature}`  \n\n")
         out.append(sym.description.strip() + "\n\n")
