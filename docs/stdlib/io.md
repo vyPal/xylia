@@ -24,11 +24,11 @@ It includes console printing, formatted output, user input, and file handling.
 | [`printf`](#printf) | function | Prints formatted output to standard output. |
 | [`input`](#input) | function | Reads input from standard input, optionally displaying a prompt. |
 | [`File`](#file) | class | Represents an open file handle. |
-| [`File::init`](#file-init) | method | Opens a file with the specified mode. |
-| [`File::close`](#file-close) | method | Closes the file handle. |
-| [`File::read`](#file-read) | method | Reads the file contents. |
-| [`File::write`](#file-write) | method | Writes content to the file. |
-| [`File::<<`](#file-<<) | operator | Writes a value to the file (using its string representation). |
+| [`File::init`](#file::init) | method | Opens a file with the specified mode. |
+| [`File::close`](#file::close) | method | Closes the file handle. |
+| [`File::read`](#file::read) | method | Reads the file contents. |
+| [`File::write`](#file::write) | method | Writes content to the file. |
+| [`File::<<`](#file::<<) | operator | Writes a value to the file (using its string representation). |
 
 ---
 
