@@ -25,18 +25,18 @@ seeding the random generator, and selecting random elements from collections.
 ### `random` <a name="random"></a>
 
 ```xylia
-random(args[])
+random(args: any[])
 ```
 
 Generates a random number. Usage:
 - `random()` → float between 0 and 1
-- `random(n)` → integer between 1 and n
-- `random(a, b)` → integer between a and b
+- `random(n: number)` → integer between 1 and n
+- `random(a: number, b: number)` → integer between a and b
 
 ### `randomseed` <a name="randomseed"></a>
 
 ```xylia
-randomseed(seed)
+randomseed(seed: number)
 ```
 
 Seeds the random number generator with the given `seed`.
@@ -44,7 +44,7 @@ Seeds the random number generator with the given `seed`.
 ### `choice` <a name="choice"></a>
 
 ```xylia
-choice(args[])
+choice(args: any[])
 ```
 
 Selects a random element from a collection or arguments list.  

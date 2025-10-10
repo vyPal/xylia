@@ -20,8 +20,10 @@ Reads input from standard input, optionally displaying a prompt.
 @class File
 Represents an open file handle.
 
-@method init(path: string, mode: string) -> File
+@method init(args: any[]) -> File
 Opens a file with the specified mode.
+- `init(fd: file)` → wrap file descriptor in File
+- `init(path: string, mode: string)` → open a file with specified mode
 
 @method close()
 Closes the file handle.
@@ -37,11 +39,8 @@ Writes a value to the file (using its string representation).
 
 @endclass
 
-@variable stdin : File
-Standard input stream.
+@variable stdin: File
 
-@variable stdout : File
-Standard output stream.
+@variable stdout: File
 
-@variable stderr : File
-Standard error stream.
+@variable stderr: File

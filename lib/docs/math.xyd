@@ -4,61 +4,61 @@
 The `math` module provides common mathematical constants and functions
 for numerical operations, trigonometry, logarithms, and rounding.
 
-@variable PI = 3.14159265358979323846
-@variable E = 2.7182818284590452354
-@variable NAN = 0 / 0
-@variable INF = 1 / 0
+@variable PI: float = 3.14159265358979323846
+@variable E: float = 2.7182818284590452354
+@variable NAN: float = 0 / 0
+@variable INF: float = 1 / 0
 
-@function abs(x)
+@function abs(x: number | float)
 Returns the absolute value of `x`.
 
-@function min(args[])
+@function min(args: [number | float][])
 Returns the minimum value from a list of arguments.
 
-@function max(args[])
+@function max(args: [number | float][])
 Returns the maximum value from a list of arguments.
 
-@function clamp(x, lo, hi)
+@function clamp(x: number | float, lo: number | float, hi: number | float)
 Clamps `x` between `lo` and `hi`.
 
-@function sin(x)
+@function sin(x: number | float)
 Returns the sine of `x` (radians).
 
-@function cos(x)
+@function cos(x: number | float)
 Returns the cosine of `x` (radians).
 
-@function tan(x)
+@function tan(x: number | float)
 Returns the tangent of `x` (radians).
 
-@function asin(x)
+@function asin(x: number | float)
 Returns the arcsine of `x` in radians.
 
-@function acos(x)
+@function acos(x: number | float)
 Returns the arccosine of `x` in radians.
 
-@function atan(x)
+@function atan(x: number | float)
 Returns the arctangent of `x` in radians.
 
-@function atan2(y, x)
+@function atan2(y: number | float, x: number | float)
 Returns the arctangent of `y/x` in radians, considering the quadrant.
 
-@function sqrt(x)
+@function sqrt(x: number | float)
 Returns the square root of `x`.
 
-@function pow(x, y)
+@function pow(x: number | float, y: number | float)
 Returns `x` raised to the power of `y`.
 
-@function log(x)
+@function log(x: number | float)
 Returns the natural logarithm of `x`.
 
-@function exp(x)
+@function exp(x: number | float)
 Returns e raised to the power `x`.
 
-@function floor(x)
+@function floor(x: float)
 Returns the largest integer ≤ `x`.
 
-@function ceil(x)
+@function ceil(x: float)
 Returns the smallest integer ≥ `x`.
 
-@function round(x)
+@function round(x: float)
 Rounds `x` to the nearest integer.

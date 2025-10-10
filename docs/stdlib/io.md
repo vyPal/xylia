@@ -16,9 +16,9 @@ It includes console printing, formatted output, user input, and file handling.
 
 | Symbol | Type | Description |
 |:--------|:------|:-------------|
-| [`stdin : File`](#stdin--file) | variable | Standard input stream. |
-| [`stdout : File`](#stdout--file) | variable | Standard output stream. |
-| [`stderr : File`](#stderr--file) | variable | Standard error stream. |
+| [`stdin: File`](#stdin-file) | variable |  |
+| [`stdout: File`](#stdout-file) | variable |  |
+| [`stderr: File`](#stderr-file) | variable |  |
 | [`print`](#print) | function | Prints arguments to standard output without a newline. |
 | [`println`](#println) | function | Prints arguments to standard output followed by a newline. |
 | [`printf`](#printf) | function | Prints formatted output to standard output. |
@@ -32,17 +32,11 @@ It includes console printing, formatted output, user input, and file handling.
 
 ---
 
-### `stdin : File` <a name="stdin--file"></a>
+### `stdin: File` <a name="stdin-file"></a>
 
-Standard input stream.
+### `stdout: File` <a name="stdout-file"></a>
 
-### `stdout : File` <a name="stdout--file"></a>
-
-Standard output stream.
-
-### `stderr : File` <a name="stderr--file"></a>
-
-Standard error stream.
+### `stderr: File` <a name="stderr-file"></a>
 
 ### `print` <a name="print"></a>
 
@@ -84,10 +78,12 @@ Represents an open file handle.
 #### `File::init` <a name="fileinit"></a>
 
 ```xylia
-init(path: string, mode: string) -> File
+init(args: any[]) -> File
 ```
 
 Opens a file with the specified mode.
+- `init(fd: file)` → wrap file descriptor in File
+- `init(path: string, mode: string)` → open a file with specified mode
 
 #### `File::close` <a name="fileclose"></a>
 

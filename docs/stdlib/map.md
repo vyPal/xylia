@@ -44,7 +44,7 @@ Initializes a new empty map.
 #### `Map::get_index` <a name="mapget_index"></a>
 
 ```xylia
-get_index(key) -> number
+get_index(key: any) -> number
 ```
 
 Computes the hash index for the given key.
@@ -60,7 +60,7 @@ Resizes the internal table to the specified capacity.
 #### `Map::insert` <a name="mapinsert"></a>
 
 ```xylia
-insert(key, value)
+insert(key: any, value: any)
 ```
 
 Inserts a key-value pair into the map, replacing the value if the key exists.
@@ -68,7 +68,7 @@ Inserts a key-value pair into the map, replacing the value if the key exists.
 #### `Map::delete` <a name="mapdelete"></a>
 
 ```xylia
-delete(key) -> bool
+delete(key: any) -> bool
 ```
 
 Deletes a key from the map. Returns `true` if the key was removed, `false` if it was not found.
@@ -76,7 +76,7 @@ Deletes a key from the map. Returns `true` if the key was removed, `false` if it
 #### `Map::get` <a name="mapget"></a>
 
 ```xylia
-get(key) -> any
+get(key: any) -> any
 ```
 
 Retrieves the value associated with the key, or `nil` if the key does not exist.
@@ -84,7 +84,7 @@ Retrieves the value associated with the key, or `nil` if the key does not exist.
 #### `Map::[]` <a name="map"></a>
 
 ```xylia
-[](key) -> any
+[](key: any) -> any
 ```
 
 Accesses the value corresponding to `key`.
@@ -92,7 +92,7 @@ Accesses the value corresponding to `key`.
 #### `Map::[]=` <a name="map"></a>
 
 ```xylia
-[]=(key, value)
+[]=(key: any, value: any)
 ```
 
 Sets the value for the given key in the map.
