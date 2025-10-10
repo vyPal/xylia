@@ -46,26 +46,34 @@ Standard error stream.
 
 ### `print` <a name="print"></a>
 
-**Signature:** `print(args: any[])`  
+```xylia
+print(args: any[])
+```
 
 Prints arguments to standard output without a newline.
 
 ### `println` <a name="println"></a>
 
-**Signature:** `println(args: any[])`  
+```xylia
+println(args: any[])
+```
 
 Prints arguments to standard output followed by a newline.
 
 ### `printf` <a name="printf"></a>
 
-**Signature:** `printf(args: any[])`  
+```xylia
+printf(args: any[])
+```
 
 Prints formatted output to standard output.
 Requires at least one argument.
 
 ### `input` <a name="input"></a>
 
-**Signature:** `input(prompt?: string) -> string`  
+```xylia
+input(prompt?: string) -> string
+```
 
 Reads input from standard input, optionally displaying a prompt.
 
@@ -73,33 +81,43 @@ Reads input from standard input, optionally displaying a prompt.
 
 Represents an open file handle.
 
-### `File::init` <a name="fileinit"></a>
+#### `File::init` <a name="fileinit"></a>
 
-**Signature:** `init(path: string, mode: string) -> File`  
+```xylia
+init(path: string, mode: string) -> File
+```
 
 Opens a file with the specified mode.
 
-### `File::close` <a name="fileclose"></a>
+#### `File::close` <a name="fileclose"></a>
 
-**Signature:** `close()`  
+```xylia
+close()
+```
 
 Closes the file handle.
 
-### `File::read` <a name="fileread"></a>
+#### `File::read` <a name="fileread"></a>
 
-**Signature:** `read() -> string`  
+```xylia
+read() -> string
+```
 
 Reads the file contents.
 
-### `File::write` <a name="filewrite"></a>
+#### `File::write` <a name="filewrite"></a>
 
-**Signature:** `write(content: string)`  
+```xylia
+write(content: string)
+```
 
 Writes content to the file.
 
-### `File::<<` <a name="file"></a>
+#### `File::<<` <a name="file"></a>
 
-**Signature:** `<<(value: any)`  
+```xylia
+<<(value: any)
+```
 
 Writes a value to the file (using its string representation).
 

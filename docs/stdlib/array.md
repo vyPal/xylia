@@ -31,39 +31,51 @@ utilities for resizing and converting to string representations.
 
 A wrapper type for builtin arrays, providing common operations and size management.
 
-### `Array::init` <a name="arrayinit"></a>
+#### `Array::init` <a name="arrayinit"></a>
 
-**Signature:** `init(size: number) -> Array`  
+```xylia
+init(size: number) -> Array
+```
 
 Initializes a new array with the given size.
 
-### `Array::size` <a name="arraysize"></a>
+#### `Array::size` <a name="arraysize"></a>
 
-**Signature:** `size() -> number`  
+```xylia
+size() -> number
+```
 
 Returns the current size of the array.
 
-### `Array::to_string` <a name="arrayto_string"></a>
+#### `Array::to_string` <a name="arrayto_string"></a>
 
-**Signature:** `to_string() -> string`  
+```xylia
+to_string() -> string
+```
 
 Returns a string representation of the array contents.
 
-### `Array::resize` <a name="arrayresize"></a>
+#### `Array::resize` <a name="arrayresize"></a>
 
-**Signature:** `resize(new_size: number)`  
+```xylia
+resize(new_size: number)
+```
 
 Resizes the array to `new_size`, truncating or extending it as needed.
 
-### `Array::[]` <a name="array"></a>
+#### `Array::[]` <a name="array"></a>
 
-**Signature:** `[](index: number) -> any`  
+```xylia
+[](index: number) -> any
+```
 
 Accesses the value at the specified `index`.
 
-### `Array::[]=` <a name="array"></a>
+#### `Array::[]=` <a name="array"></a>
 
-**Signature:** `[]=(index: number, value: any)`  
+```xylia
+[]=(index: number, value: any)
+```
 
 Sets the element at the specified `index` to `value`.
 

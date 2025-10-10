@@ -131,6 +131,8 @@ def slugify(text: str) -> str:
 
 def render_markdown(module: ModuleDoc) -> str:
     out = []
+
+    # Module header
     out.append(f"# Module: `{module.name}`\n\n")
     if module.header:
         out.append(
@@ -144,6 +146,7 @@ def render_markdown(module: ModuleDoc) -> str:
     functions = [s for s in module.symbols if s.kind in ("function", "operator")]
     classes = [s for s in module.symbols if s.kind == "class"]
 
+    # Contents table
     out.append(
         "## Contents\n\n| Symbol | Type | Description |\n|:--------|:------|:-------------|\n"
     )
@@ -155,7 +158,6 @@ def render_markdown(module: ModuleDoc) -> str:
             f"| [`{class_prefix}{sym.name}`](#{anchor}) | {sym.kind} | {desc_line} |\n"
         )
 
-    # Contents table
     for group in (variables, functions, classes):
         for sym in group:
             row(sym)
@@ -165,16 +167,27 @@ def render_markdown(module: ModuleDoc) -> str:
 
     out.append("\n---\n\n")
 
-    # Detailed documentation
-    def section(sym: Symbol, prefix=""):
+    # Detailed documentation with hierarchy
+    def section(sym: Symbol, prefix="", level=3):
+        """level: Markdown heading level (3=###, 4=####)"""
         heading_id = slugify(f"{prefix}{sym.name}")
-        out.append(f'### `{prefix}{sym.name}` <a name="{heading_id}"></a>\n\n')
-        if sym.signature:
-            out.append(f"**Signature:** `{sym.name}{sym.signature}`  \n\n")
-        out.append(sym.description.strip() + "\n\n")
-        for m in sym.methods:
-            section(m, prefix=f"{sym.name}::")
+        heading_marks = "#" * level
+        out.append(
+            f'{heading_marks} `{prefix}{sym.name}` <a name="{heading_id}"></a>\n\n'
+        )
 
+        # Use code block for signature if available
+        if sym.signature:
+            out.append(f"```xylia\n{sym.name}{sym.signature}\n```\n\n")
+
+        if sym.description.strip():
+            out.append(sym.description.strip() + "\n\n")
+
+        # Increase level for methods/operators
+        for m in sym.methods:
+            section(m, prefix=f"{sym.name}::", level=level + 1)
+
+    # Render sections
     for sym in variables + functions + classes:
         section(sym)
 
