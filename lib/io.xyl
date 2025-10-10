@@ -34,13 +34,16 @@ class File {
   }
 
   func read() {
-    assert self.__open, "File is already closed";
-    return __builtin___read(self.__file);
+    if (self.__open)
+      return ok(__builtin___read(self.__file));
+    return err("File is already closed");
   }
 
   func write(content) {
-    assert self.__open, "File is already closed";
+    if (!self.__open)
+      err("File is already closed");
     __builtin___write(self.__file, content);
+    return ok();
   }
 
   operator << (other) {

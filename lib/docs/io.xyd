@@ -1,0 +1,47 @@
+@module io
+@header "io"
+@description
+The `io` module provides functions and classes for input and output operations.
+It includes console printing, formatted output, user input, and file handling.
+
+@function print(args: any[])
+Prints arguments to standard output without a newline.
+
+@function println(args: any[])
+Prints arguments to standard output followed by a newline.
+
+@function printf(args: any[])
+Prints formatted output to standard output.
+Requires at least one argument.
+
+@function input(prompt?: string) -> string
+Reads input from standard input, optionally displaying a prompt.
+
+@class File
+Represents an open file handle.
+
+@method init(path: string, mode: string) -> File
+Opens a file with the specified mode.
+
+@method close()
+Closes the file handle.
+
+@method read() -> string
+Reads the file contents.
+
+@method write(content: string)
+Writes content to the file.
+
+@operator << (value: any)
+Writes a value to the file (using its string representation).
+
+@endclass
+
+@variable stdin : File
+Standard input stream.
+
+@variable stdout : File
+Standard output stream.
+
+@variable stderr : File
+Standard error stream.
