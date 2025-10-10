@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import re
 from argparse import ArgumentParser
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -121,6 +122,13 @@ def parse(tokens: List[Token]) -> ModuleDoc:
 # ---------------------------------------------------------------------------
 
 
+def slugify(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^\w\s-]", "", text)
+    text = text.replace(" ", "-")
+    return text
+
+
 def render_markdown(module: ModuleDoc) -> str:
     out = []
     out.append(f"# Module: `{module.name}`\n\n")
@@ -140,27 +148,27 @@ def render_markdown(module: ModuleDoc) -> str:
         "## Contents\n\n| Symbol | Type | Description |\n|:--------|:------|:-------------|\n"
     )
 
-    def row(sym: Symbol):
+    def row(sym: Symbol, class_prefix: str = ""):
         desc_line = sym.description.strip().split("\n", 1)[0]
+        anchor = slugify(f"{class_prefix}{sym.name}")
         out.append(
-            f"| [`{sym.name}`](#{sym.name.replace(" ", "-").lower()}) | {sym.kind} | {desc_line} |\n"
+            f"| [`{class_prefix}{sym.name}`](#{anchor}) | {sym.kind} | {desc_line} |\n"
         )
 
+    # Contents table
     for group in (variables, functions, classes):
         for sym in group:
             row(sym)
             if sym.methods:
                 for m in sym.methods:
-                    desc_line = m.description.strip().split("\n", 1)[0]
-                    out.append(
-                        f"| [`{sym.name}::{m.name}`](#{sym.name.lower()}::{m.name.lower()}) | {m.kind} | {desc_line} |\n"
-                    )
+                    row(m, class_prefix=f"{sym.name}::")
 
     out.append("\n---\n\n")
 
     # Detailed documentation
     def section(sym: Symbol, prefix=""):
-        out.append(f"### `{prefix}{sym.name}`\n\n")
+        heading_id = slugify(f"{prefix}{sym.name}")
+        out.append(f'### `{prefix}{sym.name}` <a name="{heading_id}"></a>\n\n')
         if sym.signature:
             out.append(f"**Signature:** `{sym.name}{sym.signature}`  \n\n")
         out.append(sym.description.strip() + "\n\n")

@@ -16,88 +16,88 @@ It includes console printing, formatted output, user input, and file handling.
 
 | Symbol | Type | Description |
 |:--------|:------|:-------------|
-| [`stdin : File`](#stdin-:-file) | variable | Standard input stream. |
-| [`stdout : File`](#stdout-:-file) | variable | Standard output stream. |
-| [`stderr : File`](#stderr-:-file) | variable | Standard error stream. |
+| [`stdin : File`](#stdin--file) | variable | Standard input stream. |
+| [`stdout : File`](#stdout--file) | variable | Standard output stream. |
+| [`stderr : File`](#stderr--file) | variable | Standard error stream. |
 | [`print`](#print) | function | Prints arguments to standard output without a newline. |
 | [`println`](#println) | function | Prints arguments to standard output followed by a newline. |
 | [`printf`](#printf) | function | Prints formatted output to standard output. |
 | [`input`](#input) | function | Reads input from standard input, optionally displaying a prompt. |
 | [`File`](#file) | class | Represents an open file handle. |
-| [`File::init`](#file::init) | method | Opens a file with the specified mode. |
-| [`File::close`](#file::close) | method | Closes the file handle. |
-| [`File::read`](#file::read) | method | Reads the file contents. |
-| [`File::write`](#file::write) | method | Writes content to the file. |
-| [`File::<<`](#file::<<) | operator | Writes a value to the file (using its string representation). |
+| [`File::init`](#fileinit) | method | Opens a file with the specified mode. |
+| [`File::close`](#fileclose) | method | Closes the file handle. |
+| [`File::read`](#fileread) | method | Reads the file contents. |
+| [`File::write`](#filewrite) | method | Writes content to the file. |
+| [`File::<<`](#file) | operator | Writes a value to the file (using its string representation). |
 
 ---
 
-### `stdin : File`
+### `stdin : File` <a name="stdin--file"></a>
 
 Standard input stream.
 
-### `stdout : File`
+### `stdout : File` <a name="stdout--file"></a>
 
 Standard output stream.
 
-### `stderr : File`
+### `stderr : File` <a name="stderr--file"></a>
 
 Standard error stream.
 
-### `print`
+### `print` <a name="print"></a>
 
 **Signature:** `print(args: any[])`  
 
 Prints arguments to standard output without a newline.
 
-### `println`
+### `println` <a name="println"></a>
 
 **Signature:** `println(args: any[])`  
 
 Prints arguments to standard output followed by a newline.
 
-### `printf`
+### `printf` <a name="printf"></a>
 
 **Signature:** `printf(args: any[])`  
 
 Prints formatted output to standard output.
 Requires at least one argument.
 
-### `input`
+### `input` <a name="input"></a>
 
 **Signature:** `input(prompt?: string) -> string`  
 
 Reads input from standard input, optionally displaying a prompt.
 
-### `File`
+### `File` <a name="file"></a>
 
 Represents an open file handle.
 
-### `File::init`
+### `File::init` <a name="fileinit"></a>
 
 **Signature:** `init(path: string, mode: string) -> File`  
 
 Opens a file with the specified mode.
 
-### `File::close`
+### `File::close` <a name="fileclose"></a>
 
 **Signature:** `close()`  
 
 Closes the file handle.
 
-### `File::read`
+### `File::read` <a name="fileread"></a>
 
 **Signature:** `read() -> string`  
 
 Reads the file contents.
 
-### `File::write`
+### `File::write` <a name="filewrite"></a>
 
 **Signature:** `write(content: string)`  
 
 Writes content to the file.
 
-### `File::<<`
+### `File::<<` <a name="file"></a>
 
 **Signature:** `<<(value: any)`  
 
