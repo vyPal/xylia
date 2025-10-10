@@ -1,0 +1,64 @@
+@module math
+@header "math"
+@description
+The `math` module provides common mathematical constants and functions
+for numerical operations, trigonometry, logarithms, and rounding.
+
+@variable PI = 3.14159265358979323846
+@variable E = 2.7182818284590452354
+@variable NAN = 0 / 0
+@variable INF = 1 / 0
+
+@function abs(x)
+Returns the absolute value of `x`.
+
+@function min(args[])
+Returns the minimum value from a list of arguments.
+
+@function max(args[])
+Returns the maximum value from a list of arguments.
+
+@function clamp(x, lo, hi)
+Clamps `x` between `lo` and `hi`.
+
+@function sin(x)
+Returns the sine of `x` (radians).
+
+@function cos(x)
+Returns the cosine of `x` (radians).
+
+@function tan(x)
+Returns the tangent of `x` (radians).
+
+@function asin(x)
+Returns the arcsine of `x` in radians.
+
+@function acos(x)
+Returns the arccosine of `x` in radians.
+
+@function atan(x)
+Returns the arctangent of `x` in radians.
+
+@function atan2(y, x)
+Returns the arctangent of `y/x` in radians, considering the quadrant.
+
+@function sqrt(x)
+Returns the square root of `x`.
+
+@function pow(x, y)
+Returns `x` raised to the power of `y`.
+
+@function log(x)
+Returns the natural logarithm of `x`.
+
+@function exp(x)
+Returns e raised to the power `x`.
+
+@function floor(x)
+Returns the largest integer ≤ `x`.
+
+@function ceil(x)
+Returns the smallest integer ≥ `x`.
+
+@function round(x)
+Rounds `x` to the nearest integer.

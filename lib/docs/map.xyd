@@ -1,0 +1,35 @@
+@module map
+@header "map"
+@description
+The `map` module provides a hash map implementation with automatic resizing
+and collision handling. It allows storing key-value pairs with efficient
+lookup, insertion, and deletion.
+
+@class Map
+A hash map type that wraps a low-level array with custom collision resolution.
+
+@method init() -> Map
+Initializes a new empty map.
+
+@method get_index(key) -> number
+Computes the hash index for the given key.
+
+@method resize_table(new_capacity: number)
+Resizes the internal table to the specified capacity.
+
+@method insert(key, value)
+Inserts a key-value pair into the map, replacing the value if the key exists.
+
+@method delete(key) -> bool
+Deletes a key from the map. Returns `true` if the key was removed, `false` if it was not found.
+
+@method get(key) -> any
+Retrieves the value associated with the key, or `nil` if the key does not exist.
+
+@operator [] (key) -> any
+Accesses the value corresponding to `key`.
+
+@operator []= (key, value)
+Sets the value for the given key in the map.
+
+@endclass

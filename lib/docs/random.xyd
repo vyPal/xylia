@@ -1,0 +1,19 @@
+@module random
+@header "random"
+@description
+The `random` module provides functions for generating pseudo-random numbers,
+seeding the random generator, and selecting random elements from collections.
+
+@function random(args[])
+Generates a random number. Usage:
+- `random()` → float between 0 and 1
+- `random(n)` → integer between 1 and n
+- `random(a, b)` → integer between a and b
+
+@function randomseed(seed)
+Seeds the random number generator with the given `seed`.
+
+@function choice(args[])
+Selects a random element from a collection or arguments list.  
+- If given a vector or list: returns a random element  
+- Otherwise: returns a random argument from the list
