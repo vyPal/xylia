@@ -391,6 +391,9 @@ void print_object(FILE *stream, value_t value, bool literally) {
       fputs(")", stream);
     }
     break;
+  case OBJ_ENUM:
+    fprintf(stream, "<enum %s>", AS_ENUM(value)->name->chars);
+    break;
   case OBJ_ANY:
     break;
   }

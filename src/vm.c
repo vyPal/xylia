@@ -141,6 +141,7 @@ static void init_vm_string(void) {
   vm.vm_strings[VM_STR_MODULE] = copy_string("module", 6, true);
   vm.vm_strings[VM_STR_RANGE] = copy_string("range", 5, true);
   vm.vm_strings[VM_STR_RESULT] = copy_string("result", 6, true);
+  vm.vm_strings[VM_STR_ENUM] = copy_string("enum", 4, true);
   vm.vm_strings[VM_STR_OVERLOAD_EQ] = copy_string("__eq__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GT] = copy_string("__gt__", 6, true);
   vm.vm_strings[VM_STR_OVERLOAD_GE] = copy_string("__ge__", 6, true);

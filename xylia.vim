@@ -32,7 +32,7 @@ syn match xylFuncCall /\<[A-Za-z_][A-Za-z0-9_]*\>\s*(/me=e-1
 syn match xylComment "--.*$"
 
 hi def link xylEscape         SpecialChar
-hi def link xylIdentifier     Identifier
+" hi def link xylIdentifier     Identifier
 hi def link xylKeyword        Keyword
 hi def link xylModuleAccessor Structure
 hi def link xylBoolean        Boolean

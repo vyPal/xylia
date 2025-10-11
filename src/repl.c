@@ -147,9 +147,10 @@ void xylia_hint(const char *input, struct replxx_hints *hints, int *start_index,
 }
 
 static ReplxxColor classify_identifier(const char *word, int len) {
-  static const char *keywords[] = {
-      "assert", "break",  "class", "continue", "else",  "for",      "func",
-      "if",     "return", "super", "let",      "while", "operator", "unary"};
+  static const char *keywords[] = {"assert", "break",    "class", "continue",
+                                   "else",   "enum",     "for",   "func",
+                                   "if",     "return",   "super", "let",
+                                   "while",  "operator", "unary"};
   static const char *constants[] = {"true", "false", "nil"};
   static const char *special_keywords[] = {
       "import",   "len",  "typeof", "isinstance", "hasmethod",

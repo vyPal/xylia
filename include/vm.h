@@ -28,6 +28,7 @@ typedef enum {
   VM_STR_MODULE,
   VM_STR_RANGE,
   VM_STR_RESULT,
+  VM_STR_ENUM,
   VM_STR_TRUE,
   VM_STR_FALSE,
   VM_STR_OVERLOAD_EQ,        // ==
