@@ -24,6 +24,7 @@ typedef enum {
   TOK_PERCENT,  // %
   TOK_SHIFTL,   // <<
   TOK_SHIFTR,   // >>
+  TOK_ARROW,    // ->
 
   // Bitwise operators
   TOK_BIT_AND, // &

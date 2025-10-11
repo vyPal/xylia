@@ -247,7 +247,7 @@ token_t scan_token(void) {
   case '+':
     return make_token(TOK_PLUS);
   case '-':
-    return make_token(TOK_MINUS);
+    return make_token(match('>') ? TOK_ARROW : TOK_MINUS);
   case '*':
     return make_token(TOK_ASTERISK);
   case '/':
