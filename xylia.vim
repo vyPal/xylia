@@ -8,7 +8,7 @@ if exists("b:current_syntax")
 endif
 
 syn match xylIdentifier /\<[A-Za-z_][A-Za-z0-9_]*\>/
-syn keyword xylKeyword class else for func if return super self let while operator unary assert break continue
+syn keyword xylKeyword class else enum for func if return super self let while operator unary assert break continue
 
 syn keyword xylBoolean true false
 syn keyword xylNil nil

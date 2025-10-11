@@ -165,6 +165,14 @@ static void blacken_object(obj_t *object) {
     mark_value(range->from);
     mark_value(range->to);
   } break;
+  case OBJ_RESULT: {
+    obj_result_t *result = (obj_result_t *)object;
+    mark_value(result->value);
+  } break;
+  case OBJ_ENUM: {
+    obj_enum_t *enum_ = (obj_enum_t *)object;
+    mark_table(&enum_->values);
+  } break;
   }
 }
 
@@ -239,6 +247,14 @@ static void free_object(obj_t *object) {
   case OBJ_RANGE:
     FREE(obj_range_t, object);
     break;
+  case OBJ_RESULT:
+    FREE(obj_result_t, object);
+    break;
+  case OBJ_ENUM: {
+    obj_enum_t *enum_ = (obj_enum_t *)object;
+    free_table(&enum_->values);
+    FREE(obj_enum_t, object);
+  } break;
   case OBJ_ANY:
     break;
   }

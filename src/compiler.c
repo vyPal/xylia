@@ -938,6 +938,7 @@ parse_rule_t rules[] = {
     [TOK_CLASS] = {NULL, NULL, PREC_NONE},
     [TOK_CONTINUE] = {NULL, NULL, PREC_NONE},
     [TOK_ELSE] = {NULL, NULL, PREC_NONE},
+    [TOK_ENUM] = {NULL, NULL, PREC_NONE},
     [TOK_FOR] = {NULL, NULL, PREC_NONE},
     [TOK_FUNC] = {NULL, NULL, PREC_NONE},
     [TOK_IF] = {NULL, NULL, PREC_NONE},
@@ -1088,10 +1089,33 @@ static void method(void) {
   emit_var_op(OP_METHOD, constant);
 }
 
+static void enum_declaration(void) {
+  consume(TOK_IDENT, "Expected enum name");
+  token_t enum_name = parser.previous;
+  unsigned int name_constant = ident_constant(&enum_name);
+  declare_variable();
+
+  emit_var_op(OP_ENUM, name_constant);
+  define_variable(name_constant);
+
+  named_variable(enum_name, false);
+  consume(TOK_LBRACE, "Expected '{' before enum body");
+  while (!check(TOK_RBRACE) && !check(TOK_EOF)) {
+    consume(TOK_IDENT, "Expected enum value name");
+    unsigned int constant = ident_constant(&parser.previous);
+    emit_var_op(OP_ENUM_VALUE, constant);
+    if (!match(TOK_COMMA))
+      break;
+  }
+
+  consume(TOK_RBRACE, "Expected '}' after enum body");
+  emit_byte(OP_POP);
+}
+
 static void class_declaration(void) {
   consume(TOK_IDENT, "Expected class name");
   token_t class_name = parser.previous;
-  unsigned int name_constant = ident_constant(&parser.previous);
+  unsigned int name_constant = ident_constant(&class_name);
   declare_variable();
 
   emit_var_op(OP_CLASS, name_constant);
@@ -1157,6 +1181,8 @@ static void declaration(void) {
     func_declaration();
   else if (match(TOK_LET))
     var_declaration();
+  else if (match(TOK_ENUM))
+    enum_declaration();
   else
     statement();
 

@@ -124,7 +124,14 @@ static token_type_t ident_type(void) {
       }
     break;
   case 'e':
-    return check_keyword(1, 3, "lse", TOK_ELSE);
+    if (scanner.current - scanner.start > 1)
+      switch (scanner.start[1]) {
+      case 'l':
+        return check_keyword(2, 2, "se", TOK_ELSE);
+      case 'n':
+        return check_keyword(2, 2, "um", TOK_ENUM);
+      }
+    break;
   case 'f':
     if (scanner.current - scanner.start > 1)
       switch (scanner.start[1]) {

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "memory.h"
@@ -237,6 +238,21 @@ obj_result_t *new_result_err(value_t error) {
   result->is_ok = false;
   result->value = error;
   return result;
+}
+
+obj_enum_t *new_enum(obj_string_t *name) {
+  obj_enum_t *enum_ = ALLOCATE_OBJ(obj_enum_t, OBJ_ENUM);
+  enum_->name = name;
+  init_table(&enum_->values);
+  enum_->last = -1;
+  return enum_;
+}
+
+void add_enum_value(obj_enum_t *enum_, obj_string_t *name) {
+  if (!table_set(&enum_->values, name, NUMBER_VAL(++enum_->last))) {
+    runtime_error(-1, "Duplicate key in enum '%s'", enum_->name->chars);
+    return;
+  }
 }
 
 static void print_function(FILE *stream, obj_function_t *function) {

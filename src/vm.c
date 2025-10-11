@@ -478,7 +478,8 @@ static bool invoke(obj_string_t *name, int argc) {
   value_t receiver = peek(argc);
 
   if (!IS_INSTANCE(receiver) && !IS_MODULE(receiver) && !IS_RESULT(receiver)) {
-    runtime_error(vm.offset, "Only instances, modules, and results have methods");
+    runtime_error(vm.offset,
+                  "Only instances, modules, and results have methods");
     return false;
   }
 
@@ -625,6 +626,11 @@ static void define_method(obj_string_t *name) {
   obj_class_t *clas = AS_CLASS(peek(1));
   table_set(&clas->methods, name, method);
   pop();
+}
+
+static void define_enum_value(obj_string_t *name) {
+  obj_enum_t *enum_ = AS_ENUM(peek(0));
+  add_enum_value(enum_, name);
 }
 
 static bool is_falsey(value_t value) {
@@ -908,44 +914,71 @@ static result_t run(void) {
       push(value);
     } break;
     case OP_GET_ACCESS: {
-      if (!IS_MODULE(peek(0))) {
-        runtime_error(vm.offset, "Only modules have accessors");
+      if (IS_MODULE(peek(0))) {
+        obj_module_t *module = AS_MODULE(peek(0));
+        obj_string_t *name = READ_STRING();
+
+        value_t value;
+        if (table_get(&module->globals, name, &value)) {
+          pop();
+          push(value);
+          break;
+        }
+
+        runtime_error(vm.offset, "Object does not have property '%s'",
+                      name->chars);
+        return RESULT_RUNTIME_ERROR;
+      } else if (IS_ENUM(peek(0))) {
+        obj_enum_t *enum_ = AS_ENUM(peek(0));
+        obj_string_t *name = READ_STRING();
+        value_t result;
+
+        if (!table_get(&enum_->values, name, &result)) {
+          runtime_error(vm.offset, "Object does not have property '%s'",
+                        name->chars);
+          return RESULT_RUNTIME_ERROR;
+        }
+
+        pop();
+        push(result);
+      } else {
+        runtime_error(vm.offset, "Only modules and enums have accessors");
         return RESULT_RUNTIME_ERROR;
       }
-
-      obj_module_t *module = AS_MODULE(peek(0));
-      obj_string_t *name = READ_STRING();
-
-      value_t value;
-      if (table_get(&module->globals, name, &value)) {
-        pop();
-        push(value);
-        break;
-      }
-
-      runtime_error(vm.offset, "Object does not have property '%s'",
-                    name->chars);
-      return RESULT_RUNTIME_ERROR;
     } break;
     case OP_GET_ACCESS_LONG: {
-      if (!IS_MODULE(peek(0))) {
-        runtime_error(vm.offset, "Only modules have accessors");
+      if (IS_MODULE(peek(0))) {
+        obj_module_t *module = AS_MODULE(peek(0));
+        obj_string_t *name = READ_STRING_LONG();
+
+        value_t value;
+        if (table_get(&module->globals, name, &value)) {
+          pop();
+          push(value);
+          break;
+        }
+
+        runtime_error(vm.offset, "Object does not have property '%s'",
+                      name->chars);
+        return RESULT_RUNTIME_ERROR;
+      } else if (IS_ENUM(peek(0))) {
+        obj_enum_t *enum_ = AS_ENUM(peek(0));
+        obj_string_t *name = READ_STRING_LONG();
+        value_t result;
+
+        if (!table_get(&enum_->values, name, &result)) {
+          runtime_error(vm.offset, "Object does not have property '%s'",
+                        name->chars);
+          return RESULT_RUNTIME_ERROR;
+        }
+
+        pop();
+        push(result);
+      } else {
+        runtime_error(vm.offset, "Only modules and enums have accessors");
         return RESULT_RUNTIME_ERROR;
       }
 
-      obj_module_t *module = AS_MODULE(peek(0));
-      obj_string_t *name = READ_STRING_LONG();
-
-      value_t value;
-      if (table_get(&module->globals, name, &value)) {
-        pop();
-        push(value);
-        break;
-      }
-
-      runtime_error(vm.offset, "Object does not have property '%s'",
-                    name->chars);
-      return RESULT_RUNTIME_ERROR;
     } break;
     case OP_GET_INDEX: {
       value_t index = peek(0);
@@ -1121,6 +1154,12 @@ static result_t run(void) {
     case OP_CLASS_LONG:
       push(OBJ_VAL(new_class(READ_STRING_LONG())));
       break;
+    case OP_ENUM:
+      push(OBJ_VAL(new_enum(READ_STRING())));
+      break;
+    case OP_ENUM_LONG:
+      push(OBJ_VAL(new_enum(READ_STRING_LONG())));
+      break;
     case OP_CLOSURE: {
       obj_function_t *function = AS_FUNCTION(READ_CONSTANT());
       obj_closure_t *closure = new_closure(function);
@@ -1152,6 +1191,12 @@ static result_t run(void) {
       break;
     case OP_METHOD_LONG:
       define_method(READ_STRING_LONG());
+      break;
+    case OP_ENUM_VALUE:
+      define_enum_value(READ_STRING());
+      break;
+    case OP_ENUM_VALUE_LONG:
+      define_enum_value(READ_STRING_LONG());
       break;
     case OP_TRUE:
       push(BOOL_VAL(true));

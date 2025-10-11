@@ -61,6 +61,7 @@ typedef enum {
   TOK_CLASS,
   TOK_CONTINUE,
   TOK_ELSE,
+  TOK_ENUM,
   TOK_FOR,
   TOK_FUNC,
   TOK_IF,
