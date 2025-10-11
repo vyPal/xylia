@@ -633,6 +633,11 @@ static void define_enum_value(obj_string_t *name) {
   obj_enum_t *enum_ = AS_ENUM(peek(0));
   add_enum_value(enum_, name);
 }
+static void define_enum_value_custom(obj_string_t *name, value_t value) {
+  obj_enum_t *enum_ = AS_ENUM(peek(1));
+  add_enum_value_custom(enum_, name, value);
+  pop(); // pop the value
+}
 
 static bool is_falsey(value_t value) {
   return IS_NIL(value) || (IS_BOOL(value) && !AS_BOOL(value));
@@ -1198,6 +1203,12 @@ static result_t run(void) {
       break;
     case OP_ENUM_VALUE_LONG:
       define_enum_value(READ_STRING_LONG());
+      break;
+    case OP_ENUM_VALUE_CUSTOM:
+      define_enum_value_custom(READ_STRING(), peek(0));
+      break;
+    case OP_ENUM_VALUE_CUSTOM_LONG:
+      define_enum_value_custom(READ_STRING_LONG(), peek(0));
       break;
     case OP_TRUE:
       push(BOOL_VAL(true));

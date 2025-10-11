@@ -255,6 +255,17 @@ void add_enum_value(obj_enum_t *enum_, obj_string_t *name) {
   }
 }
 
+void add_enum_value_custom(obj_enum_t *enum_, obj_string_t *name,
+                           value_t value) {
+  if (!table_set(&enum_->values, name, value)) {
+    runtime_error(-1, "Duplicate key in enum '%s'", enum_->name->chars);
+    return;
+  }
+
+  if (IS_NUMBER(value))
+    enum_->last = AS_NUMBER(value);
+}
+
 static void print_function(FILE *stream, obj_function_t *function) {
   if (function->name == NULL)
     fputs("<script>", stream);

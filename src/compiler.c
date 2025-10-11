@@ -1103,7 +1103,13 @@ static void enum_declaration(void) {
   while (!check(TOK_RBRACE) && !check(TOK_EOF)) {
     consume(TOK_IDENT, "Expected enum value name");
     unsigned int constant = ident_constant(&parser.previous);
-    emit_var_op(OP_ENUM_VALUE, constant);
+
+    if (match(TOK_ASSIGN)) {
+      expression();
+      emit_var_op(OP_ENUM_VALUE_CUSTOM, constant);
+    } else
+      emit_var_op(OP_ENUM_VALUE, constant);
+
     if (!match(TOK_COMMA))
       break;
   }

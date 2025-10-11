@@ -206,6 +206,8 @@ obj_enum_t *new_enum(obj_string_t *name);
 void print_object(FILE *stream, value_t value, bool literally);
 
 void add_enum_value(obj_enum_t *enum_, obj_string_t *name);
+void add_enum_value_custom(obj_enum_t *enum_, obj_string_t *name,
+                           value_t value);
 
 static inline bool is_obj_type(value_t value, obj_type_t type) {
   return IS_OBJ(value) && AS_OBJ(value)->type == type;
