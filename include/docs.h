@@ -35,9 +35,9 @@ struct doc_function {
   doc_param_t *params;       // Parameter list
   type_hint_t return_type;   // Return type hint
   doc_comment_t *return_doc; // Return value documentation
-  bool is_method;            // True if this is a class method
   char *class_name;          // If method, which class it belongs to
   int line;                  // Line number of function declaration
+  bool is_method;            // True if this is a class method
   doc_function_t *next;      // Next function in module
 };
 
@@ -80,9 +80,9 @@ typedef enum {
 // Documentation generation options
 typedef struct {
   doc_format_t format;  // Output format
-  char *output_dir;     // Output directory
   bool include_private; // Include private members
   bool generate_index;  // Generate index/navigation
+  char *output_dir;     // Output directory
   char *title;          // Documentation title
   char *theme;          // Theme for HTML output
 } doc_options_t;
