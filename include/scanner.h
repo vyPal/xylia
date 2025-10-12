@@ -1,6 +1,8 @@
 #ifndef XYL_SCANNER_H
 #define XYL_SCANNER_H
 
+#include <stdbool.h>
+
 typedef enum {
   TOK_LPAREN,    // (
   TOK_RPAREN,    // )
@@ -74,6 +76,7 @@ typedef enum {
   TOK_WHILE,
 
   // Special tokens
+  TOK_DOC_COMMENT,
   TOK_ERROR,
   TOK_EOF,
 } token_type_t;
@@ -86,6 +89,7 @@ typedef struct {
 } token_t;
 
 void init_scanner(const char *source);
+void init_scanner_with_doc_mode(const char *source, bool enable_doc_comments);
 token_t scan_token(void);
 
 #endif

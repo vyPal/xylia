@@ -7,6 +7,7 @@ typedef struct {
   const char *start;
   const char *current;
   int row, col;
+  bool doc_mode; // Enable doc comment recognition
 } scanner_t;
 
 scanner_t scanner;
@@ -16,6 +17,15 @@ void init_scanner(const char *source) {
   scanner.current = source;
   scanner.row = 1;
   scanner.col = 1;
+  scanner.doc_mode = false;
+}
+
+void init_scanner_with_doc_mode(const char *source, bool enable_doc_comments) {
+  scanner.start = source;
+  scanner.current = source;
+  scanner.row = 1;
+  scanner.col = 1;
+  scanner.doc_mode = enable_doc_comments;
 }
 
 static bool is_alpha(char c) {
@@ -75,6 +85,29 @@ static token_t error_token(const char *msg) {
   return token;
 }
 
+static token_t doc_comment(void) {
+  // All three dashes have already been consumed by match() calls
+  
+  // Skip any whitespace after ---
+  while (peek() == ' ' || peek() == '\t')
+    advance();
+  
+  // Capture the comment content until end of line
+  const char *start = scanner.current;
+  while (peek() != '\n' && !is_at_end())
+    advance();
+  
+  // Create token with the comment content
+  token_t token;
+  token.type = TOK_DOC_COMMENT;
+  token.start = start;
+  token.length = (int)(scanner.current - start);
+  token.row = scanner.row;
+  token.col = scanner.col;
+  
+  return token;
+}
+
 static void skip_whitespace(void) {
   while (true) {
     switch (peek()) {
@@ -89,8 +122,14 @@ static void skip_whitespace(void) {
       break;
     case '-':
       if (peek_next() == '-') {
-        while (peek() != '\n' && !is_at_end())
-          advance();
+        // Check if it's a doc comment (---)
+        if (scanner.current[2] == '-') {
+          return; // Don't skip doc comments, let scan_token handle them
+        } else {
+          // Regular comment, skip it
+          while (peek() != '\n' && !is_at_end())
+            advance();
+        }
       } else
         return;
       break;
@@ -247,6 +286,16 @@ token_t scan_token(void) {
   case '+':
     return make_token(TOK_PLUS);
   case '-':
+    if (match('-')) {
+      if (match('-') && scanner.doc_mode) {
+        return doc_comment();
+      } else {
+        // Regular comment, skip it and continue scanning
+        while (peek() != '\n' && !is_at_end())
+          advance();
+        return scan_token();
+      }
+    }
     return make_token(match('>') ? TOK_ARROW : TOK_MINUS);
   case '*':
     return make_token(TOK_ASTERISK);

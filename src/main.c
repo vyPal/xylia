@@ -60,6 +60,7 @@ typedef struct {
 static const subcommand_t subcommands[] = {
   {"run", cli_run, "Run a Xylia script file"},
   {"repl", cli_repl, "Start interactive REPL session"},
+  {"docs", cli_docs, "Generate documentation from source files"},
   {NULL, NULL, NULL} // Sentinel
 };
 
@@ -102,8 +103,8 @@ static cli_result_t run_subcommand(int argc, char **argv, cli_context_t *ctx) {
   return cmd->func(argc - 1, argv + 1, ctx);
 }
 
-// Parse global arguments (returns true if execution should continue)
-static bool parse_global_args(int *argc, char ***argv, cli_context_t *ctx) {
+// Parse only global arguments that appear before subcommand (returns true if execution should continue)
+static bool parse_global_args_before_subcommand(int *argc, char ***argv, cli_context_t *ctx) {
   int new_argc = 0;
   char **new_argv = *argv;
   
@@ -119,20 +120,59 @@ static bool parse_global_args(int *argc, char ***argv, cli_context_t *ctx) {
     } else if (strcmp(arg, "-v") == 0 || strcmp(arg, "--verbose") == 0) {
       ctx->verbose = true;
       continue; // Don't add to new_argv
-    } else if (arg[0] == '-') {
-      // Unknown flag
-      fprintf(stderr, "Error: Unknown option '%s'\n", arg);
-      fprintf(stderr, "Run 'xylia --help' for usage information\n");
-      ctx->failed = true;
-      return false;
     } else {
-      // Keep this argument (not a flag)
+      // Keep this argument - it's either a subcommand or subcommand argument
       new_argv[new_argc++] = (*argv)[i];
     }
   }
   
   *argc = new_argc;
   return true;
+}
+
+// Separate global args from subcommand args
+static void separate_global_and_subcommand_args(int argc, char **argv, 
+                                                 int *global_argc, char ***global_argv,
+                                                 int *sub_argc, char ***sub_argv,
+                                                 cli_context_t *ctx) {
+  static char *global_args[16];
+  static char *sub_args[256];
+  
+  *global_argc = 0;
+  *sub_argc = 0;
+  *global_argv = global_args;
+  *sub_argv = sub_args;
+  
+  bool found_subcommand = false;
+  
+  for (int i = 0; i < argc; i++) {
+    const char *arg = argv[i];
+    
+    if (!found_subcommand) {
+      // Check for global flags first
+      if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0 ||
+          strcmp(arg, "-V") == 0 || strcmp(arg, "--version") == 0) {
+        // These are global flags
+        global_args[(*global_argc)++] = argv[i];
+      } else if (strcmp(arg, "-v") == 0 || strcmp(arg, "--verbose") == 0) {
+        // Global verbose flag
+        ctx->verbose = true;
+      } else if (strcmp(arg, "run") == 0 || strcmp(arg, "repl") == 0 || 
+          strcmp(arg, "docs") == 0 || strcmp(arg, "help") == 0 || 
+          strcmp(arg, "version") == 0 || cli_looks_like_file(arg)) {
+        // This is a subcommand or file
+        found_subcommand = true;
+        sub_args[(*sub_argc)++] = argv[i];
+      } else {
+        // Unknown argument before subcommand, treat as potential filename
+        sub_args[(*sub_argc)++] = argv[i];
+        found_subcommand = true;
+      }
+    } else {
+      // After subcommand, everything goes to subcommand
+      sub_args[(*sub_argc)++] = argv[i];
+    }
+  }
 }
 
 // Run file directly (default behavior)
@@ -177,10 +217,27 @@ int main(int argc, char **argv) {
   argc--;
   argv++;
   
-  // Parse global arguments
-  if (!parse_global_args(&argc, &argv, &ctx)) {
-    return ctx.failed ? CLI_ERROR : CLI_SUCCESS;
+  // Separate global args from subcommand args
+  int global_argc, sub_argc;
+  char **global_argv, **sub_argv;
+  separate_global_and_subcommand_args(argc, argv, &global_argc, &global_argv, &sub_argc, &sub_argv, &ctx);
+  
+  // Handle global-only arguments first
+  if (global_argc > 0) {
+    for (int i = 0; i < global_argc; i++) {
+      if (strcmp(global_argv[i], "-h") == 0 || strcmp(global_argv[i], "--help") == 0) {
+        cli_show_help("xylia");
+        return CLI_SUCCESS;
+      } else if (strcmp(global_argv[i], "-V") == 0 || strcmp(global_argv[i], "--version") == 0) {
+        cli_show_version();
+        return CLI_SUCCESS;
+      }
+    }
   }
+  
+  // Use subcommand args for the rest of processing
+  argc = sub_argc;
+  argv = sub_argv;
   
   // Initialize VM and random seed
   uint64_t seed = get_seed();

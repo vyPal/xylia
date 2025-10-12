@@ -28,6 +28,7 @@ void cli_show_help(const char *program_name) {
   printf("SUBCOMMANDS:\n");
   printf("    run <file>       Run a Xylia script file\n");
   printf("    repl             Start interactive REPL session\n");
+  printf("    docs <input>     Generate documentation from source files\n");
   printf("    help             Show this help message\n");
   printf("    version          Show version information\n");
   printf("\n");
@@ -41,6 +42,7 @@ void cli_show_help(const char *program_name) {
   printf("    %s hello.xyl                    # Run hello.xyl\n", program_name);
   printf("    %s run hello.xyl arg1 arg2      # Run hello.xyl with arguments\n", program_name);
   printf("    %s repl                         # Start interactive session\n", program_name);
+  printf("    %s docs src/                    # Generate docs for directory\n", program_name);
   printf("    %s --version                    # Show version\n", program_name);
   printf("    %s --help                       # Show this help\n", program_name);
   printf("\n");
@@ -69,7 +71,8 @@ bool cli_looks_like_file(const char *str) {
   
   // Check if it's not a known subcommand
   if (strcmp(str, "run") == 0 || strcmp(str, "repl") == 0 || 
-      strcmp(str, "help") == 0 || strcmp(str, "version") == 0) {
+      strcmp(str, "docs") == 0 || strcmp(str, "help") == 0 || 
+      strcmp(str, "version") == 0) {
     return false;
   }
   

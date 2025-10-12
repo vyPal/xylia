@@ -4,6 +4,8 @@
 #include "object.h"
 #include "value.h"
 
+typedef struct doc_module doc_module_t;
+
 typedef struct type_param type_param_t;
 
 struct type_param {
@@ -21,5 +23,7 @@ typedef struct {
 obj_module_t *compile(const char *source, obj_string_t *path,
                       obj_string_t *file);
 void mark_compiler_roots(void);
+
+doc_module_t *compile_docs(const char *source, const char *path);
 
 #endif

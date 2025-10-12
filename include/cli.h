@@ -22,6 +22,7 @@ typedef cli_result_t (*subcommand_fn_t)(int argc, char **argv, cli_context_t *ct
 // Core subcommand operations
 cli_result_t cli_run(int argc, char **argv, cli_context_t *ctx);
 cli_result_t cli_repl(int argc, char **argv, cli_context_t *ctx);
+cli_result_t cli_docs(int argc, char **argv, cli_context_t *ctx);
 
 // Utility functions
 void cli_show_version(void);
