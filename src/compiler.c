@@ -504,7 +504,8 @@ static type_hint_t no_type_hint(void) {
   return hint;
 }
 
-static type_param_t *add_type_param(type_param_t *head, obj_string_t *type_name) {
+static type_param_t *add_type_param(type_param_t *head,
+                                    obj_string_t *type_name) {
   type_param_t *param = ALLOCATE(type_param_t, 1);
   param->type_name = type_name;
   param->next = head;
@@ -514,11 +515,13 @@ static type_param_t *add_type_param(type_param_t *head, obj_string_t *type_name)
 static type_param_t *parse_type_params(void) {
   type_param_t *params = NULL;
 
-  if (!match(TOK_LT)) return NULL;
+  if (!match(TOK_LT))
+    return NULL;
 
   do {
     consume(TOK_IDENT, "Expected type parameter name");
-    obj_string_t *param_name = copy_string(parser.previous.start, parser.previous.length, true);
+    obj_string_t *param_name =
+        copy_string(parser.previous.start, parser.previous.length, true);
     params = add_type_param(params, param_name);
   } while (match(TOK_COMMA));
 
@@ -532,7 +535,8 @@ static type_hint_t parse_type_hint(void) {
 
     type_hint_t hint;
     hint.has_hint = true;
-    hint.base_type = copy_string(parser.previous.start, parser.previous.length, true);
+    hint.base_type =
+        copy_string(parser.previous.start, parser.previous.length, true);
     hint.type_params = parse_type_params();
     hint.is_generic = (hint.type_params != NULL);
 
@@ -1095,7 +1099,8 @@ static unsigned int parse_variable(const char *err) {
   return ident_constant(&parser.previous);
 }
 
-static unsigned int parse_variable_with_hint(const char *err, type_hint_t hint) {
+static unsigned int parse_variable_with_hint(const char *err,
+                                             type_hint_t hint) {
   consume(TOK_IDENT, err);
 
   declare_variable_with_hint(hint);
@@ -1165,7 +1170,8 @@ static void function(function_type_t type, obj_string_t *name) {
   if (match(TOK_ARROW)) {
     consume(TOK_IDENT, "Expected return type after '->'");
     return_hint.has_hint = true;
-    return_hint.base_type = copy_string(parser.previous.start, parser.previous.length, true);
+    return_hint.base_type =
+        copy_string(parser.previous.start, parser.previous.length, true);
     return_hint.type_params = parse_type_params();
     return_hint.is_generic = (return_hint.type_params != NULL);
   }

@@ -17,7 +17,8 @@ typedef struct {
 } cli_context_t;
 
 // Subcommand function signatures
-typedef cli_result_t (*subcommand_fn_t)(int argc, char **argv, cli_context_t *ctx);
+typedef cli_result_t (*subcommand_fn_t)(int argc, char **argv,
+                                        cli_context_t *ctx);
 
 // Core subcommand operations
 cli_result_t cli_run(int argc, char **argv, cli_context_t *ctx);

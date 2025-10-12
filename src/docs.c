@@ -1,20 +1,24 @@
 #include "docs.h"
+#include "cli.h"
 #include "object.h"
 #include "scanner.h"
-#include "cli.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// Utility function for portability (strndup might not be available on all systems)
+// Utility function for portability (strndup might not be available on all
+// systems)
 static char *safe_strndup(const char *s, size_t n) {
-  if (!s) return NULL;
+  if (!s)
+    return NULL;
 
   size_t len = strlen(s);
-  if (len > n) len = n;
+  if (len > n)
+    len = n;
 
   char *result = (char *)malloc(len + 1);
-  if (!result) return NULL;
+  if (!result)
+    return NULL;
 
   memcpy(result, s, len);
   result[len] = '\0';
@@ -24,7 +28,8 @@ static char *safe_strndup(const char *s, size_t n) {
 // Documentation comment functions
 doc_comment_t *doc_comment_new(const char *content, size_t length, int line) {
   doc_comment_t *comment = (doc_comment_t *)malloc(sizeof(doc_comment_t));
-  if (!comment) return NULL;
+  if (!comment)
+    return NULL;
 
   comment->content = (char *)malloc(length + 1);
   if (!comment->content) {
@@ -50,8 +55,10 @@ void doc_comment_free(doc_comment_t *comment) {
   }
 }
 
-doc_comment_t *doc_comment_append(doc_comment_t *head, doc_comment_t *new_comment) {
-  if (!head) return new_comment;
+doc_comment_t *doc_comment_append(doc_comment_t *head,
+                                  doc_comment_t *new_comment) {
+  if (!head)
+    return new_comment;
 
   doc_comment_t *current = head;
   while (current->next) {
@@ -63,9 +70,11 @@ doc_comment_t *doc_comment_append(doc_comment_t *head, doc_comment_t *new_commen
 }
 
 // Parameter documentation functions
-doc_param_t *doc_param_new(const char *name, type_hint_t type, doc_comment_t *doc) {
+doc_param_t *doc_param_new(const char *name, type_hint_t type,
+                           doc_comment_t *doc) {
   doc_param_t *param = (doc_param_t *)malloc(sizeof(doc_param_t));
-  if (!param) return NULL;
+  if (!param)
+    return NULL;
 
   size_t name_len = strlen(name);
   param->name = (char *)malloc(name_len + 1);
@@ -95,7 +104,8 @@ void doc_param_free(doc_param_t *param) {
 // Function documentation functions
 doc_function_t *doc_function_new(const char *name, int line) {
   doc_function_t *func = (doc_function_t *)malloc(sizeof(doc_function_t));
-  if (!func) return NULL;
+  if (!func)
+    return NULL;
 
   size_t name_len = strlen(name);
   func->name = (char *)malloc(name_len + 1);
@@ -136,7 +146,8 @@ void doc_function_free(doc_function_t *func) {
 // Variable documentation functions
 doc_variable_t *doc_variable_new(const char *name, type_hint_t type, int line) {
   doc_variable_t *var = (doc_variable_t *)malloc(sizeof(doc_variable_t));
-  if (!var) return NULL;
+  if (!var)
+    return NULL;
 
   size_t name_len = strlen(name);
   var->name = (char *)malloc(name_len + 1);
@@ -167,7 +178,8 @@ void doc_variable_free(doc_variable_t *var) {
 // Class documentation functions
 doc_class_t *doc_class_new(const char *name, int line) {
   doc_class_t *cls = (doc_class_t *)malloc(sizeof(doc_class_t));
-  if (!cls) return NULL;
+  if (!cls)
+    return NULL;
 
   size_t name_len = strlen(name);
   cls->name = (char *)malloc(name_len + 1);
@@ -201,7 +213,8 @@ void doc_class_free(doc_class_t *cls) {
 // Module documentation functions
 doc_module_t *doc_module_new(const char *name, const char *path) {
   doc_module_t *module = (doc_module_t *)malloc(sizeof(doc_module_t));
-  if (!module) return NULL;
+  if (!module)
+    return NULL;
 
   size_t name_len = strlen(name);
   size_t path_len = strlen(path);
@@ -255,12 +268,14 @@ char *doc_format_type_hint(const type_hint_t *hint) {
   // Calculate total length needed
   while (param) {
     total_len += strlen(param->type_name->chars);
-    if (param->next) total_len += 2; // ", "
+    if (param->next)
+      total_len += 2; // ", "
     param = param->next;
   }
 
   char *result = (char *)malloc(total_len + 1);
-  if (!result) return NULL;
+  if (!result)
+    return NULL;
 
   strcpy(result, hint->base_type->chars);
   strcat(result, "<");
@@ -268,7 +283,8 @@ char *doc_format_type_hint(const type_hint_t *hint) {
   param = hint->type_params;
   bool first = true;
   while (param) {
-    if (!first) strcat(result, ", ");
+    if (!first)
+      strcat(result, ", ");
     strcat(result, param->type_name->chars);
     first = false;
     param = param->next;
@@ -279,39 +295,41 @@ char *doc_format_type_hint(const type_hint_t *hint) {
 }
 
 char *doc_escape_html(const char *text) {
-  if (!text) return NULL;
+  if (!text)
+    return NULL;
 
   size_t len = strlen(text);
   size_t escaped_len = len * 6; // Worst case: all chars need escaping
   char *escaped = (char *)malloc(escaped_len + 1);
-  if (!escaped) return NULL;
+  if (!escaped)
+    return NULL;
 
   char *out = escaped;
   for (const char *in = text; *in; in++) {
     switch (*in) {
-      case '<':
-        strcpy(out, "&lt;");
-        out += 4;
-        break;
-      case '>':
-        strcpy(out, "&gt;");
-        out += 4;
-        break;
-      case '&':
-        strcpy(out, "&amp;");
-        out += 5;
-        break;
-      case '"':
-        strcpy(out, "&quot;");
-        out += 6;
-        break;
-      case '\'':
-        strcpy(out, "&#39;");
-        out += 5;
-        break;
-      default:
-        *out++ = *in;
-        break;
+    case '<':
+      strcpy(out, "&lt;");
+      out += 4;
+      break;
+    case '>':
+      strcpy(out, "&gt;");
+      out += 4;
+      break;
+    case '&':
+      strcpy(out, "&amp;");
+      out += 5;
+      break;
+    case '"':
+      strcpy(out, "&quot;");
+      out += 6;
+      break;
+    case '\'':
+      strcpy(out, "&#39;");
+      out += 5;
+      break;
+    default:
+      *out++ = *in;
+      break;
     }
   }
   *out = '\0';
@@ -320,35 +338,37 @@ char *doc_escape_html(const char *text) {
 }
 
 char *doc_escape_markdown(const char *text) {
-  if (!text) return NULL;
+  if (!text)
+    return NULL;
 
   size_t len = strlen(text);
   size_t escaped_len = len * 2; // Worst case: all chars need escaping
   char *escaped = (char *)malloc(escaped_len + 1);
-  if (!escaped) return NULL;
+  if (!escaped)
+    return NULL;
 
   char *out = escaped;
   for (const char *in = text; *in; in++) {
     switch (*in) {
-      case '*':
-      case '_':
-      case '`':
-      case '[':
-      case ']':
-      case '(':
-      case ')':
-      case '#':
-      case '+':
-      case '-':
-      case '.':
-      case '!':
-      case '\\':
-        *out++ = '\\';
-        *out++ = *in;
-        break;
-      default:
-        *out++ = *in;
-        break;
+    case '*':
+    case '_':
+    case '`':
+    case '[':
+    case ']':
+    case '(':
+    case ')':
+    case '#':
+    case '+':
+    case '-':
+    case '.':
+    case '!':
+    case '\\':
+      *out++ = '\\';
+      *out++ = *in;
+      break;
+    default:
+      *out++ = *in;
+      break;
     }
   }
   *out = '\0';
@@ -357,11 +377,7 @@ char *doc_escape_markdown(const char *text) {
 }
 
 // Scope tracking for better documentation extraction
-typedef enum {
-  SCOPE_MODULE,
-  SCOPE_CLASS,
-  SCOPE_FUNCTION
-} scope_type_t;
+typedef enum { SCOPE_MODULE, SCOPE_CLASS, SCOPE_FUNCTION } scope_type_t;
 
 typedef struct scope_info {
   scope_type_t type;
@@ -373,7 +389,8 @@ typedef struct scope_info {
   struct scope_info *parent;
 } scope_info_t;
 
-static scope_info_t *push_scope(scope_info_t *current, scope_type_t type, const char *name, doc_class_t *cls) {
+static scope_info_t *push_scope(scope_info_t *current, scope_type_t type,
+                                const char *name, doc_class_t *cls) {
   scope_info_t *new_scope = (scope_info_t *)malloc(sizeof(scope_info_t));
   new_scope->type = type;
   new_scope->name = name ? strdup(name) : NULL;
@@ -386,7 +403,8 @@ static scope_info_t *push_scope(scope_info_t *current, scope_type_t type, const 
 }
 
 static scope_info_t *pop_scope(scope_info_t *current) {
-  if (!current) return NULL;
+  if (!current)
+    return NULL;
   scope_info_t *parent = current->parent;
   free(current->name);
   free(current);
@@ -413,9 +431,11 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
   doc_module_t *module = doc_module_new(name_copy, path);
   free(name_copy);
 
-  if (!module) return NULL;
+  if (!module)
+    return NULL;
 
-  // Initialize scanner for documentation extraction with doc comment mode enabled
+  // Initialize scanner for documentation extraction with doc comment mode
+  // enabled
   init_scanner_with_doc_mode(source, true);
 
   doc_comment_t *pending_comments = NULL;
@@ -423,7 +443,7 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
   scope_info_t *current_scope = push_scope(NULL, SCOPE_MODULE, "module", NULL);
   current_scope->expecting_brace = false;
   token_t token;
-  
+
   bool seen_first_declaration = false;
   int first_declaration_line = -1;
 
@@ -431,91 +451,257 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
     token = scan_token();
 
     switch (token.type) {
-      case TOK_DOC_COMMENT: {
-        // Create new doc comment
-        doc_comment_t *comment = doc_comment_new(token.start, token.length, token.row);
-        if (comment) {
-          // Check if there's a gap from previous comments
+    case TOK_DOC_COMMENT: {
+      // Create new doc comment
+      doc_comment_t *comment =
+          doc_comment_new(token.start, token.length, token.row);
+      if (comment) {
+        // Check if there's a gap from previous comments
+        if (pending_comments) {
+          doc_comment_t *last_comment = pending_comments;
+          while (last_comment->next)
+            last_comment = last_comment->next;
+
+          // If there's a gap of more than 1 line, and we haven't seen a
+          // declaration, treat previous comments as module comments
+          if (!seen_first_declaration &&
+              comment->line - last_comment->line > 1) {
+            module_comments = pending_comments;
+            pending_comments = NULL;
+          }
+        }
+        pending_comments = doc_comment_append(pending_comments, comment);
+      }
+      break;
+    }
+
+    case TOK_LBRACE: {
+      if (current_scope) {
+        if (current_scope->expecting_brace) {
+          current_scope->expecting_brace = false;
+          current_scope->brace_depth = 1;
+        } else {
+          current_scope->brace_depth++;
+        }
+      }
+      break;
+    }
+
+    case TOK_RBRACE: {
+      if (current_scope) {
+        current_scope->brace_depth--;
+        // If we've closed all braces for this scope, pop back to parent
+        if (current_scope->brace_depth <= 0 &&
+            current_scope->type != SCOPE_MODULE) {
+          current_scope = pop_scope(current_scope);
+        }
+      }
+      break;
+    }
+
+    case TOK_OPERATOR: {
+      // Parse operator overload
+      char temp_name[256] = "operator ";
+      token_t paren_token = {
+          0}; // Will hold the opening paren if we find it early
+      bool have_paren = false;
+
+      token_t op_token = scan_token();
+      if (op_token.type == TOK_LBRACKET) {
+        strcat(temp_name, "[");
+        token_t rbracket = scan_token();
+        if (rbracket.type == TOK_RBRACKET) {
+          strcat(temp_name, "]");
+          // Check if next token is assignment
+          token_t next = scan_token();
+          if (next.type == TOK_ASSIGN) {
+            strcat(temp_name, "=");
+          } else if (next.type == TOK_LPAREN) {
+            // This is the opening paren for parameters
+            paren_token = next;
+            have_paren = true;
+          }
+          // Note: if it's neither = nor (, we'll scan for the paren later
+        }
+      } else if (op_token.type == TOK_ASSIGN) {
+        strcat(temp_name, "=");
+      } else if (op_token.type == TOK_PLUS) {
+        strcat(temp_name, "+");
+      } else if (op_token.type == TOK_MINUS) {
+        strcat(temp_name, "-");
+      } else {
+        // Copy the token text directly
+        size_t len = op_token.length;
+        if (len < 240) {
+          strncat(temp_name, op_token.start, len);
+        }
+      }
+
+      char *func_name = strdup(temp_name);
+      doc_function_t *func = doc_function_new(func_name, op_token.row);
+
+      // Handle comment assignment for operators
+      if (func && pending_comments) {
+        func->doc = pending_comments;
+        pending_comments = NULL;
+      }
+
+      current_scope->seen_declaration = true;
+
+      // Parse function parameters and type hints
+      token_t paren;
+      if (have_paren) {
+        paren = paren_token;
+      } else {
+        // Scan for opening parenthesis
+        do {
+          paren = scan_token();
+        } while (paren.type != TOK_LPAREN && paren.type != TOK_EOF &&
+                 paren.type != TOK_LBRACE);
+      }
+
+      if (paren.type == TOK_LPAREN) {
+        // Parse parameters until we hit TOK_RPAREN
+        token_t param_token = scan_token();
+        int paren_depth = 1; // Track nested parentheses
+
+        while (param_token.type != TOK_EOF && paren_depth > 0) {
+          if (param_token.type == TOK_RPAREN) {
+            paren_depth--;
+            if (paren_depth == 0)
+              break;
+          } else if (param_token.type == TOK_LPAREN) {
+            paren_depth++;
+          } else if (param_token.type == TOK_IDENT && paren_depth == 1) {
+            char *param_name =
+                safe_strndup(param_token.start, param_token.length);
+
+            // Look ahead for type hint
+            token_t next_token = scan_token();
+            type_hint_t param_type = {false, NULL, NULL, false};
+
+            if (next_token.type == TOK_COLON) {
+              token_t type_token = scan_token();
+              if (type_token.type == TOK_IDENT) {
+                param_type.has_hint = true;
+                param_type.base_type =
+                    copy_string(type_token.start, type_token.length, true);
+              }
+              // Skip to next parameter (comma or closing paren)
+              next_token = scan_token();
+            }
+
+            // next_token should now be comma, closing paren, or something else
+            doc_param_t *param = doc_param_new(param_name, param_type, NULL);
+            if (param) {
+              // Add parameter to end of list to maintain order
+              if (func->params == NULL) {
+                func->params = param;
+              } else {
+                doc_param_t *last = func->params;
+                while (last->next)
+                  last = last->next;
+                last->next = param;
+              }
+            }
+            free(param_name);
+
+            // Handle the next token
+            if (next_token.type == TOK_RPAREN) {
+              paren_depth--;
+              if (paren_depth == 0)
+                break;
+            } else if (next_token.type == TOK_COMMA) {
+              param_token = scan_token();
+              continue;
+            } else if (next_token.type == TOK_LPAREN) {
+              paren_depth++;
+              param_token = scan_token();
+              continue;
+            } else {
+              param_token = next_token;
+              continue;
+            }
+          }
+          param_token = scan_token();
+        }
+
+        // Check for return type - be careful not to consume unrelated tokens
+        token_t arrow_token = scan_token();
+        if (arrow_token.type == TOK_ARROW) {
+          token_t return_type_token = scan_token();
+          if (return_type_token.type == TOK_IDENT) {
+            func->return_type.has_hint = true;
+            func->return_type.base_type = copy_string(
+                return_type_token.start, return_type_token.length, true);
+          }
+        }
+        // If not arrow, we've consumed a token that might be important
+        // Continue processing it in the main loop
+      }
+
+      // Determine where to add the function based on current scope
+      if (current_scope && current_scope->type == SCOPE_CLASS &&
+          current_scope->current_class && !current_scope->expecting_brace) {
+        // Add as method to current class
+        func->is_method = true;
+        func->class_name = strdup(current_scope->name);
+        if (current_scope->current_class->methods == NULL) {
+          current_scope->current_class->methods = func;
+        } else {
+          doc_function_t *last = current_scope->current_class->methods;
+          while (last->next)
+            last = last->next;
+          last->next = func;
+        }
+      } else {
+        // Add as module-level function
+        if (module->functions == NULL) {
+          module->functions = func;
+        } else {
+          doc_function_t *last = module->functions;
+          while (last->next)
+            last = last->next;
+          last->next = func;
+        }
+      }
+
+      // Push function scope
+      current_scope =
+          push_scope(current_scope, SCOPE_FUNCTION, func_name,
+                     current_scope ? current_scope->current_class : NULL);
+      free(func_name);
+      break;
+    }
+
+    case TOK_FUNC: {
+      // Parse regular function declaration
+      token_t name_token = scan_token();
+      if (name_token.type == TOK_IDENT) {
+        char *func_name = safe_strndup(name_token.start, name_token.length);
+
+        doc_function_t *func = doc_function_new(func_name, name_token.row);
+
+        // Handle comment assignment
+        if (!seen_first_declaration) {
+          seen_first_declaration = true;
+          first_declaration_line = name_token.row;
+
+          // Check if pending comments are separated from this declaration
           if (pending_comments) {
             doc_comment_t *last_comment = pending_comments;
-            while (last_comment->next) last_comment = last_comment->next;
-            
-            // If there's a gap of more than 1 line, and we haven't seen a declaration,
-            // treat previous comments as module comments
-            if (!seen_first_declaration && comment->line - last_comment->line > 1) {
+            while (last_comment->next)
+              last_comment = last_comment->next;
+
+            // If there's a gap between comments and declaration, treat as
+            // module comments
+            if (name_token.row - last_comment->line > 1) {
               module_comments = pending_comments;
               pending_comments = NULL;
             }
           }
-          pending_comments = doc_comment_append(pending_comments, comment);
         }
-        break;
-      }
 
-      case TOK_LBRACE: {
-        if (current_scope) {
-          if (current_scope->expecting_brace) {
-            current_scope->expecting_brace = false;
-            current_scope->brace_depth = 1;
-          } else {
-            current_scope->brace_depth++;
-          }
-        }
-        break;
-      }
-
-      case TOK_RBRACE: {
-        if (current_scope) {
-          current_scope->brace_depth--;
-          // If we've closed all braces for this scope, pop back to parent
-          if (current_scope->brace_depth <= 0 && current_scope->type != SCOPE_MODULE) {
-            current_scope = pop_scope(current_scope);
-          }
-        }
-        break;
-      }
-
-      case TOK_OPERATOR: {
-        // Parse operator overload
-        char temp_name[256] = "operator ";
-        token_t paren_token = {0}; // Will hold the opening paren if we find it early
-        bool have_paren = false;
-        
-        token_t op_token = scan_token();
-        if (op_token.type == TOK_LBRACKET) {
-          strcat(temp_name, "[");
-          token_t rbracket = scan_token();
-          if (rbracket.type == TOK_RBRACKET) {
-            strcat(temp_name, "]");
-            // Check if next token is assignment
-            token_t next = scan_token();
-            if (next.type == TOK_ASSIGN) {
-              strcat(temp_name, "=");
-            } else if (next.type == TOK_LPAREN) {
-              // This is the opening paren for parameters
-              paren_token = next;
-              have_paren = true;
-            }
-            // Note: if it's neither = nor (, we'll scan for the paren later
-          }
-        } else if (op_token.type == TOK_ASSIGN) {
-          strcat(temp_name, "=");
-        } else if (op_token.type == TOK_PLUS) {
-          strcat(temp_name, "+");
-        } else if (op_token.type == TOK_MINUS) {
-          strcat(temp_name, "-");
-        } else {
-          // Copy the token text directly
-          size_t len = op_token.length;
-          if (len < 240) {
-            strncat(temp_name, op_token.start, len);
-          }
-        }
-        
-        char *func_name = strdup(temp_name);
-        doc_function_t *func = doc_function_new(func_name, op_token.row);
-
-        // Handle comment assignment for operators
         if (func && pending_comments) {
           func->doc = pending_comments;
           pending_comments = NULL;
@@ -524,45 +710,33 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
         current_scope->seen_declaration = true;
 
         // Parse function parameters and type hints
-        token_t paren;
-        if (have_paren) {
-          paren = paren_token;
-        } else {
-          // Scan for opening parenthesis
-          do {
-            paren = scan_token();
-          } while (paren.type != TOK_LPAREN && paren.type != TOK_EOF && paren.type != TOK_LBRACE);
-        }
-        
+        token_t paren = scan_token();
         if (paren.type == TOK_LPAREN) {
           // Parse parameters until we hit TOK_RPAREN
           token_t param_token = scan_token();
-          int paren_depth = 1; // Track nested parentheses
-          
-          while (param_token.type != TOK_EOF && paren_depth > 0) {
-            if (param_token.type == TOK_RPAREN) {
-              paren_depth--;
-              if (paren_depth == 0) break;
-            } else if (param_token.type == TOK_LPAREN) {
-              paren_depth++;
-            } else if (param_token.type == TOK_IDENT && paren_depth == 1) {
-              char *param_name = safe_strndup(param_token.start, param_token.length);
+          while (param_token.type != TOK_RPAREN &&
+                 param_token.type != TOK_EOF) {
+            if (param_token.type == TOK_IDENT) {
+              char *param_name =
+                  safe_strndup(param_token.start, param_token.length);
 
               // Look ahead for type hint
               token_t next_token = scan_token();
               type_hint_t param_type = {false, NULL, NULL, false};
-              
+
               if (next_token.type == TOK_COLON) {
                 token_t type_token = scan_token();
                 if (type_token.type == TOK_IDENT) {
                   param_type.has_hint = true;
-                  param_type.base_type = copy_string(type_token.start, type_token.length, true);
+                  param_type.base_type =
+                      copy_string(type_token.start, type_token.length, true);
                 }
                 // Skip to next parameter (comma or closing paren)
                 next_token = scan_token();
               }
-              
-              // next_token should now be comma, closing paren, or something else
+
+              // next_token should now be comma, closing paren, or something
+              // else
               doc_param_t *param = doc_param_new(param_name, param_type, NULL);
               if (param) {
                 // Add parameter to end of list to maintain order
@@ -570,46 +744,48 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
                   func->params = param;
                 } else {
                   doc_param_t *last = func->params;
-                  while (last->next) last = last->next;
+                  while (last->next)
+                    last = last->next;
                   last->next = param;
                 }
               }
               free(param_name);
-              
-              // Handle the next token
+
+              // If we hit closing paren, we're done
               if (next_token.type == TOK_RPAREN) {
-                paren_depth--;
-                if (paren_depth == 0) break;
-              } else if (next_token.type == TOK_COMMA) {
+                break;
+              }
+              // If we hit comma, continue to next parameter
+              if (next_token.type == TOK_COMMA) {
                 param_token = scan_token();
-                continue;
-              } else if (next_token.type == TOK_LPAREN) {
-                paren_depth++;
-                param_token = scan_token();
-                continue;
-              } else {
-                param_token = next_token;
                 continue;
               }
+              // Otherwise, move to next token
+              param_token = next_token;
+            } else {
+              // Skip non-identifier tokens
+              param_token = scan_token();
             }
-            param_token = scan_token();
           }
 
-          // Check for return type - be careful not to consume unrelated tokens
+          // Check for return type - peek ahead without consuming tokens if not
+          // arrow
           token_t arrow_token = scan_token();
           if (arrow_token.type == TOK_ARROW) {
             token_t return_type_token = scan_token();
             if (return_type_token.type == TOK_IDENT) {
               func->return_type.has_hint = true;
-              func->return_type.base_type = copy_string(return_type_token.start, return_type_token.length, true);
+              func->return_type.base_type = copy_string(
+                  return_type_token.start, return_type_token.length, true);
             }
           }
-          // If not arrow, we've consumed a token that might be important
-          // Continue processing it in the main loop
+          // Note: If not arrow, we've already consumed that token, which is
+          // fine as it will be processed by the main scanner loop
         }
 
         // Determine where to add the function based on current scope
-        if (current_scope && current_scope->type == SCOPE_CLASS && current_scope->current_class && !current_scope->expecting_brace) {
+        if (current_scope && current_scope->type == SCOPE_CLASS &&
+            current_scope->current_class && !current_scope->expecting_brace) {
           // Add as method to current class
           func->is_method = true;
           func->class_name = strdup(current_scope->name);
@@ -617,7 +793,8 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
             current_scope->current_class->methods = func;
           } else {
             doc_function_t *last = current_scope->current_class->methods;
-            while (last->next) last = last->next;
+            while (last->next)
+              last = last->next;
             last->next = func;
           }
         } else {
@@ -626,276 +803,161 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
             module->functions = func;
           } else {
             doc_function_t *last = module->functions;
-            while (last->next) last = last->next;
+            while (last->next)
+              last = last->next;
             last->next = func;
           }
         }
 
         // Push function scope
-        current_scope = push_scope(current_scope, SCOPE_FUNCTION, func_name, current_scope ? current_scope->current_class : NULL);
+        current_scope =
+            push_scope(current_scope, SCOPE_FUNCTION, func_name,
+                       current_scope ? current_scope->current_class : NULL);
         free(func_name);
-        break;
       }
+      break;
+    }
 
-      case TOK_FUNC: {
-        // Parse regular function declaration
+    case TOK_LET: {
+      // Only process module-level variables
+      if (current_scope && current_scope->type == SCOPE_MODULE) {
         token_t name_token = scan_token();
         if (name_token.type == TOK_IDENT) {
-          char *func_name = safe_strndup(name_token.start, name_token.length);
-          
-          doc_function_t *func = doc_function_new(func_name, name_token.row);
+          char *var_name = safe_strndup(name_token.start, name_token.length);
+
+          // Check for type hint
+          token_t colon_token = scan_token();
+          type_hint_t var_type = {false, NULL, NULL, false};
+          if (colon_token.type == TOK_COLON) {
+            token_t type_token = scan_token();
+            if (type_token.type == TOK_IDENT) {
+              var_type.has_hint = true;
+              var_type.base_type =
+                  copy_string(type_token.start, type_token.length, true);
+            }
+          }
+
+          doc_variable_t *var =
+              doc_variable_new(var_name, var_type, name_token.row);
+          free(var_name);
 
           // Handle comment assignment
           if (!seen_first_declaration) {
             seen_first_declaration = true;
             first_declaration_line = name_token.row;
-            
+
             // Check if pending comments are separated from this declaration
             if (pending_comments) {
               doc_comment_t *last_comment = pending_comments;
-              while (last_comment->next) last_comment = last_comment->next;
-              
-              // If there's a gap between comments and declaration, treat as module comments
+              while (last_comment->next)
+                last_comment = last_comment->next;
+
+              // If there's a gap between comments and declaration, treat as
+              // module comments
               if (name_token.row - last_comment->line > 1) {
                 module_comments = pending_comments;
                 pending_comments = NULL;
               }
             }
           }
-          
-          if (func && pending_comments) {
-            func->doc = pending_comments;
+
+          if (var && pending_comments) {
+            var->doc = pending_comments;
             pending_comments = NULL;
           }
 
           current_scope->seen_declaration = true;
 
-          // Parse function parameters and type hints
-          token_t paren = scan_token();
-          if (paren.type == TOK_LPAREN) {
-            // Parse parameters until we hit TOK_RPAREN
-            token_t param_token = scan_token();
-            while (param_token.type != TOK_RPAREN && param_token.type != TOK_EOF) {
-              if (param_token.type == TOK_IDENT) {
-                char *param_name = safe_strndup(param_token.start, param_token.length);
-
-                // Look ahead for type hint
-                token_t next_token = scan_token();
-                type_hint_t param_type = {false, NULL, NULL, false};
-              
-                if (next_token.type == TOK_COLON) {
-                  token_t type_token = scan_token();
-                  if (type_token.type == TOK_IDENT) {
-                    param_type.has_hint = true;
-                    param_type.base_type = copy_string(type_token.start, type_token.length, true);
-                  }
-                  // Skip to next parameter (comma or closing paren)
-                  next_token = scan_token();
-                }
-              
-                // next_token should now be comma, closing paren, or something else
-                doc_param_t *param = doc_param_new(param_name, param_type, NULL);
-                if (param) {
-                  // Add parameter to end of list to maintain order
-                  if (func->params == NULL) {
-                    func->params = param;
-                  } else {
-                    doc_param_t *last = func->params;
-                    while (last->next) last = last->next;
-                    last->next = param;
-                  }
-                }
-                free(param_name);
-              
-                // If we hit closing paren, we're done
-                if (next_token.type == TOK_RPAREN) {
-                  break;
-                }
-                // If we hit comma, continue to next parameter
-                if (next_token.type == TOK_COMMA) {
-                  param_token = scan_token();
-                  continue;
-                }
-                // Otherwise, move to next token
-                param_token = next_token;
-              } else {
-                // Skip non-identifier tokens
-                param_token = scan_token();
-              }
-            }
-
-            // Check for return type - peek ahead without consuming tokens if not arrow
-            token_t arrow_token = scan_token();
-            if (arrow_token.type == TOK_ARROW) {
-              token_t return_type_token = scan_token();
-              if (return_type_token.type == TOK_IDENT) {
-                func->return_type.has_hint = true;
-                func->return_type.base_type = copy_string(return_type_token.start, return_type_token.length, true);
-              }
-            }
-            // Note: If not arrow, we've already consumed that token, which is fine
-            // as it will be processed by the main scanner loop
-          }
-
-          // Determine where to add the function based on current scope
-          if (current_scope && current_scope->type == SCOPE_CLASS && current_scope->current_class && !current_scope->expecting_brace) {
-            // Add as method to current class
-            func->is_method = true;
-            func->class_name = strdup(current_scope->name);
-            if (current_scope->current_class->methods == NULL) {
-              current_scope->current_class->methods = func;
+          // Add to module variables list
+          if (var) {
+            if (module->variables == NULL) {
+              module->variables = var;
             } else {
-              doc_function_t *last = current_scope->current_class->methods;
-              while (last->next) last = last->next;
-              last->next = func;
-            }
-          } else {
-            // Add as module-level function
-            if (module->functions == NULL) {
-              module->functions = func;
-            } else {
-              doc_function_t *last = module->functions;
-              while (last->next) last = last->next;
-              last->next = func;
+              doc_variable_t *last = module->variables;
+              while (last->next)
+                last = last->next;
+              last->next = var;
             }
           }
-
-          // Push function scope
-          current_scope = push_scope(current_scope, SCOPE_FUNCTION, func_name, current_scope ? current_scope->current_class : NULL);
-          free(func_name);
         }
-        break;
+      } else {
+        // Skip local variables - just clear pending comments
+        doc_comment_free(pending_comments);
+        pending_comments = NULL;
       }
+      break;
+    }
 
-      case TOK_LET: {
-        // Only process module-level variables
-        if (current_scope && current_scope->type == SCOPE_MODULE) {
-          token_t name_token = scan_token();
-          if (name_token.type == TOK_IDENT) {
-            char *var_name = safe_strndup(name_token.start, name_token.length);
+    case TOK_CLASS: {
+      // Parse class declaration
+      token_t name_token = scan_token();
+      if (name_token.type == TOK_IDENT) {
+        char *class_name = safe_strndup(name_token.start, name_token.length);
+        doc_class_t *cls = doc_class_new(class_name, name_token.row);
 
-            // Check for type hint
-            token_t colon_token = scan_token();
-            type_hint_t var_type = {false, NULL, NULL, false};
-            if (colon_token.type == TOK_COLON) {
-              token_t type_token = scan_token();
-              if (type_token.type == TOK_IDENT) {
-                var_type.has_hint = true;
-                var_type.base_type = copy_string(type_token.start, type_token.length, true);
-              }
-            }
+        // Handle comment assignment
+        if (!seen_first_declaration) {
+          seen_first_declaration = true;
+          first_declaration_line = name_token.row;
 
-            doc_variable_t *var = doc_variable_new(var_name, var_type, name_token.row);
-            free(var_name);
+          // Check if pending comments are separated from this declaration
+          if (pending_comments) {
+            doc_comment_t *last_comment = pending_comments;
+            while (last_comment->next)
+              last_comment = last_comment->next;
 
-            // Handle comment assignment
-            if (!seen_first_declaration) {
-              seen_first_declaration = true;
-              first_declaration_line = name_token.row;
-              
-              // Check if pending comments are separated from this declaration
-              if (pending_comments) {
-                doc_comment_t *last_comment = pending_comments;
-                while (last_comment->next) last_comment = last_comment->next;
-                
-                // If there's a gap between comments and declaration, treat as module comments
-                if (name_token.row - last_comment->line > 1) {
-                  module_comments = pending_comments;
-                  pending_comments = NULL;
-                }
-              }
-            }
-            
-            if (var && pending_comments) {
-              var->doc = pending_comments;
+            // If there's a gap between comments and declaration, treat as
+            // module comments
+            if (name_token.row - last_comment->line > 1) {
+              module_comments = pending_comments;
               pending_comments = NULL;
             }
-
-            current_scope->seen_declaration = true;
-
-            // Add to module variables list
-            if (var) {
-              if (module->variables == NULL) {
-                module->variables = var;
-              } else {
-                doc_variable_t *last = module->variables;
-                while (last->next) last = last->next;
-                last->next = var;
-              }
-            }
           }
-        } else {
-          // Skip local variables - just clear pending comments
+        }
+
+        if (cls && pending_comments) {
+          cls->doc = pending_comments;
+          pending_comments = NULL;
+        }
+
+        current_scope->seen_declaration = true;
+
+        // Add to module classes list
+        if (cls) {
+          if (module->classes == NULL) {
+            module->classes = cls;
+          } else {
+            doc_class_t *last = module->classes;
+            while (last->next)
+              last = last->next;
+            last->next = cls;
+          }
+        }
+
+        // Push class scope
+        current_scope = push_scope(current_scope, SCOPE_CLASS, class_name, cls);
+        free(class_name);
+      }
+      break;
+    }
+
+    default:
+      // For other tokens, clear pending comments if they're not followed by a
+      // declaration
+      if (token.type != TOK_EOF && token.type != TOK_DOC_COMMENT &&
+          token.type != TOK_FUNC && token.type != TOK_LET &&
+          token.type != TOK_CLASS && token.type != TOK_LBRACE &&
+          token.type != TOK_RBRACE) {
+        // Only clear if we hit a statement/expression that's not
+        // whitespace/structural
+        if (token.type != TOK_LPAREN && token.type != TOK_RPAREN &&
+            token.type != TOK_SEMICOLON && token.type != TOK_COLON &&
+            token.type != TOK_ARROW && token.type != TOK_IDENT) {
           doc_comment_free(pending_comments);
           pending_comments = NULL;
         }
-        break;
       }
-
-      case TOK_CLASS: {
-        // Parse class declaration
-        token_t name_token = scan_token();
-        if (name_token.type == TOK_IDENT) {
-          char *class_name = safe_strndup(name_token.start, name_token.length);
-          doc_class_t *cls = doc_class_new(class_name, name_token.row);
-
-          // Handle comment assignment
-          if (!seen_first_declaration) {
-            seen_first_declaration = true;
-            first_declaration_line = name_token.row;
-            
-            // Check if pending comments are separated from this declaration
-            if (pending_comments) {
-              doc_comment_t *last_comment = pending_comments;
-              while (last_comment->next) last_comment = last_comment->next;
-              
-              // If there's a gap between comments and declaration, treat as module comments
-              if (name_token.row - last_comment->line > 1) {
-                module_comments = pending_comments;
-                pending_comments = NULL;
-              }
-            }
-          }
-          
-          if (cls && pending_comments) {
-            cls->doc = pending_comments;
-            pending_comments = NULL;
-          }
-
-          current_scope->seen_declaration = true;
-
-          // Add to module classes list
-          if (cls) {
-            if (module->classes == NULL) {
-              module->classes = cls;
-            } else {
-              doc_class_t *last = module->classes;
-              while (last->next) last = last->next;
-              last->next = cls;
-            }
-          }
-
-          // Push class scope
-          current_scope = push_scope(current_scope, SCOPE_CLASS, class_name, cls);
-          free(class_name);
-        }
-        break;
-      }
-
-      default:
-        // For other tokens, clear pending comments if they're not followed by a declaration
-        if (token.type != TOK_EOF && token.type != TOK_DOC_COMMENT &&
-            token.type != TOK_FUNC && token.type != TOK_LET && token.type != TOK_CLASS &&
-            token.type != TOK_LBRACE && token.type != TOK_RBRACE) {
-          // Only clear if we hit a statement/expression that's not whitespace/structural
-          if (token.type != TOK_LPAREN && token.type != TOK_RPAREN &&
-              token.type != TOK_SEMICOLON && token.type != TOK_COLON &&
-              token.type != TOK_ARROW && token.type != TOK_IDENT) {
-            doc_comment_free(pending_comments);
-            pending_comments = NULL;
-          }
-        }
-        break;
+      break;
     }
   } while (token.type != TOK_EOF);
 
@@ -914,7 +976,8 @@ doc_module_t *extract_docs_from_source(const char *source, const char *path) {
 }
 
 // Markdown generation functions
-static void write_comment_md(FILE *f, doc_comment_t *comment, const char *prefix) {
+static void write_comment_md(FILE *f, doc_comment_t *comment,
+                             const char *prefix) {
   while (comment) {
     if (comment->content && strlen(comment->content) > 0) {
       fprintf(f, "%s%s\n", prefix ? prefix : "", comment->content);
@@ -936,7 +999,8 @@ static void write_type_hint_md(FILE *f, const type_hint_t *hint) {
     type_param_t *param = hint->type_params;
     bool first = true;
     while (param) {
-      if (!first) fprintf(f, ", ");
+      if (!first)
+        fprintf(f, ", ");
       fprintf(f, "%s", param->type_name->chars);
       first = false;
       param = param->next;
@@ -957,7 +1021,8 @@ static void write_function_md(FILE *f, doc_function_t *func) {
   doc_param_t *param = func->params;
   bool first = true;
   while (param) {
-    if (!first) fprintf(f, ", ");
+    if (!first)
+      fprintf(f, ", ");
     fprintf(f, "%s", param->name);
     if (param->type.has_hint) {
       fprintf(f, ": ");
@@ -1066,10 +1131,12 @@ static void write_class_md(FILE *f, doc_class_t *cls) {
 }
 
 bool generate_docs_markdown(doc_module_t *module, const char *output_path) {
-  if (!module || !output_path) return false;
+  if (!module || !output_path)
+    return false;
 
   FILE *f = fopen(output_path, "w");
-  if (!f) return false;
+  if (!f)
+    return false;
 
   // Module header
   fprintf(f, "# %s\n\n", module->name);
@@ -1152,25 +1219,26 @@ bool generate_docs_markdown(doc_module_t *module, const char *output_path) {
 
 // Main documentation generation function
 bool generate_docs(doc_module_t *module, const doc_options_t *options) {
-  if (!module || !options) return false;
+  if (!module || !options)
+    return false;
 
   switch (options->format) {
-    case DOC_FORMAT_MARKDOWN: {
-      char output_path[1024];
-      snprintf(output_path, sizeof(output_path), "%s/%s.md",
-               options->output_dir, module->name);
-      return generate_docs_markdown(module, output_path);
-    }
+  case DOC_FORMAT_MARKDOWN: {
+    char output_path[1024];
+    snprintf(output_path, sizeof(output_path), "%s/%s.md", options->output_dir,
+             module->name);
+    return generate_docs_markdown(module, output_path);
+  }
 
-    case DOC_FORMAT_HTML:
-      return generate_docs_html(module, options);
+  case DOC_FORMAT_HTML:
+    return generate_docs_html(module, options);
 
-    case DOC_FORMAT_JSON:
-      // TODO: Implement JSON output
-      return false;
+  case DOC_FORMAT_JSON:
+    // TODO: Implement JSON output
+    return false;
 
-    default:
-      return false;
+  default:
+    return false;
   }
 }
 
@@ -1180,31 +1248,49 @@ static void write_html_header(FILE *f, const char *title, const char *theme) {
   fprintf(f, "<html lang=\"en\">\n");
   fprintf(f, "<head>\n");
   fprintf(f, "    <meta charset=\"UTF-8\">\n");
-  fprintf(f, "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n");
+  fprintf(f, "    <meta name=\"viewport\" content=\"width=device-width, "
+             "initial-scale=1.0\">\n");
   fprintf(f, "    <title>%s</title>\n", title ? title : "Documentation");
   fprintf(f, "    <style>\n");
-  fprintf(f, "        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }\n");
-  fprintf(f, "        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }\n");
-  fprintf(f, "        .header { border-bottom: 1px solid #e1e5e9; margin-bottom: 30px; padding-bottom: 20px; }\n");
-  fprintf(f, "        .nav { background: #f6f8fa; padding: 15px; border-radius: 6px; margin-bottom: 30px; }\n");
+  fprintf(f, "        body { font-family: -apple-system, BlinkMacSystemFont, "
+             "'Segoe UI', Roboto, sans-serif; }\n");
+  fprintf(f, "        .container { max-width: 1200px; margin: 0 auto; padding: "
+             "20px; }\n");
+  fprintf(f, "        .header { border-bottom: 1px solid #e1e5e9; "
+             "margin-bottom: 30px; padding-bottom: 20px; }\n");
+  fprintf(f, "        .nav { background: #f6f8fa; padding: 15px; "
+             "border-radius: 6px; margin-bottom: 30px; }\n");
   fprintf(f, "        .nav ul { list-style: none; margin: 0; padding: 0; }\n");
-  fprintf(f, "        .nav li { display: inline-block; margin-right: 20px; }\n");
-  fprintf(f, "        .nav a { text-decoration: none; color: #586069; font-weight: 500; }\n");
+  fprintf(f,
+          "        .nav li { display: inline-block; margin-right: 20px; }\n");
+  fprintf(f, "        .nav a { text-decoration: none; color: #586069; "
+             "font-weight: 500; }\n");
   fprintf(f, "        .nav a:hover { color: #0366d6; }\n");
   fprintf(f, "        .section { margin-bottom: 40px; }\n");
-  fprintf(f, "        .function, .variable, .class { border: 1px solid #e1e5e9; border-radius: 6px; margin-bottom: 20px; }\n");
-  fprintf(f, "        .function-header, .variable-header, .class-header { background: #f6f8fa; padding: 15px; border-bottom: 1px solid #e1e5e9; }\n");
-  fprintf(f, "        .function-body, .variable-body, .class-body { padding: 15px; }\n");
-  fprintf(f, "        .signature { background: #f6f8fa; border: 1px solid #e1e5e9; border-radius: 3px; padding: 10px; font-family: monospace; margin: 10px 0; }\n");
+  fprintf(f, "        .function, .variable, .class { border: 1px solid "
+             "#e1e5e9; border-radius: 6px; margin-bottom: 20px; }\n");
+  fprintf(
+      f,
+      "        .function-header, .variable-header, .class-header { background: "
+      "#f6f8fa; padding: 15px; border-bottom: 1px solid #e1e5e9; }\n");
+  fprintf(f, "        .function-body, .variable-body, .class-body { padding: "
+             "15px; }\n");
+  fprintf(f, "        .signature { background: #f6f8fa; border: 1px solid "
+             "#e1e5e9; border-radius: 3px; padding: 10px; font-family: "
+             "monospace; margin: 10px 0; }\n");
   fprintf(f, "        .type { color: #d73a49; font-weight: bold; }\n");
   fprintf(f, "        .param-list { margin: 10px 0; }\n");
   fprintf(f, "        .param { margin: 5px 0; }\n");
   fprintf(f, "        .returns { margin: 10px 0; font-weight: bold; }\n");
   fprintf(f, "        h1 { color: #24292e; }\n");
-  fprintf(f, "        h2 { color: #24292e; border-bottom: 1px solid #e1e5e9; padding-bottom: 10px; }\n");
+  fprintf(f, "        h2 { color: #24292e; border-bottom: 1px solid #e1e5e9; "
+             "padding-bottom: 10px; }\n");
   fprintf(f, "        h3 { color: #586069; }\n");
-  fprintf(f, "        code { background: #f6f8fa; padding: 2px 4px; border-radius: 3px; font-size: 0.9em; }\n");
-  fprintf(f, "        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #e1e5e9; color: #586069; text-align: center; }\n");
+  fprintf(f, "        code { background: #f6f8fa; padding: 2px 4px; "
+             "border-radius: 3px; font-size: 0.9em; }\n");
+  fprintf(f,
+          "        .footer { margin-top: 50px; padding-top: 20px; border-top: "
+          "1px solid #e1e5e9; color: #586069; text-align: center; }\n");
   fprintf(f, "    </style>\n");
   fprintf(f, "</head>\n");
   fprintf(f, "<body>\n");
@@ -1213,7 +1299,8 @@ static void write_html_header(FILE *f, const char *title, const char *theme) {
 
 static void write_html_footer(FILE *f) {
   fprintf(f, "        <div class=\"footer\">\n");
-  fprintf(f, "            <p>Generated by Xylia docs v%s</p>\n", XYLIA_VERSION_STRING);
+  fprintf(f, "            <p>Generated by Xylia docs v%s</p>\n",
+          XYLIA_VERSION_STRING);
   fprintf(f, "        </div>\n");
   fprintf(f, "    </div>\n");
   fprintf(f, "</body>\n");
@@ -1244,7 +1331,8 @@ static void write_type_hint_html(FILE *f, const type_hint_t *hint) {
     type_param_t *param = hint->type_params;
     bool first = true;
     while (param) {
-      if (!first) fprintf(f, ", ");
+      if (!first)
+        fprintf(f, ", ");
       fprintf(f, "%s", param->type_name->chars);
       first = false;
       param = param->next;
@@ -1269,7 +1357,8 @@ static void write_function_html(FILE *f, doc_function_t *func) {
   doc_param_t *param = func->params;
   bool first = true;
   while (param) {
-    if (!first) fprintf(f, ", ");
+    if (!first)
+      fprintf(f, ", ");
     fprintf(f, "%s", param->name);
     if (param->type.has_hint) {
       fprintf(f, ": ");
@@ -1392,14 +1481,16 @@ static void write_class_html(FILE *f, doc_class_t *cls) {
 }
 
 bool generate_docs_html(doc_module_t *module, const doc_options_t *options) {
-  if (!module || !options) return false;
+  if (!module || !options)
+    return false;
 
   char output_path[1024];
-  snprintf(output_path, sizeof(output_path), "%s/%s.html",
-           options->output_dir, module->name);
+  snprintf(output_path, sizeof(output_path), "%s/%s.html", options->output_dir,
+           module->name);
 
   FILE *f = fopen(output_path, "w");
-  if (!f) return false;
+  if (!f)
+    return false;
 
   char title[256];
   snprintf(title, sizeof(title), "%s - %s", module->name,
@@ -1422,11 +1513,13 @@ bool generate_docs_html(doc_module_t *module, const doc_options_t *options) {
     fprintf(f, "            <ul>\n");
 
     if (module->functions) {
-      fprintf(f, "                <li><a href=\"#functions\">Functions</a></li>\n");
+      fprintf(
+          f, "                <li><a href=\"#functions\">Functions</a></li>\n");
     }
 
     if (module->variables) {
-      fprintf(f, "                <li><a href=\"#variables\">Variables</a></li>\n");
+      fprintf(
+          f, "                <li><a href=\"#variables\">Variables</a></li>\n");
     }
 
     if (module->classes) {

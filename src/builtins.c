@@ -126,9 +126,9 @@ obj_string_t *value_to_string(value_t value, bool literal) {
       obj_result_t *result = AS_RESULT(value);
       sb_init(&sb);
       if (result->is_ok) {
-          sb_append(&sb, "Ok(", 3);
+        sb_append(&sb, "Ok(", 3);
       } else {
-          sb_append(&sb, "Err(", 4);
+        sb_append(&sb, "Err(", 4);
       }
       obj_string_t *val = value_to_string(result->value, true);
       sb_append(&sb, val->chars, val->length);

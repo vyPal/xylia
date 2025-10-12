@@ -87,16 +87,16 @@ static token_t error_token(const char *msg) {
 
 static token_t doc_comment(void) {
   // All three dashes have already been consumed by match() calls
-  
+
   // Skip any whitespace after ---
   while (peek() == ' ' || peek() == '\t')
     advance();
-  
+
   // Capture the comment content until end of line
   const char *start = scanner.current;
   while (peek() != '\n' && !is_at_end())
     advance();
-  
+
   // Create token with the comment content
   token_t token;
   token.type = TOK_DOC_COMMENT;
@@ -104,7 +104,7 @@ static token_t doc_comment(void) {
   token.length = (int)(scanner.current - start);
   token.row = scanner.row;
   token.col = scanner.col;
-  
+
   return token;
 }
 

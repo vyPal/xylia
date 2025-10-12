@@ -14,40 +14,40 @@ typedef struct doc_module doc_module_t;
 
 // Documentation comment structure
 struct doc_comment {
-  char *content;           // The comment text
-  size_t length;           // Length of content
-  int line;                // Line number where comment appears
-  doc_comment_t *next;     // For multiple comment lines
+  char *content;       // The comment text
+  size_t length;       // Length of content
+  int line;            // Line number where comment appears
+  doc_comment_t *next; // For multiple comment lines
 };
 
 // Parameter documentation
 struct doc_param {
-  char *name;              // Parameter name
-  type_hint_t type;        // Parameter type hint
-  doc_comment_t *doc;      // Parameter documentation
-  doc_param_t *next;       // Next parameter
+  char *name;         // Parameter name
+  type_hint_t type;   // Parameter type hint
+  doc_comment_t *doc; // Parameter documentation
+  doc_param_t *next;  // Next parameter
 };
 
 // Function documentation
 struct doc_function {
-  char *name;              // Function name
-  doc_comment_t *doc;      // Function documentation
-  doc_param_t *params;     // Parameter list
-  type_hint_t return_type; // Return type hint
+  char *name;                // Function name
+  doc_comment_t *doc;        // Function documentation
+  doc_param_t *params;       // Parameter list
+  type_hint_t return_type;   // Return type hint
   doc_comment_t *return_doc; // Return value documentation
-  bool is_method;          // True if this is a class method
-  char *class_name;        // If method, which class it belongs to
-  int line;                // Line number of function declaration
-  doc_function_t *next;    // Next function in module
+  bool is_method;            // True if this is a class method
+  char *class_name;          // If method, which class it belongs to
+  int line;                  // Line number of function declaration
+  doc_function_t *next;      // Next function in module
 };
 
 // Variable documentation
 struct doc_variable {
-  char *name;              // Variable name
-  type_hint_t type;        // Variable type hint
-  doc_comment_t *doc;      // Variable documentation
-  int line;                // Line number of variable declaration
-  doc_variable_t *next;    // Next variable in module
+  char *name;           // Variable name
+  type_hint_t type;     // Variable type hint
+  doc_comment_t *doc;   // Variable documentation
+  int line;             // Line number of variable declaration
+  doc_variable_t *next; // Next variable in module
 };
 
 // Class documentation
@@ -62,12 +62,12 @@ struct doc_class {
 
 // Module documentation
 struct doc_module {
-  char *name;              // Module name (usually filename)
-  char *path;              // Full file path
-  doc_comment_t *doc;      // Module-level documentation
+  char *name;                // Module name (usually filename)
+  char *path;                // Full file path
+  doc_comment_t *doc;        // Module-level documentation
   doc_function_t *functions; // Functions in module
   doc_variable_t *variables; // Variables in module
-  doc_class_t *classes;    // Classes in module
+  doc_class_t *classes;      // Classes in module
 };
 
 // Documentation generation output formats
@@ -79,20 +79,22 @@ typedef enum {
 
 // Documentation generation options
 typedef struct {
-  doc_format_t format;     // Output format
-  char *output_dir;        // Output directory
-  bool include_private;    // Include private members
-  bool generate_index;     // Generate index/navigation
-  char *title;             // Documentation title
-  char *theme;             // Theme for HTML output
+  doc_format_t format;  // Output format
+  char *output_dir;     // Output directory
+  bool include_private; // Include private members
+  bool generate_index;  // Generate index/navigation
+  char *title;          // Documentation title
+  char *theme;          // Theme for HTML output
 } doc_options_t;
 
 // Function declarations
 doc_comment_t *doc_comment_new(const char *content, size_t length, int line);
 void doc_comment_free(doc_comment_t *comment);
-doc_comment_t *doc_comment_append(doc_comment_t *head, doc_comment_t *new_comment);
+doc_comment_t *doc_comment_append(doc_comment_t *head,
+                                  doc_comment_t *new_comment);
 
-doc_param_t *doc_param_new(const char *name, type_hint_t type, doc_comment_t *doc);
+doc_param_t *doc_param_new(const char *name, type_hint_t type,
+                           doc_comment_t *doc);
 void doc_param_free(doc_param_t *param);
 
 doc_function_t *doc_function_new(const char *name, int line);
