@@ -8,9 +8,9 @@
 ---
 --- **Examples:**
 --- ```xylia
---- random()        -- 0.73124
---- random(10)      -- 7
---- random(5, 15)   -- 12
+--- random();       -- 0.73124
+--- random(10);     -- 7
+--- random(5, 15);  -- 12
 --- ```
 func random(args: any[]) -> any {
   let argc = len(args);
@@ -36,8 +36,8 @@ func random(args: any[]) -> any {
 ---
 --- **Example:**
 --- ```xylia
---- randomseed(42)
---- print(random())   -- always the same value for seed 42
+--- randomseed(42);
+--- print(random());   -- always the same value for seed 42
 --- ```
 func randomseed(seed: number) {
   __builtin___randomseed(seed);
@@ -52,9 +52,9 @@ func randomseed(seed: number) {
 ---
 --- **Examples:**
 --- ```xylia
---- choice([1, 2, 3, 4])       -- 2
---- choice("a", "b", "c")      -- "b"
---- choice(Vector(0:10))       -- random element from vector
+--- choice([1, 2, 3, 4]);   -- 2
+--- choice("a", "b", "c");  -- "b"
+--- choice(Vector(0:10));   -- random element from vector
 --- ```
 func choice(args: any[]) -> any {
   let argc = len(args);

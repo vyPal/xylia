@@ -22,9 +22,9 @@ Returns a random number or integer depending on the arguments provided.
 Raises an error if too many arguments are passed.
 **Examples:**
 ```xylia
-random()        -- 0.73124
-random(10)      -- 7
-random(5, 15)   -- 12
+random();       -- 0.73124
+random(10);     -- 7
+random(5, 15);  -- 12
 ```
 
 **Parameters:**
@@ -45,8 +45,8 @@ Seeds the random number generator with the given `seed`.
 This allows deterministic random sequences for testing or reproducibility.
 **Example:**
 ```xylia
-randomseed(42)
-print(random())   -- always the same value for seed 42
+randomseed(42);
+print(random());   -- always the same value for seed 42
 ```
 
 **Parameters:**
@@ -65,9 +65,9 @@ a random element is chosen from that sequence.
 If multiple arguments are passed, one of them is chosen randomly.
 **Examples:**
 ```xylia
-choice([1, 2, 3, 4])       -- 2
-choice("a", "b", "c")      -- "b"
-choice(Vector(0:10))       -- random element from vector
+choice([1, 2, 3, 4]);   -- 2
+choice("a", "b", "c");  -- "b"
+choice(Vector(0:10));   -- random element from vector
 ```
 
 **Parameters:**
