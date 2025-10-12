@@ -1,99 +1,99 @@
-# Module: `map`
+# map
 
-> **Header:** `map`  
-> **Import with:** `let map = import("map");`
+## Table of Contents
 
----
+- [Functions](#functions)
+  - [insert](#insert)
+  - [delete](#delete)
+  - [get](#get)
+  - [operator []](#operator [])
+  - [operator []=](#operator []=)
+- [Classes](#classes)
+  - [Map](#Map)
 
-## Overview
+## Functions
 
-The `map` module provides a hash map implementation with automatic resizing
-and collision handling. It allows storing key-value pairs with efficient
-lookup, insertion, and deletion.
-
----
-
-## Contents
-
-| Symbol | Type | Description |
-|:--------|:------|:-------------|
-| [`Map`](#map) | class | A hash map type that wraps a low-level array with custom collision resolution. |
-| [`Map::init`](#mapinit) | method | Initializes a new empty map. |
-| [`Map::get_index`](#mapget_index) | method | Computes the hash index for the given key. |
-| [`Map::resize_table`](#mapresize_table) | method | Resizes the internal table to the specified capacity. |
-| [`Map::insert`](#mapinsert) | method | Inserts a key-value pair into the map, replacing the value if the key exists. |
-| [`Map::delete`](#mapdelete) | method | Deletes a key from the map. Returns `true` if the key was removed, `false` if it was not found. |
-| [`Map::get`](#mapget) | method | Retrieves the value associated with the key, or `nil` if the key does not exist. |
-| [`Map::[]`](#map) | operator | Accesses the value corresponding to `key`. |
-| [`Map::[]=`](#map) | operator | Sets the value for the given key in the map. |
-
----
-
-### `Map` <a name="map"></a>
-
-A hash map type that wraps a low-level array with custom collision resolution.
-
-#### `Map::init` <a name="mapinit"></a>
+### insert
 
 ```xylia
-init() -> Map
+func insert(key, value)
 ```
 
-Initializes a new empty map.
+**Parameters:**
 
-#### `Map::get_index` <a name="mapget_index"></a>
+- `key`
+- `value`
+
+### delete
 
 ```xylia
-get_index(key: any) -> number
+func delete(key)
 ```
 
-Computes the hash index for the given key.
+**Parameters:**
 
-#### `Map::resize_table` <a name="mapresize_table"></a>
+- `key`
+
+### get
 
 ```xylia
-resize_table(new_capacity: number)
+func get(key)
 ```
 
-Resizes the internal table to the specified capacity.
+**Parameters:**
 
-#### `Map::insert` <a name="mapinsert"></a>
+- `key`
+
+### operator []
 
 ```xylia
-insert(key: any, value: any)
+func operator [](key)
 ```
 
-Inserts a key-value pair into the map, replacing the value if the key exists.
+**Parameters:**
 
-#### `Map::delete` <a name="mapdelete"></a>
+- `key`
+
+### operator []=
 
 ```xylia
-delete(key: any) -> bool
+func operator []=(key, value)
 ```
 
-Deletes a key from the map. Returns `true` if the key was removed, `false` if it was not found.
+**Parameters:**
 
-#### `Map::get` <a name="mapget"></a>
+- `key`
+- `value`
+
+## Classes
+
+## Map
+
+### Methods
+
+### init
 
 ```xylia
-get(key: any) -> any
+func init()
 ```
 
-Retrieves the value associated with the key, or `nil` if the key does not exist.
-
-#### `Map::[]` <a name="map"></a>
+### get_index
 
 ```xylia
-[](key: any) -> any
+func get_index(key)
 ```
 
-Accesses the value corresponding to `key`.
+**Parameters:**
 
-#### `Map::[]=` <a name="map"></a>
+- `key`
+
+### resize_table
 
 ```xylia
-[]=(key: any, value: any)
+func resize_table(new_capacity)
 ```
 
-Sets the value for the given key in the map.
+**Parameters:**
+
+- `new_capacity`
 

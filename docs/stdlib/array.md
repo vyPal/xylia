@@ -1,81 +1,102 @@
-# Module: `array`
+# array
 
-> **Header:** `array`  
-> **Import with:** `let array = import("array");`
+## Table of Contents
 
----
+- [Classes](#classes)
+  - [Array](#Array)
 
-## Overview
+## Classes
 
-The `array` module provides a simple wrapper around the builtin array type.
-It offers a higher-level interface for fixed-size collections of values, as well as
-utilities for resizing and converting to string representations.
+## Array
 
----
+The `Array` class provides a simple wrapper around builtin arrays.
+It adds size tracking and a few utility methods for resizing and
+converting arrays to string form.
 
-## Contents
+### Methods
 
-| Symbol | Type | Description |
-|:--------|:------|:-------------|
-| [`Array`](#array) | class | A wrapper type for builtin arrays, providing common operations and size management. |
-| [`Array::init`](#arrayinit) | method | Initializes a new array with the given size. |
-| [`Array::size`](#arraysize) | method | Returns the current size of the array. |
-| [`Array::to_string`](#arrayto_string) | method | Returns a string representation of the array contents. |
-| [`Array::resize`](#arrayresize) | method | Resizes the array to `new_size`, truncating or extending it as needed. |
-| [`Array::[]`](#array) | operator | Accesses the value at the specified `index`. |
-| [`Array::[]=`](#array) | operator | Sets the element at the specified `index` to `value`. |
-
----
-
-### `Array` <a name="array"></a>
-
-A wrapper type for builtin arrays, providing common operations and size management.
-
-#### `Array::init` <a name="arrayinit"></a>
+### init
 
 ```xylia
-init(size: number) -> Array
+func init(size: number) -> Array
 ```
 
-Initializes a new array with the given size.
+Initializes a new `Array` with the given size.
+The internal data is a builtin array of that size.
 
-#### `Array::size` <a name="arraysize"></a>
+**Parameters:**
+
+- `size` (`number`)
+
+**Returns:**
+
+`Array` 
+
+### size
 
 ```xylia
-size() -> number
+func size() -> number
 ```
 
 Returns the current size of the array.
 
-#### `Array::to_string` <a name="arrayto_string"></a>
+**Returns:**
+
+`number` 
+
+### to_string
 
 ```xylia
-to_string() -> string
+func to_string() -> string
 ```
 
-Returns a string representation of the array contents.
+Returns a string representation of the array’s contents.
 
-#### `Array::resize` <a name="arrayresize"></a>
+**Returns:**
+
+`string` 
+
+### resize
 
 ```xylia
-resize(new_size: number)
+func resize(new_size: number)
 ```
 
-Resizes the array to `new_size`, truncating or extending it as needed.
+Resizes the array to `new_size`.
+The contents are preserved up to the new size if possible.
 
-#### `Array::[]` <a name="array"></a>
+**Parameters:**
+
+- `new_size` (`number`)
+
+### operator []
 
 ```xylia
-[](index: number) -> any
+func operator [](index: number) -> Any
 ```
 
-Accesses the value at the specified `index`.
+Returns the element at the given index.
+Raises an error if the index is out of range.
 
-#### `Array::[]=` <a name="array"></a>
+**Parameters:**
+
+- `index` (`number`)
+
+**Returns:**
+
+`Any` 
+
+### operator []=
 
 ```xylia
-[]=(index: number, value: any)
+func operator []=(index: number, value: Any)
 ```
 
-Sets the element at the specified `index` to `value`.
+Sets the element at the given index to `value`.
+Raises an error if the index is out of range.
+
+**Parameters:**
+
+- `index` (`number`)
+- `value` (`Any`)
 

@@ -1,17 +1,40 @@
+--- The `Array` class provides a simple wrapper around builtin arrays.
+--- It adds size tracking and a few utility methods for resizing and
+--- converting arrays to string form.
 class Array {
-  func init(size) {
+  --- Initializes a new `Array` with the given size.
+  --- The internal data is a builtin array of that size.
+  func init(size: number) -> Array {
     self.size = size;
     self.data = __builtin___array(size);
   }
 
-  func size()      { return self.size; }
-  func to_string() { return __builtin___string(self.data); }
+  --- Returns the current size of the array.
+  func size() -> number {
+    return self.size;
+  }
 
-  func resize(new_size) {
+  --- Returns a string representation of the array’s contents.
+  func to_string() -> string {
+    return __builtin___string(self.data);
+  }
+
+  --- Resizes the array to `new_size`.
+  --- The contents are preserved up to the new size if possible.
+  func resize(new_size: number) {
     __builtin___resize(self.data, new_size);
     self.size = new_size;
   }
 
-  operator [] (index)         { return self.data[index]; }
-  operator []= (index, value) { self.data[index] = value; }
+  --- Returns the element at the given index.
+  --- Raises an error if the index is out of range.
+  operator [] (index: number) -> Any {
+    return self.data[index];
+  }
+
+  --- Sets the element at the given index to `value`.
+  --- Raises an error if the index is out of range.
+  operator []= (index: number, value: Any) {
+    self.data[index] = value;
+  }
 }

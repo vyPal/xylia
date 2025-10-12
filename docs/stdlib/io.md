@@ -1,119 +1,154 @@
-# Module: `io`
+# io
 
-> **Header:** `io`  
-> **Import with:** `let io = import("io");`
+## Table of Contents
 
----
+- [Functions](#functions)
+  - [print](#print)
+  - [println](#println)
+  - [printf](#printf)
+  - [input](#input)
+  - [close](#close)
+  - [read](#read)
+  - [write](#write)
+  - [operator <<](#operator <<)
+  - [fprint](#fprint)
+  - [fprintln](#fprintln)
+  - [fprintf](#fprintf)
+- [Variables](#variables)
+  - [stdin](#stdin)
+  - [stdout](#stdout)
+  - [stderr](#stderr)
+- [Classes](#classes)
+  - [File](#File)
 
-## Overview
+## Functions
 
-The `io` module provides functions and classes for input and output operations.
-It includes console printing, formatted output, user input, and file handling.
-
----
-
-## Contents
-
-| Symbol | Type | Description |
-|:--------|:------|:-------------|
-| [`stdin: File`](#stdin-file) | variable |  |
-| [`stdout: File`](#stdout-file) | variable |  |
-| [`stderr: File`](#stderr-file) | variable |  |
-| [`print`](#print) | function | Prints arguments to standard output without a newline. |
-| [`println`](#println) | function | Prints arguments to standard output followed by a newline. |
-| [`printf`](#printf) | function | Prints formatted output to standard output. |
-| [`input`](#input) | function | Reads input from standard input, optionally displaying a prompt. |
-| [`File`](#file) | class | Represents an open file handle. |
-| [`File::init`](#fileinit) | method | Opens a file with the specified mode. |
-| [`File::close`](#fileclose) | method | Closes the file handle. |
-| [`File::read`](#fileread) | method | Reads the file contents. |
-| [`File::write`](#filewrite) | method | Writes content to the file. |
-| [`File::<<`](#file) | operator | Writes a value to the file (using its string representation). |
-
----
-
-### `stdin: File` <a name="stdin-file"></a>
-
-### `stdout: File` <a name="stdout-file"></a>
-
-### `stderr: File` <a name="stderr-file"></a>
-
-### `print` <a name="print"></a>
+### print
 
 ```xylia
-print(args: any[])
+func print(args)
 ```
 
-Prints arguments to standard output without a newline.
+**Parameters:**
 
-### `println` <a name="println"></a>
+- `args`
+
+### println
 
 ```xylia
-println(args: any[])
+func println(args)
 ```
 
-Prints arguments to standard output followed by a newline.
+**Parameters:**
 
-### `printf` <a name="printf"></a>
+- `args`
+
+### printf
 
 ```xylia
-printf(args: any[])
+func printf(args)
 ```
 
-Prints formatted output to standard output.
-Requires at least one argument.
+**Parameters:**
 
-### `input` <a name="input"></a>
+- `args`
+
+### input
 
 ```xylia
-input(prompt?: string) -> string
+func input(prompt)
 ```
 
-Reads input from standard input, optionally displaying a prompt.
+**Parameters:**
 
-### `File` <a name="file"></a>
+- `prompt`
 
-Represents an open file handle.
-
-#### `File::init` <a name="fileinit"></a>
+### close
 
 ```xylia
-init(args: any[]) -> File
+func close()
 ```
 
-Opens a file with the specified mode.
-- `init(fd: file)` → wrap file descriptor in File
-- `init(path: string, mode: string)` → open a file with specified mode
-
-#### `File::close` <a name="fileclose"></a>
+### read
 
 ```xylia
-close()
+func read()
 ```
 
-Closes the file handle.
-
-#### `File::read` <a name="fileread"></a>
+### write
 
 ```xylia
-read() -> string
+func write(content)
 ```
 
-Reads the file contents.
+**Parameters:**
 
-#### `File::write` <a name="filewrite"></a>
+- `content`
+
+### operator <<
 
 ```xylia
-write(content: string)
+func operator <<(other)
 ```
 
-Writes content to the file.
+**Parameters:**
 
-#### `File::<<` <a name="file"></a>
+- `other`
+
+### fprint
 
 ```xylia
-<<(value: any)
+func fprint(stream, args)
 ```
 
-Writes a value to the file (using its string representation).
+**Parameters:**
+
+- `stream`
+- `args`
+
+### fprintln
+
+```xylia
+func fprintln(stream, args)
+```
+
+**Parameters:**
+
+- `stream`
+- `args`
+
+### fprintf
+
+```xylia
+func fprintf(stream, args)
+```
+
+**Parameters:**
+
+- `stream`
+- `args`
+
+## Variables
+
+### stdin
+
+### stdout
+
+### stderr
+
+## Classes
+
+## File
+
+### Methods
+
+### init
+
+```xylia
+func init(args)
+```
+
+**Parameters:**
+
+- `args`
 

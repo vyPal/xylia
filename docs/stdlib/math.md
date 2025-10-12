@@ -1,195 +1,225 @@
-# Module: `math`
+# math
 
-> **Header:** `math`  
-> **Import with:** `let math = import("math");`
+## Table of Contents
 
----
+- [Functions](#functions)
+  - [abs](#abs)
+  - [min](#min)
+  - [max](#max)
+  - [clamp](#clamp)
+  - [sin](#sin)
+  - [cos](#cos)
+  - [tan](#tan)
+  - [asin](#asin)
+  - [acos](#acos)
+  - [atan](#atan)
+  - [atan2](#atan2)
+  - [sqrt](#sqrt)
+  - [pow](#pow)
+  - [log](#log)
+  - [exp](#exp)
+  - [floor](#floor)
+  - [ceil](#ceil)
+  - [round](#round)
+- [Variables](#variables)
+  - [PI](#PI)
+  - [E](#E)
+  - [NAN](#NAN)
+  - [INF](#INF)
 
-## Overview
+## Functions
 
-The `math` module provides common mathematical constants and functions
-for numerical operations, trigonometry, logarithms, and rounding.
-
----
-
-## Contents
-
-| Symbol | Type | Description |
-|:--------|:------|:-------------|
-| [`PI: float = 3.14159265358979323846`](#pi-float--314159265358979323846) | variable |  |
-| [`E: float = 2.7182818284590452354`](#e-float--27182818284590452354) | variable |  |
-| [`NAN: float = 0 / 0`](#nan-float--0--0) | variable |  |
-| [`INF: float = 1 / 0`](#inf-float--1--0) | variable |  |
-| [`abs`](#abs) | function | Returns the absolute value of `x`. |
-| [`min`](#min) | function | Returns the minimum value from a list of arguments. |
-| [`max`](#max) | function | Returns the maximum value from a list of arguments. |
-| [`clamp`](#clamp) | function | Clamps `x` between `lo` and `hi`. |
-| [`sin`](#sin) | function | Returns the sine of `x` (radians). |
-| [`cos`](#cos) | function | Returns the cosine of `x` (radians). |
-| [`tan`](#tan) | function | Returns the tangent of `x` (radians). |
-| [`asin`](#asin) | function | Returns the arcsine of `x` in radians. |
-| [`acos`](#acos) | function | Returns the arccosine of `x` in radians. |
-| [`atan`](#atan) | function | Returns the arctangent of `x` in radians. |
-| [`atan2`](#atan2) | function | Returns the arctangent of `y/x` in radians, considering the quadrant. |
-| [`sqrt`](#sqrt) | function | Returns the square root of `x`. |
-| [`pow`](#pow) | function | Returns `x` raised to the power of `y`. |
-| [`log`](#log) | function | Returns the natural logarithm of `x`. |
-| [`exp`](#exp) | function | Returns e raised to the power `x`. |
-| [`floor`](#floor) | function | Returns the largest integer ≤ `x`. |
-| [`ceil`](#ceil) | function | Returns the smallest integer ≥ `x`. |
-| [`round`](#round) | function | Rounds `x` to the nearest integer. |
-
----
-
-### `PI: float = 3.14159265358979323846` <a name="pi-float--314159265358979323846"></a>
-
-### `E: float = 2.7182818284590452354` <a name="e-float--27182818284590452354"></a>
-
-### `NAN: float = 0 / 0` <a name="nan-float--0--0"></a>
-
-### `INF: float = 1 / 0` <a name="inf-float--1--0"></a>
-
-### `abs` <a name="abs"></a>
+### abs
 
 ```xylia
-abs(x: number | float)
+func abs(x)
 ```
 
-Returns the absolute value of `x`.
+**Parameters:**
 
-### `min` <a name="min"></a>
+- `x`
+
+### min
 
 ```xylia
-min(args: [number | float][])
+func min(args)
 ```
 
-Returns the minimum value from a list of arguments.
+**Parameters:**
 
-### `max` <a name="max"></a>
+- `args`
+
+### max
 
 ```xylia
-max(args: [number | float][])
+func max(args)
 ```
 
-Returns the maximum value from a list of arguments.
+**Parameters:**
 
-### `clamp` <a name="clamp"></a>
+- `args`
+
+### clamp
 
 ```xylia
-clamp(x: number | float, lo: number | float, hi: number | float)
+func clamp(x, lo, hi)
 ```
 
-Clamps `x` between `lo` and `hi`.
+**Parameters:**
 
-### `sin` <a name="sin"></a>
+- `x`
+- `lo`
+- `hi`
+
+### sin
 
 ```xylia
-sin(x: number | float)
+func sin(x)
 ```
 
-Returns the sine of `x` (radians).
+**Parameters:**
 
-### `cos` <a name="cos"></a>
+- `x`
+
+### cos
 
 ```xylia
-cos(x: number | float)
+func cos(x)
 ```
 
-Returns the cosine of `x` (radians).
+**Parameters:**
 
-### `tan` <a name="tan"></a>
+- `x`
+
+### tan
 
 ```xylia
-tan(x: number | float)
+func tan(x)
 ```
 
-Returns the tangent of `x` (radians).
+**Parameters:**
 
-### `asin` <a name="asin"></a>
+- `x`
+
+### asin
 
 ```xylia
-asin(x: number | float)
+func asin(x)
 ```
 
-Returns the arcsine of `x` in radians.
+**Parameters:**
 
-### `acos` <a name="acos"></a>
+- `x`
+
+### acos
 
 ```xylia
-acos(x: number | float)
+func acos(x)
 ```
 
-Returns the arccosine of `x` in radians.
+**Parameters:**
 
-### `atan` <a name="atan"></a>
+- `x`
+
+### atan
 
 ```xylia
-atan(x: number | float)
+func atan(x)
 ```
 
-Returns the arctangent of `x` in radians.
+**Parameters:**
 
-### `atan2` <a name="atan2"></a>
+- `x`
+
+### atan2
 
 ```xylia
-atan2(y: number | float, x: number | float)
+func atan2(y, x)
 ```
 
-Returns the arctangent of `y/x` in radians, considering the quadrant.
+**Parameters:**
 
-### `sqrt` <a name="sqrt"></a>
+- `y`
+- `x`
+
+### sqrt
 
 ```xylia
-sqrt(x: number | float)
+func sqrt(x)
 ```
 
-Returns the square root of `x`.
+**Parameters:**
 
-### `pow` <a name="pow"></a>
+- `x`
+
+### pow
 
 ```xylia
-pow(x: number | float, y: number | float)
+func pow(x, y)
 ```
 
-Returns `x` raised to the power of `y`.
+**Parameters:**
 
-### `log` <a name="log"></a>
+- `x`
+- `y`
+
+### log
 
 ```xylia
-log(x: number | float)
+func log(x)
 ```
 
-Returns the natural logarithm of `x`.
+**Parameters:**
 
-### `exp` <a name="exp"></a>
+- `x`
+
+### exp
 
 ```xylia
-exp(x: number | float)
+func exp(x)
 ```
 
-Returns e raised to the power `x`.
+**Parameters:**
 
-### `floor` <a name="floor"></a>
+- `x`
+
+### floor
 
 ```xylia
-floor(x: float)
+func floor(x)
 ```
 
-Returns the largest integer ≤ `x`.
+**Parameters:**
 
-### `ceil` <a name="ceil"></a>
+- `x`
+
+### ceil
 
 ```xylia
-ceil(x: float)
+func ceil(x)
 ```
 
-Returns the smallest integer ≥ `x`.
+**Parameters:**
 
-### `round` <a name="round"></a>
+- `x`
+
+### round
 
 ```xylia
-round(x: float)
+func round(x)
 ```
 
-Rounds `x` to the nearest integer.
+**Parameters:**
+
+- `x`
+
+## Variables
+
+### PI
+
+### E
+
+### NAN
+
+### INF
 

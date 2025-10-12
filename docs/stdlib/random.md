@@ -1,53 +1,80 @@
-# Module: `random`
+# random
 
-> **Header:** `random`  
-> **Import with:** `let random = import("random");`
+## Table of Contents
 
----
+- [Functions](#functions)
+  - [random](#random)
+  - [randomseed](#randomseed)
+  - [choice](#choice)
 
-## Overview
+## Functions
 
-The `random` module provides functions for generating pseudo-random numbers,
-seeding the random generator, and selecting random elements from collections.
-
----
-
-## Contents
-
-| Symbol | Type | Description |
-|:--------|:------|:-------------|
-| [`random`](#random) | function | Generates a random number. Usage: |
-| [`randomseed`](#randomseed) | function | Seeds the random number generator with the given `seed`. |
-| [`choice`](#choice) | function | Selects a random element from a collection or arguments list.   |
-
----
-
-### `random` <a name="random"></a>
+### random
 
 ```xylia
-random(args: any[])
+func random(args: any) -> any
 ```
 
-Generates a random number. Usage:
-- `random()` → float between 0 and 1
-- `random(n: number)` → integer between 1 and n
-- `random(a: number, b: number)` → integer between a and b
+Returns a random number or integer depending on the arguments provided.
+- `random()` → float in range `[0, 1)`
+- `random(n)` → integer in range `[1, n]`
+- `random(a, b)` → integer in range `[a, b]`
+Raises an error if too many arguments are passed.
+**Examples:**
+```xylia
+random()        -- 0.73124
+random(10)      -- 7
+random(5, 15)   -- 12
+```
 
-### `randomseed` <a name="randomseed"></a>
+**Parameters:**
+
+- `args` (`any`)
+
+**Returns:**
+
+`any` 
+
+### randomseed
 
 ```xylia
-randomseed(seed: number)
+func randomseed(seed: number)
 ```
 
 Seeds the random number generator with the given `seed`.
-
-### `choice` <a name="choice"></a>
-
+This allows deterministic random sequences for testing or reproducibility.
+**Example:**
 ```xylia
-choice(args: any[])
+randomseed(42)
+print(random())   -- always the same value for seed 42
 ```
 
-Selects a random element from a collection or arguments list.  
-- If given a vector or list: returns a random element  
-- Otherwise: returns a random argument from the list
+**Parameters:**
+
+- `seed` (`number`)
+
+### choice
+
+```xylia
+func choice(args: any) -> any
+```
+
+Returns a random element from a list, vector, or from the provided arguments.
+If one argument is given and it is a sequence (like a `vector` or `list`),
+a random element is chosen from that sequence.
+If multiple arguments are passed, one of them is chosen randomly.
+**Examples:**
+```xylia
+choice([1, 2, 3, 4])       -- 2
+choice("a", "b", "c")      -- "b"
+choice(Vector(0:10))       -- random element from vector
+```
+
+**Parameters:**
+
+- `args` (`any`)
+
+**Returns:**
+
+`any` 
 
