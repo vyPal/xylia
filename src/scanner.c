@@ -123,7 +123,7 @@ static void skip_whitespace(void) {
     case '-':
       if (peek_next() == '-') {
         // Check if it's a doc comment (---)
-        if (scanner.current[2] == '-') {
+        if (scanner.current - scanner.start > 2 && scanner.current[2] == '-') {
           return; // Don't skip doc comments, let scan_token handle them
         } else {
           // Regular comment, skip it
