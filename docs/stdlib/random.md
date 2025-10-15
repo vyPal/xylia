@@ -30,9 +30,7 @@ random(5, 15);  -- 12
 
 - `args` (`any`)
 
-**Returns:**
-
-`any` 
+**Returns:** `any` 
 
 ### randomseed
 
@@ -73,7 +71,5 @@ choice(Vector(0:10));   -- random element from vector
 
 - `args` (`any`)
 
-**Returns:**
-
-`any` 
+**Returns:** `any` 
 

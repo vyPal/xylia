@@ -1081,12 +1081,14 @@ static void write_function_md(FILE *f, doc_function_t *func,
 
   // Return value
   if (func->return_type.has_hint || func->return_doc) {
-    fprintf(f, "**Returns:**\n\n");
+    fprintf(f, "**Returns:**");
     if (func->return_type.has_hint) {
+      fprintf(f, " ");
       write_type_hint_md(f, &func->return_type);
       fprintf(f, " ");
     }
     if (func->return_doc) {
+      fprintf(f, "\n\n");
       write_comment_md(f, func->return_doc, "");
     }
     fprintf(f, "\n\n");

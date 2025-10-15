@@ -27,9 +27,7 @@ The internal data is a builtin array of that size.
 
 - `size` (`number`)
 
-**Returns:**
-
-`Array` 
+**Returns:** `Array` 
 
 ### Array::size
 
@@ -39,9 +37,7 @@ func Array::size() -> number
 
 Returns the current size of the array.
 
-**Returns:**
-
-`number` 
+**Returns:** `number` 
 
 ### Array::to_string
 
@@ -51,9 +47,7 @@ func Array::to_string() -> string
 
 Returns a string representation of the array’s contents.
 
-**Returns:**
-
-`string` 
+**Returns:** `string` 
 
 ### Array::resize
 
@@ -81,9 +75,7 @@ Raises an error if the index is out of range.
 
 - `index` (`number`)
 
-**Returns:**
-
-`Any` 
+**Returns:** `Any` 
 
 ### Array::operator []=
 
