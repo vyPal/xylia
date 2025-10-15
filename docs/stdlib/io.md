@@ -23,7 +23,7 @@
 
 ## Functions
 
-### print
+### `print`
 
 ```xylia
 func print(args)
@@ -33,7 +33,7 @@ func print(args)
 
 - `args`
 
-### println
+### `println`
 
 ```xylia
 func println(args)
@@ -43,7 +43,7 @@ func println(args)
 
 - `args`
 
-### printf
+### `printf`
 
 ```xylia
 func printf(args)
@@ -53,7 +53,7 @@ func printf(args)
 
 - `args`
 
-### input
+### `input`
 
 ```xylia
 func input(prompt)
@@ -63,19 +63,19 @@ func input(prompt)
 
 - `prompt`
 
-### close
+### `close`
 
 ```xylia
 func close()
 ```
 
-### read
+### `read`
 
 ```xylia
 func read()
 ```
 
-### write
+### `write`
 
 ```xylia
 func write(content)
@@ -85,7 +85,7 @@ func write(content)
 
 - `content`
 
-### operator <<
+### `operator <<`
 
 ```xylia
 func operator <<(other)
@@ -95,7 +95,7 @@ func operator <<(other)
 
 - `other`
 
-### fprint
+### `fprint`
 
 ```xylia
 func fprint(stream, args)
@@ -106,7 +106,7 @@ func fprint(stream, args)
 - `stream`
 - `args`
 
-### fprintln
+### `fprintln`
 
 ```xylia
 func fprintln(stream, args)
@@ -117,7 +117,7 @@ func fprintln(stream, args)
 - `stream`
 - `args`
 
-### fprintf
+### `fprintf`
 
 ```xylia
 func fprintf(stream, args)
@@ -142,7 +142,7 @@ func fprintf(stream, args)
 
 ### Methods
 
-### File::init
+### `File::init`
 
 ```xylia
 func File::init(args)

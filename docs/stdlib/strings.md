@@ -8,7 +8,7 @@
 
 ## Functions
 
-### padl
+### `padl`
 
 ```xylia
 func padl(str, n, c)
@@ -20,7 +20,7 @@ func padl(str, n, c)
 - `n`
 - `c`
 
-### padr
+### `padr`
 
 ```xylia
 func padr(str, n, c)

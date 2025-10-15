@@ -13,19 +13,19 @@
 
 ## Functions
 
-### now
+### `now`
 
 ```xylia
 func now()
 ```
 
-### clock
+### `clock`
 
 ```xylia
 func clock()
 ```
 
-### sleep
+### `sleep`
 
 ```xylia
 func sleep(time)
@@ -45,13 +45,13 @@ func sleep(time)
 
 ### Methods
 
-### date::init
+### `date::init`
 
 ```xylia
 func date::init()
 ```
 
-### date::format
+### `date::format`
 
 ```xylia
 func date::format(fmt)

@@ -20,13 +20,13 @@
 
 ## Functions
 
-### size
+### `size`
 
 ```xylia
 func size()
 ```
 
-### push
+### `push`
 
 ```xylia
 func push(args)
@@ -36,13 +36,13 @@ func push(args)
 
 - `args`
 
-### pop
+### `pop`
 
 ```xylia
 func pop()
 ```
 
-### insert
+### `insert`
 
 ```xylia
 func insert(index, value)
@@ -53,7 +53,7 @@ func insert(index, value)
 - `index`
 - `value`
 
-### remove
+### `remove`
 
 ```xylia
 func remove(index)
@@ -63,13 +63,13 @@ func remove(index)
 
 - `index`
 
-### to_string
+### `to_string`
 
 ```xylia
 func to_string()
 ```
 
-### operator []
+### `operator []`
 
 ```xylia
 func operator [](index)
@@ -79,7 +79,7 @@ func operator [](index)
 
 - `index`
 
-### operator []=
+### `operator []=`
 
 ```xylia
 func operator []=(index, value)
@@ -90,7 +90,7 @@ func operator []=(index, value)
 - `index`
 - `value`
 
-### operator [
+### `operator [`
 
 ```xylia
 func operator [(from, to)
@@ -101,7 +101,7 @@ func operator [(from, to)
 - `from`
 - `to`
 
-### operator [
+### `operator [`
 
 ```xylia
 func operator [(from, to, value)
@@ -113,7 +113,7 @@ func operator [(from, to, value)
 - `to`
 - `value`
 
-### operator +
+### `operator +`
 
 ```xylia
 func operator +(other)
@@ -123,7 +123,7 @@ func operator +(other)
 
 - `other`
 
-### operator ==
+### `operator ==`
 
 ```xylia
 func operator ==(other)
@@ -139,7 +139,7 @@ func operator ==(other)
 
 ### Methods
 
-### Vector::init
+### `Vector::init`
 
 ```xylia
 func Vector::init(args)

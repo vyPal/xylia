@@ -29,7 +29,7 @@
 
 ## Functions
 
-### abs
+### `abs`
 
 ```xylia
 func abs(x)
@@ -39,7 +39,7 @@ func abs(x)
 
 - `x`
 
-### min
+### `min`
 
 ```xylia
 func min(args)
@@ -49,7 +49,7 @@ func min(args)
 
 - `args`
 
-### max
+### `max`
 
 ```xylia
 func max(args)
@@ -59,7 +59,7 @@ func max(args)
 
 - `args`
 
-### clamp
+### `clamp`
 
 ```xylia
 func clamp(x, lo, hi)
@@ -71,7 +71,7 @@ func clamp(x, lo, hi)
 - `lo`
 - `hi`
 
-### sin
+### `sin`
 
 ```xylia
 func sin(x)
@@ -81,7 +81,7 @@ func sin(x)
 
 - `x`
 
-### cos
+### `cos`
 
 ```xylia
 func cos(x)
@@ -91,7 +91,7 @@ func cos(x)
 
 - `x`
 
-### tan
+### `tan`
 
 ```xylia
 func tan(x)
@@ -101,7 +101,7 @@ func tan(x)
 
 - `x`
 
-### asin
+### `asin`
 
 ```xylia
 func asin(x)
@@ -111,7 +111,7 @@ func asin(x)
 
 - `x`
 
-### acos
+### `acos`
 
 ```xylia
 func acos(x)
@@ -121,7 +121,7 @@ func acos(x)
 
 - `x`
 
-### atan
+### `atan`
 
 ```xylia
 func atan(x)
@@ -131,7 +131,7 @@ func atan(x)
 
 - `x`
 
-### atan2
+### `atan2`
 
 ```xylia
 func atan2(y, x)
@@ -142,7 +142,7 @@ func atan2(y, x)
 - `y`
 - `x`
 
-### sqrt
+### `sqrt`
 
 ```xylia
 func sqrt(x)
@@ -152,7 +152,7 @@ func sqrt(x)
 
 - `x`
 
-### pow
+### `pow`
 
 ```xylia
 func pow(x, y)
@@ -163,7 +163,7 @@ func pow(x, y)
 - `x`
 - `y`
 
-### log
+### `log`
 
 ```xylia
 func log(x)
@@ -173,7 +173,7 @@ func log(x)
 
 - `x`
 
-### exp
+### `exp`
 
 ```xylia
 func exp(x)
@@ -183,7 +183,7 @@ func exp(x)
 
 - `x`
 
-### floor
+### `floor`
 
 ```xylia
 func floor(x)
@@ -193,7 +193,7 @@ func floor(x)
 
 - `x`
 
-### ceil
+### `ceil`
 
 ```xylia
 func ceil(x)
@@ -203,7 +203,7 @@ func ceil(x)
 
 - `x`
 
-### round
+### `round`
 
 ```xylia
 func round(x)

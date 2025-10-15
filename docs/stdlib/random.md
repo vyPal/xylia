@@ -9,7 +9,7 @@
 
 ## Functions
 
-### random
+### `random`
 
 ```xylia
 func random(args: any) -> any
@@ -32,7 +32,7 @@ random(5, 15);  -- 12
 
 **Returns:** `any` 
 
-### randomseed
+### `randomseed`
 
 ```xylia
 func randomseed(seed: number)
@@ -50,7 +50,7 @@ print(random());   -- always the same value for seed 42
 
 - `seed` (`number`)
 
-### choice
+### `choice`
 
 ```xylia
 func choice(args: any) -> any

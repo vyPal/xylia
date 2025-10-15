@@ -13,7 +13,7 @@
 
 ## Functions
 
-### insert
+### `insert`
 
 ```xylia
 func insert(key, value)
@@ -24,7 +24,7 @@ func insert(key, value)
 - `key`
 - `value`
 
-### delete
+### `delete`
 
 ```xylia
 func delete(key)
@@ -34,7 +34,7 @@ func delete(key)
 
 - `key`
 
-### get
+### `get`
 
 ```xylia
 func get(key)
@@ -44,7 +44,7 @@ func get(key)
 
 - `key`
 
-### operator []
+### `operator []`
 
 ```xylia
 func operator [](key)
@@ -54,7 +54,7 @@ func operator [](key)
 
 - `key`
 
-### operator []=
+### `operator []=`
 
 ```xylia
 func operator []=(key, value)
@@ -71,13 +71,13 @@ func operator []=(key, value)
 
 ### Methods
 
-### Map::init
+### `Map::init`
 
 ```xylia
 func Map::init()
 ```
 
-### Map::get_index
+### `Map::get_index`
 
 ```xylia
 func Map::get_index(key)
@@ -87,7 +87,7 @@ func Map::get_index(key)
 
 - `key`
 
-### Map::resize_table
+### `Map::resize_table`
 
 ```xylia
 func Map::resize_table(new_capacity)

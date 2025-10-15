@@ -1014,9 +1014,9 @@ static void write_type_hint_md(FILE *f, const type_hint_t *hint) {
 static void write_function_md(FILE *f, doc_function_t *func,
                               const char *class_name) {
   if (class_name == NULL)
-    fprintf(f, "### %s\n\n", func->name);
+    fprintf(f, "### `%s`\n\n", func->name);
   else
-    fprintf(f, "### %s::%s\n\n", class_name, func->name);
+    fprintf(f, "### `%s::%s`\n\n", class_name, func->name);
 
   // Function signature
   fprintf(f, "```xylia\n");

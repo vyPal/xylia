@@ -11,7 +11,7 @@
 
 ### Methods
 
-### Pair::init
+### `Pair::init`
 
 ```xylia
 func Pair::init(first, second)
@@ -22,13 +22,13 @@ func Pair::init(first, second)
 - `first`
 - `second`
 
-### Pair::to_string
+### `Pair::to_string`
 
 ```xylia
 func Pair::to_string()
 ```
 
-### Pair::operator +
+### `Pair::operator +`
 
 ```xylia
 func Pair::operator +(other)
@@ -38,7 +38,7 @@ func Pair::operator +(other)
 
 - `other`
 
-### Pair::operator -
+### `Pair::operator -`
 
 ```xylia
 func Pair::operator -(other)
@@ -48,7 +48,7 @@ func Pair::operator -(other)
 
 - `other`
 
-### Pair::operator ==
+### `Pair::operator ==`
 
 ```xylia
 func Pair::operator ==(other)
