@@ -16,6 +16,18 @@ BUILD_DIR="build"
 EXE="xylia"
 OUT_PATH="${BUILD_DIR}/${EXE}"
 
+if command -v nproc &>/dev/null; then
+  CORES=$(nproc)
+elif command -v sysctl &>/dev/null; then
+  CORES=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
+elif [ -f /proc/cpuinfo ]; then
+  CORES=$(grep -c '^processor' /proc/cpuinfo)
+else
+  CORES=2
+fi
+
+[[ "$CORES" =~ ^[0-9]+$ ]] && [ "$CORES" -gt 0 ] || CORES=2ORES="8"
+
 BUILD_TYPE="Release"
 EXTRA_ARGS=()
 
@@ -40,8 +52,8 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-info "Building with Ninja"
-ninja -C "${BUILD_DIR}" -j8
+info "Building with Ninja using $CORES cores"
+ninja -C "${BUILD_DIR}" "-j$CORES"
 if [ $? -ne 0 ]; then
   error "Ninja build failed. Aborting."
   exit 1
