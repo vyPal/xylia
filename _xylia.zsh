@@ -19,37 +19,37 @@ _xylia() {
     'version:Show version information'
   )
 
-  _arguments -C
-  $opts
-  '1: :->subcmds'
-  '*::arg:->args'
+  _arguments -C \
+    $opts \
+    '1: :->subcmds' \
+    '*::arg:->args'
 
   case $state in
-  subcmds)
-    _describe 'subcommand' subcmds
-    ;;
-  args)
-    case $words[1] in
-    run)
-      _arguments
-      '1:file:_files -g "*.xyl"'
-      '*:args:'
+    subcmds)
+      _describe 'subcommand' subcmds
       ;;
-    docs)
-      _arguments
-      '1:input:_files -/'
-      '*:args:'
-      ;;
-    repl)
-      _message "Starts an interactive REPL session"
-      ;;
-    help | version)
-      _message "No additional arguments"
-      ;;
-    *)
-      _files -g "*.xyl"
-      ;;
-    esac
+    args)
+      case $words[1] in
+        run)
+          _arguments \
+            '1:file:_files -g "*.xyl"' \
+            '*:args:'
+          ;;
+        docs)
+          _arguments \
+            '1:input:_files -/' \
+            '*:args:'
+          ;;
+        repl)
+          _message "Starts an interactive REPL session"
+          ;;
+        help|version)
+          _message "No additional arguments"
+          ;;
+        *)
+          _files -g "*.xyl"
+          ;;
+      esac
     ;;
   esac
 }
