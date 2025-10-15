@@ -57,7 +57,7 @@ void cli_show_help(const char *program_name) {
   printf("    XYL_HOME         Path to Xylia standard library (required)\n");
   printf("\n");
 
-  printf("For more information, visit: https://github.com/your-org/xylia\n");
+  printf("For more information, visit: https://github.com/vh8t/xylia\n");
 }
 
 // Check if string looks like a file path (contains .xyl extension or path
