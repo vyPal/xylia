@@ -1011,8 +1011,12 @@ static void write_type_hint_md(FILE *f, const type_hint_t *hint) {
   fprintf(f, "`");
 }
 
-static void write_function_md(FILE *f, doc_function_t *func) {
-  fprintf(f, "### %s\n\n", func->name);
+static void write_function_md(FILE *f, doc_function_t *func,
+                              const char *class_name) {
+  if (class_name == NULL)
+    fprintf(f, "### %s\n\n", func->name);
+  else
+    fprintf(f, "### %s::%s\n\n", class_name, func->name);
 
   // Function signature
   fprintf(f, "```xylia\n");
@@ -1114,7 +1118,7 @@ static void write_class_md(FILE *f, doc_class_t *cls) {
     fprintf(f, "### Methods\n\n");
     doc_function_t *method = cls->methods;
     while (method) {
-      write_function_md(f, method);
+      write_function_md(f, method, cls->name);
       method = method->next;
     }
   }
@@ -1187,7 +1191,7 @@ bool generate_docs_markdown(doc_module_t *module, const char *output_path) {
     doc_function_t *func = module->functions;
     while (func) {
       if (!func->is_method) { // Only include non-method functions
-        write_function_md(f, func);
+        write_function_md(f, func, NULL);
       }
       func = func->next;
     }

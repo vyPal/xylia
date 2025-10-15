@@ -139,7 +139,7 @@ func operator ==(other)
 
 ### Methods
 
-### init
+### Vector::init
 
 ```xylia
 func init(args)

@@ -15,7 +15,6 @@
 func random(args: any) -> any
 ```
 
-Returns a random number or integer depending on the arguments provided.
 - `random()` → float in range `[0, 1)`
 - `random(n)` → integer in range `[1, n]`
 - `random(a, b)` → integer in range `[a, b]`

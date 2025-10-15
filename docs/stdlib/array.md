@@ -9,13 +9,12 @@
 
 ## Array
 
-The `Array` class provides a simple wrapper around builtin arrays.
 It adds size tracking and a few utility methods for resizing and
 converting arrays to string form.
 
 ### Methods
 
-### init
+### Array::init
 
 ```xylia
 func init(size: number) -> Array
@@ -32,7 +31,7 @@ The internal data is a builtin array of that size.
 
 `Array` 
 
-### size
+### Array::size
 
 ```xylia
 func size() -> number
@@ -44,7 +43,7 @@ Returns the current size of the array.
 
 `number` 
 
-### to_string
+### Array::to_string
 
 ```xylia
 func to_string() -> string
@@ -56,7 +55,7 @@ Returns a string representation of the array’s contents.
 
 `string` 
 
-### resize
+### Array::resize
 
 ```xylia
 func resize(new_size: number)
@@ -69,7 +68,7 @@ The contents are preserved up to the new size if possible.
 
 - `new_size` (`number`)
 
-### operator []
+### Array::operator []
 
 ```xylia
 func operator [](index: number) -> Any
@@ -86,7 +85,7 @@ Raises an error if the index is out of range.
 
 `Any` 
 
-### operator []=
+### Array::operator []=
 
 ```xylia
 func operator []=(index: number, value: Any)
