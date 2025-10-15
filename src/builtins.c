@@ -207,6 +207,16 @@ obj_string_t *value_to_string(value_t value, bool literal) {
       sb_free(&sb);
       return res;
     }
+    case OBJ_ENUM: {
+      obj_enum_t *enum_ = AS_ENUM(value);
+      sb_init(&sb);
+      sb_append(&sb, "<enum ", 6);
+      sb_append(&sb, enum_->name->chars, enum_->name->length);
+      sb_append(&sb, ">", 1);
+      obj_string_t *res = copy_string(sb.data, sb.length, true);
+      sb_free(&sb);
+      return res;
+    }
     case OBJ_ANY:
       break;
     }
@@ -265,6 +275,8 @@ const char *obj_type_to_str(obj_type_t type) {
     return "range";
   case OBJ_RESULT:
     return "result";
+  case OBJ_ENUM:
+    return "enum";
   case OBJ_ANY:
     return "any";
   }
