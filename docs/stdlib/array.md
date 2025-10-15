@@ -17,7 +17,7 @@ converting arrays to string form.
 ### Array::init
 
 ```xylia
-func init(size: number) -> Array
+func Array::init(size: number) -> Array
 ```
 
 Initializes a new `Array` with the given size.
@@ -34,7 +34,7 @@ The internal data is a builtin array of that size.
 ### Array::size
 
 ```xylia
-func size() -> number
+func Array::size() -> number
 ```
 
 Returns the current size of the array.
@@ -46,7 +46,7 @@ Returns the current size of the array.
 ### Array::to_string
 
 ```xylia
-func to_string() -> string
+func Array::to_string() -> string
 ```
 
 Returns a string representation of the array’s contents.
@@ -58,7 +58,7 @@ Returns a string representation of the array’s contents.
 ### Array::resize
 
 ```xylia
-func resize(new_size: number)
+func Array::resize(new_size: number)
 ```
 
 Resizes the array to `new_size`.
@@ -71,7 +71,7 @@ The contents are preserved up to the new size if possible.
 ### Array::operator []
 
 ```xylia
-func operator [](index: number) -> Any
+func Array::operator [](index: number) -> Any
 ```
 
 Returns the element at the given index.
@@ -88,7 +88,7 @@ Raises an error if the index is out of range.
 ### Array::operator []=
 
 ```xylia
-func operator []=(index: number, value: Any)
+func Array::operator []=(index: number, value: Any)
 ```
 
 Sets the element at the given index to `value`.

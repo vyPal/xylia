@@ -142,7 +142,7 @@ func operator ==(other)
 ### Vector::init
 
 ```xylia
-func init(args)
+func Vector::init(args)
 ```
 
 **Parameters:**

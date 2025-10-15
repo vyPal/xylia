@@ -1020,7 +1020,10 @@ static void write_function_md(FILE *f, doc_function_t *func,
 
   // Function signature
   fprintf(f, "```xylia\n");
-  fprintf(f, "func %s(", func->name);
+  if (class_name == NULL)
+    fprintf(f, "func %s(", func->name);
+  else
+    fprintf(f, "func %s::%s(", class_name, func->name);
 
   doc_param_t *param = func->params;
   bool first = true;

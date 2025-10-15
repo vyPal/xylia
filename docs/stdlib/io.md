@@ -145,7 +145,7 @@ func fprintf(stream, args)
 ### File::init
 
 ```xylia
-func init(args)
+func File::init(args)
 ```
 
 **Parameters:**

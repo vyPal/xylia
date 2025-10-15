@@ -74,13 +74,13 @@ func operator []=(key, value)
 ### Map::init
 
 ```xylia
-func init()
+func Map::init()
 ```
 
 ### Map::get_index
 
 ```xylia
-func get_index(key)
+func Map::get_index(key)
 ```
 
 **Parameters:**
@@ -90,7 +90,7 @@ func get_index(key)
 ### Map::resize_table
 
 ```xylia
-func resize_table(new_capacity)
+func Map::resize_table(new_capacity)
 ```
 
 **Parameters:**

@@ -14,7 +14,7 @@
 ### Pair::init
 
 ```xylia
-func init(first, second)
+func Pair::init(first, second)
 ```
 
 **Parameters:**
@@ -25,13 +25,13 @@ func init(first, second)
 ### Pair::to_string
 
 ```xylia
-func to_string()
+func Pair::to_string()
 ```
 
 ### Pair::operator +
 
 ```xylia
-func operator +(other)
+func Pair::operator +(other)
 ```
 
 **Parameters:**
@@ -41,7 +41,7 @@ func operator +(other)
 ### Pair::operator -
 
 ```xylia
-func operator -(other)
+func Pair::operator -(other)
 ```
 
 **Parameters:**
@@ -51,7 +51,7 @@ func operator -(other)
 ### Pair::operator ==
 
 ```xylia
-func operator ==(other)
+func Pair::operator ==(other)
 ```
 
 **Parameters:**

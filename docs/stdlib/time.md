@@ -48,13 +48,13 @@ func sleep(time)
 ### date::init
 
 ```xylia
-func init()
+func date::init()
 ```
 
 ### date::format
 
 ```xylia
-func format(fmt)
+func date::format(fmt)
 ```
 
 **Parameters:**
