@@ -4,6 +4,10 @@ info() {
   echo -e "\x1b[1;34m[INFO]\x1b[0m $*"
 }
 
+warn() {
+  echo -e "\x1b[1;33m[WARN]\x1b[0m $*" >&2
+}
+
 error() {
   echo -e "\x1b[1;31m[ERROR]\x1b[0m $*" >&2
 }
@@ -13,6 +17,7 @@ success() {
 }
 
 BUILD_DIR="build"
+BIN_DIR="bin"
 EXE="xylia"
 OUT_PATH="${BUILD_DIR}/${EXE}"
 
@@ -80,5 +85,30 @@ if [ ! -f "$BUILD_DIR/compile_commands.json" ]; then
   exit 1
 fi
 mv "${BUILD_DIR}/compile_commands.json" .
+
+if [ -f "${OUT_PATH}" ]; then
+  [ ! -d "${BIN_DIR}" ] && mkdir -p "${BIN_DIR}" && info "Created bin directory: ${BIN_DIR}"
+
+  mv -f "${OUT_PATH}" "${BIN_DIR}/"
+  success "Moved binary to ${BIN_DIR}/$(basename "${OUT_PATH}")"
+else
+  error "Expected binary '${OUT_PATH}' not found!"
+fi
+
+if [ -z "${XYL_HOME}" ]; then
+  warn "Environment variable 'XYL_HOME' is not set."
+  echo -e "       You should set it to your project root (parent of build dir) for Xylia to work properly:"
+  echo -e "       \x1b[1;37mexport XYL_HOME=\"$(realpath "${BUILD_DIR}/..")\"\x1b[0m"
+else
+  info "XYL_HOME is set to: ${XYL_HOME}"
+fi
+
+if [[ ":$PATH:" != *":$(realpath "${BIN_DIR}"):"* ]]; then
+  warn "'${BIN_DIR}' is not in your PATH."
+  echo -e "       You may want to add it so you can run '${EXE}' from anywhere:"
+  echo -e "       \x1b[1;37mexport PATH=\"$(realpath "${BIN_DIR}"):\$PATH\"\x1b[0m"
+else
+  info "'${BIN_DIR}' is already in PATH"
+fi
 
 success "Build complete!"
