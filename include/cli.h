@@ -31,10 +31,4 @@ void cli_show_help(const char *program_name);
 bool cli_looks_like_file(const char *str);
 bool cli_file_exists(const char *path);
 
-// Version information
-#define XYLIA_VERSION_MAJOR 0
-#define XYLIA_VERSION_MINOR 0
-#define XYLIA_VERSION_PATCH 1
-#define XYLIA_VERSION_STRING "0.0.1"
-
 #endif

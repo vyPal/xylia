@@ -6,14 +6,14 @@
 
 // Print version information
 void cli_show_version(void) {
-  printf("Xylia %s\n", XYLIA_VERSION_STRING);
+  printf("Xylia %s\n", XYLIA_VERSION);
   printf("A dynamically-typed programming language with optional type hints\n");
 }
 
 // Print help information
 void cli_show_help(const char *program_name) {
   printf("Xylia %s - A dynamically-typed programming language\n\n",
-         XYLIA_VERSION_STRING);
+         XYLIA_VERSION);
 
   printf("USAGE:\n");
   printf("    %s [OPTIONS] [SUBCOMMAND] [ARGS...]\n", program_name);
