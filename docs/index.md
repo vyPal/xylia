@@ -77,7 +77,7 @@ Xylia is an open-source project. Contributions are welcome — whether it's impr
 
 * [Getting Started](./getting-started/installation.md)
 * [Language Reference](./language/syntax.md)
-* [Standard Library](./stdlib/io.md)
+* [Standard Library](./stdlib/index.md)
 
 ---
 
