@@ -1,5 +1,3 @@
-#compdef xylia
-
 _xylia() {
   local -a opts subcmds
   local curcontext="$curcontext" state line
