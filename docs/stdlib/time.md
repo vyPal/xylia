@@ -16,14 +16,18 @@
 ### `now`
 
 ```xylia
-func now()
+func now() -> float
 ```
+
+**Returns:** `float` 
 
 ### `clock`
 
 ```xylia
-func clock()
+func clock() -> float
 ```
+
+**Returns:** `float` 
 
 ### `sleep`
 
@@ -39,6 +43,8 @@ func sleep(time)
 
 ### strings
 
+**Type:** `module`
+
 ## Classes
 
 ## date
@@ -48,16 +54,20 @@ func sleep(time)
 ### `date::init`
 
 ```xylia
-func date::init()
+func date::init() -> date
 ```
+
+**Returns:** `date` 
 
 ### `date::format`
 
 ```xylia
-func date::format(fmt)
+func date::format(fmt: string) -> string
 ```
 
 **Parameters:**
 
-- `fmt`
+- `fmt` (`string`)
+
+**Returns:** `string` 
 

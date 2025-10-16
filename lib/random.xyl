@@ -12,7 +12,7 @@
 --- random(10);     -- 7
 --- random(5, 15);  -- 12
 --- ```
-func random(args: any[]) -> any {
+func random(args: Any[]) -> Any {
   let argc = len(args);
   if (argc == 0)
     return __builtin___random();
@@ -56,7 +56,7 @@ func randomseed(seed: number) {
 --- choice("a", "b", "c");  -- "b"
 --- choice(Vector(0:10));   -- random element from vector
 --- ```
-func choice(args: any[]) -> any {
+func choice(args: Any[]) -> Any {
   let argc = len(args);
   if (argc == 1) {
     let arg = args[0];

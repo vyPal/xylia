@@ -1,5 +1,5 @@
 class Map {
-  func init() {
+  func init() -> Map {
     self.data = __builtin___array(8);
     self.capacity = 8;
     self.count = 0;
@@ -8,7 +8,7 @@ class Map {
     self.__seed = __builtin___floor(__builtin___random() * 9223372036854775807);
   }
 
-  func get_index(key) {
+  func get_index(key: Any) -> number {
     let hash;
     if (typeof(key) == "instance" && hasmethod(getclass(key), "hash"))
       hash = __builtin___hash(key.hash());
@@ -19,7 +19,7 @@ class Map {
     return hash % self.capacity;
   }
 
-  func resize_table(new_capacity) {
+  func resize_table(new_capacity: number) {
     let old_data = self.data;
     let old_capacity = self.capacity;
 
@@ -34,7 +34,7 @@ class Map {
     }
   }
 
-  func insert(key, value) {
+  func insert(key: Any, value: Any) {
     if ((self.count + 1) / self.capacity > self.__max_load)
       self.resize_table(self.capacity * 2);
 
@@ -67,7 +67,7 @@ class Map {
     }
   }
 
-  func delete(key) {
+  func delete(key: Any) -> bool {
     let index = self.get_index(key);
 
     while (true) {
@@ -86,7 +86,7 @@ class Map {
     }
   }
 
-  func get(key) {
+  func get(key: Any) -> Any {
     let index = self.get_index(key);
 
     while (true) {
@@ -99,6 +99,6 @@ class Map {
     }
   }
 
-  operator [] (key)         { return self.get(key); }
-  operator []= (key, value) { self.insert(key, value); }
+  operator [] (key: Any) -> Any       { return self.get(key); }
+  operator []= (key: Any, value: Any) { self.insert(key, value); }
 }

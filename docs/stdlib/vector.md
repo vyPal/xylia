@@ -3,16 +3,6 @@
 ## Table of Contents
 
 - [Functions](#functions)
-  - [size](#size)
-  - [push](#push)
-  - [pop](#pop)
-  - [insert](#insert)
-  - [remove](#remove)
-  - [to_string](#to_string)
-  - [operator []](#operator [])
-  - [operator []=](#operator []=)
-  - [operator [](#operator [)
-  - [operator [](#operator [)
   - [operator +](#operator +)
   - [operator ==](#operator ==)
 - [Classes](#classes)
@@ -20,118 +10,29 @@
 
 ## Functions
 
-### `size`
-
-```xylia
-func size()
-```
-
-### `push`
-
-```xylia
-func push(args)
-```
-
-**Parameters:**
-
-- `args`
-
-### `pop`
-
-```xylia
-func pop()
-```
-
-### `insert`
-
-```xylia
-func insert(index, value)
-```
-
-**Parameters:**
-
-- `index`
-- `value`
-
-### `remove`
-
-```xylia
-func remove(index)
-```
-
-**Parameters:**
-
-- `index`
-
-### `to_string`
-
-```xylia
-func to_string()
-```
-
-### `operator []`
-
-```xylia
-func operator [](index)
-```
-
-**Parameters:**
-
-- `index`
-
-### `operator []=`
-
-```xylia
-func operator []=(index, value)
-```
-
-**Parameters:**
-
-- `index`
-- `value`
-
-### `operator [`
-
-```xylia
-func operator [(from, to)
-```
-
-**Parameters:**
-
-- `from`
-- `to`
-
-### `operator [`
-
-```xylia
-func operator [(from, to, value)
-```
-
-**Parameters:**
-
-- `from`
-- `to`
-- `value`
-
 ### `operator +`
 
 ```xylia
-func operator +(other)
+func operator +(other: Vector) -> Vector
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Vector`)
+
+**Returns:** `Vector` 
 
 ### `operator ==`
 
 ```xylia
-func operator ==(other)
+func operator ==(other: Vector) -> Vector
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Vector`)
+
+**Returns:** `Vector` 
 
 ## Classes
 
@@ -142,10 +43,117 @@ func operator ==(other)
 ### `Vector::init`
 
 ```xylia
-func Vector::init(args)
+func Vector::init(args: Any) -> Vector
 ```
 
 **Parameters:**
 
-- `args`
+- `args` (`Any`)
+
+**Returns:** `Vector` 
+
+### `Vector::size`
+
+```xylia
+func Vector::size() -> number
+```
+
+**Returns:** `number` 
+
+### `Vector::push`
+
+```xylia
+func Vector::push(args: Any)
+```
+
+**Parameters:**
+
+- `args` (`Any`)
+
+### `Vector::pop`
+
+```xylia
+func Vector::pop() -> Any
+```
+
+**Returns:** `Any` 
+
+### `Vector::insert`
+
+```xylia
+func Vector::insert(index: number, value: Any)
+```
+
+**Parameters:**
+
+- `index` (`number`)
+- `value` (`Any`)
+
+### `Vector::remove`
+
+```xylia
+func Vector::remove(index: number) -> Any
+```
+
+**Parameters:**
+
+- `index` (`number`)
+
+**Returns:** `Any` 
+
+### `Vector::to_string`
+
+```xylia
+func Vector::to_string() -> string
+```
+
+**Returns:** `string` 
+
+### `Vector::operator []`
+
+```xylia
+func Vector::operator [](index: number) -> Any
+```
+
+**Parameters:**
+
+- `index` (`number`)
+
+**Returns:** `Any` 
+
+### `Vector::operator []=`
+
+```xylia
+func Vector::operator []=(index: number, value: Any)
+```
+
+**Parameters:**
+
+- `index` (`number`)
+- `value` (`Any`)
+
+### `Vector::operator [`
+
+```xylia
+func Vector::operator [(from: number, to: number) -> Vector
+```
+
+**Parameters:**
+
+- `from` (`number`)
+- `to` (`number`)
+
+**Returns:** `Vector` 
+
+### `Vector::operator [`
+
+```xylia
+func Vector::operator [(from: number, to: number, value: Any)
+```
+
+**Parameters:**
+
+- `from` (`number`)
+- `to` (`number`)
+- `value` (`Any`)
 

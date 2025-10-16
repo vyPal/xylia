@@ -1,11 +1,11 @@
-func padl(str, n, c) {
+func padl(str: string, n: number, c: string) -> string {
   let result = str;
   while (len(result) < n)
     result = c + result;
   return result;
 }
 
-func padr(str, n, c) {
+func padr(str: string, n: number, c: string) -> string {
   let result = str;
   while (len(result) < n)
     result = result + c;

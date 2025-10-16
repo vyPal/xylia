@@ -16,54 +16,60 @@
 ### `insert`
 
 ```xylia
-func insert(key, value)
+func insert(key: Any, value: Any)
 ```
 
 **Parameters:**
 
-- `key`
-- `value`
+- `key` (`Any`)
+- `value` (`Any`)
 
 ### `delete`
 
 ```xylia
-func delete(key)
+func delete(key: Any) -> bool
 ```
 
 **Parameters:**
 
-- `key`
+- `key` (`Any`)
+
+**Returns:** `bool` 
 
 ### `get`
 
 ```xylia
-func get(key)
+func get(key: Any) -> Any
 ```
 
 **Parameters:**
 
-- `key`
+- `key` (`Any`)
+
+**Returns:** `Any` 
 
 ### `operator []`
 
 ```xylia
-func operator [](key)
+func operator [](key: Any) -> Any
 ```
 
 **Parameters:**
 
-- `key`
+- `key` (`Any`)
+
+**Returns:** `Any` 
 
 ### `operator []=`
 
 ```xylia
-func operator []=(key, value)
+func operator []=(key: Any, value: Any)
 ```
 
 **Parameters:**
 
-- `key`
-- `value`
+- `key` (`Any`)
+- `value` (`Any`)
 
 ## Classes
 
@@ -74,26 +80,30 @@ func operator []=(key, value)
 ### `Map::init`
 
 ```xylia
-func Map::init()
+func Map::init() -> Map
 ```
+
+**Returns:** `Map` 
 
 ### `Map::get_index`
 
 ```xylia
-func Map::get_index(key)
+func Map::get_index(key: Any) -> number
 ```
 
 **Parameters:**
 
-- `key`
+- `key` (`Any`)
+
+**Returns:** `number` 
 
 ### `Map::resize_table`
 
 ```xylia
-func Map::resize_table(new_capacity)
+func Map::resize_table(new_capacity: number)
 ```
 
 **Parameters:**
 
-- `new_capacity`
+- `new_capacity` (`number`)
 

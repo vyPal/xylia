@@ -1,11 +1,11 @@
-let strings = import("strings");
+let strings: module = import("strings");
 
-func now()       { return __builtin___now(); }
-func clock()     { return __builtin___clock(); }
+func now() -> float       { return __builtin___now(); }
+func clock() -> float     { return __builtin___clock(); }
 func sleep(time) { return __builtin___sleep(time); }
 
 class date {
-  func init() {
+  func init() -> date {
     let parts = __builtin___localtime(__builtin___now());
 
     self.year = parts[0];
@@ -16,7 +16,7 @@ class date {
     self.sec = parts[5];
   }
 
-  func format(fmt) {
+  func format(fmt: string) -> string {
     let result = "";
     let fmt_len = len(fmt);
 

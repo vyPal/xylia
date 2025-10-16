@@ -7,7 +7,6 @@
   - [println](#println)
   - [printf](#printf)
   - [input](#input)
-  - [close](#close)
   - [read](#read)
   - [write](#write)
   - [operator <<](#operator <<)
@@ -26,115 +25,119 @@
 ### `print`
 
 ```xylia
-func print(args)
+func print(args: Any)
 ```
 
 **Parameters:**
 
-- `args`
+- `args` (`Any`)
 
 ### `println`
 
 ```xylia
-func println(args)
+func println(args: Any)
 ```
 
 **Parameters:**
 
-- `args`
+- `args` (`Any`)
 
 ### `printf`
 
 ```xylia
-func printf(args)
+func printf(args: Any)
 ```
 
 **Parameters:**
 
-- `args`
+- `args` (`Any`)
 
 ### `input`
 
 ```xylia
-func input(prompt)
+func input(prompt: Any) -> string
 ```
 
 **Parameters:**
 
-- `prompt`
+- `prompt` (`Any`)
 
-### `close`
-
-```xylia
-func close()
-```
+**Returns:** `string` 
 
 ### `read`
 
 ```xylia
-func read()
+func read() -> string
 ```
+
+**Returns:** `string` 
 
 ### `write`
 
 ```xylia
-func write(content)
+func write(content: string)
 ```
 
 **Parameters:**
 
-- `content`
+- `content` (`string`)
 
 ### `operator <<`
 
 ```xylia
-func operator <<(other)
+func operator <<(other: Any)
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Any`)
 
 ### `fprint`
 
 ```xylia
-func fprint(stream, args)
+func fprint(stream: File, args: Any)
 ```
 
 **Parameters:**
 
-- `stream`
-- `args`
+- `stream` (`File`)
+- `args` (`Any`)
 
 ### `fprintln`
 
 ```xylia
-func fprintln(stream, args)
+func fprintln(stream: File, args: Any)
 ```
 
 **Parameters:**
 
-- `stream`
-- `args`
+- `stream` (`File`)
+- `args` (`Any`)
 
 ### `fprintf`
 
 ```xylia
-func fprintf(stream, args)
+func fprintf(stream: File, args: Any)
 ```
 
 **Parameters:**
 
-- `stream`
-- `args`
+- `stream` (`File`)
+- `args` (`Any`)
 
 ## Variables
 
 ### stdin
 
+**Type:** `File`
+
 ### stdout
 
+**Type:** `File`
+
 ### stderr
+
+**Type:** `File`
 
 ## Classes
 
@@ -145,10 +148,18 @@ func fprintf(stream, args)
 ### `File::init`
 
 ```xylia
-func File::init(args)
+func File::init(args: Any) -> File
 ```
 
 **Parameters:**
 
-- `args`
+- `args` (`Any`)
+
+**Returns:** `File` 
+
+### `File::close`
+
+```xylia
+func File::close()
+```
 

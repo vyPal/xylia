@@ -12,7 +12,7 @@
 ### `random`
 
 ```xylia
-func random(args: any) -> any
+func random(args: Any) -> Any
 ```
 
 - `random()` → float in range `[0, 1)`
@@ -28,9 +28,9 @@ random(5, 15);  -- 12
 
 **Parameters:**
 
-- `args` (`any`)
+- `args` (`Any`)
 
-**Returns:** `any` 
+**Returns:** `Any` 
 
 ### `randomseed`
 
@@ -53,7 +53,7 @@ print(random());   -- always the same value for seed 42
 ### `choice`
 
 ```xylia
-func choice(args: any) -> any
+func choice(args: Any) -> Any
 ```
 
 Returns a random element from a list, vector, or from the provided arguments.
@@ -69,7 +69,7 @@ choice(Vector(0:10));   -- random element from vector
 
 **Parameters:**
 
-- `args` (`any`)
+- `args` (`Any`)
 
-**Returns:** `any` 
+**Returns:** `Any` 
 

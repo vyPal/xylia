@@ -1,26 +1,26 @@
 class Pair {
-  func init(first, second) {
+  func init(first: Any, second: Any) -> Pair {
     self.first = first;
     self.second = second;
   }
 
-  func to_string() {
+  func to_string() -> string {
     return "Pair{" + string(self.first) + ", " + string(self.second) + "}";
   }
 
-  operator + (other) {
+  operator + (other: Pair) -> Pair {
     assert isinstance(other, Pair),
             "Pair can be added only with Pair but got '" + typeof(other) + "' instead";
     return Pair(self.first + other.first, self.second + other.second);
   }
 
-  operator - (other) {
+  operator - (other: Pair) -> Pair {
     assert isinstance(other, Pair),
             "Pair can be subtracted only with Pair but got '" + typeof(other) + "' instead";
     return Pair(self.first - other.first, self.second - other.second);
   }
 
-  operator == (other) {
+  operator == (other: Pair) -> Pair {
     if (isinstance(other, Pair))
       return self.first == other.first && self.second == other.second;
     return false;

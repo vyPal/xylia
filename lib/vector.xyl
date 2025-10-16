@@ -1,5 +1,5 @@
 class Vector {
-  func init(args[]) {
+  func init(args: Any[]) -> Vector {
     let argc = len(args);
 
     if (argc == 1 && typeof(args[0]) == "range")
@@ -10,18 +10,18 @@ class Vector {
     }
   }
 
-  func size()               { return len(self.data); }
-  func push(args[])         { __builtin___append(self.data, ..args); }
-  func pop()                { return __builtin___pop(self.data); }
-  func insert(index, value) { __builtin___insert(self.data, index, value); }
-  func remove(index)        { return __builtin___remove(self.data, index); }
-  func to_string()          { return __builtin___string(self.data); }
+  func size() -> number                  { return len(self.data); }
+  func push(args: Any[])                 { __builtin___append(self.data, ..args); }
+  func pop() -> Any                      { return __builtin___pop(self.data); }
+  func insert(index: number, value: Any) { __builtin___insert(self.data, index, value); }
+  func remove(index: number) -> Any      { return __builtin___remove(self.data, index); }
+  func to_string() -> string             { return __builtin___string(self.data); }
 
-  operator [] (index)         { return self.data[index]; }
-  operator []= (index, value) { self.data[index] = value; }
-  operator [:] (from, to)     { return Vector(..__builtin___slice(self.data, from, to)); }
+  operator [] (index: number) -> Any                { return self.data[index]; }
+  operator []= (index: number, value: Any)          { self.data[index] = value; }
+  operator [:] (from: number, to: number) -> Vector { return Vector(..__builtin___slice(self.data, from, to)); }
 
-  operator [:]= (from, to, value) {
+  operator [:]= (from: number, to: number, value: Any) {
     for (let i = from; i < to; i = i + 1)
       __builtin___remove(self.data, from);
 
@@ -33,7 +33,7 @@ class Vector {
       __builtin___insert(self.data, from, value);
   }
 
-  operator + (other) {
+  operator + (other: Vector) -> Vector {
     assert typeof(other) == "vector" || isinstance(other, Vector),
             "Can only add vectors";
 
@@ -49,7 +49,7 @@ class Vector {
     return new_vec;
   }
 
-  operator == (other) {
+  operator == (other: Vector) -> Vector {
     assert typeof(other) == "vector" || isinstance(other, Vector),
             "Can only compare vectors";
 

@@ -1,7 +1,7 @@
-let PI = 3.14159265358979323846;
-let E = 2.7182818284590452354;
-let NAN = 0 / 0;
-let INF = 1 / 0;
+let PI: float = 3.14159265358979323846;
+let E: float = 2.7182818284590452354;
+let NAN: float = 0 / 0;
+let INF: float = 1 / 0;
 
 func abs(x)      { return __builtin___abs(x); }
 func min(args[]) { return __builtin___min(args); }
@@ -14,19 +14,19 @@ func clamp(x, lo, hi) {
   return x;
 }
 
-func sin(x)      { return __builtin___sin(x); }
-func cos(x)      { return __builtin___cos(x); }
-func tan(x)      { return __builtin___tan(x); }
-func asin(x)     { return __builtin___asin(x); }
-func acos(x)     { return __builtin___acos(x); }
-func atan(x)     { return __builtin___atan(x); }
-func atan2(y, x) { return __builtin___atan2(y, x); }
+func sin(x) -> float                    { return __builtin___sin(x); }
+func cos(x) -> float                    { return __builtin___cos(x); }
+func tan(x) -> float                    { return __builtin___tan(x); }
+func asin(x) -> float                   { return __builtin___asin(x); }
+func acos(x) -> float                   { return __builtin___acos(x); }
+func atan(x) -> float                   { return __builtin___atan(x); }
+func atan2(y: float, x: float) -> float { return __builtin___atan2(y, x); }
 
-func sqrt(x)   { return __builtin___sqrt(x); }
-func pow(x, y) { return __builtin___pow(x, y); }
-func log(x)    { return __builtin___log(x); }  -- natural log
-func exp(x)    { return __builtin___exp(x); }
+func sqrt(x) -> float   { return __builtin___sqrt(x); }
+func pow(x, y) -> float { return __builtin___pow(x, y); }
+func log(x) -> float    { return __builtin___log(x); }  -- natural log
+func exp(x) -> float    { return __builtin___exp(x); }
 
-func floor(x) { return __builtin___floor(x); }
-func ceil(x)  { return __builtin___ceil(x); }
-func round(x) { return __builtin___round(x); }
+func floor(x: float) { return __builtin___floor(x); }
+func ceil(x: float)  { return __builtin___ceil(x); }
+func round(x: float) { return __builtin___round(x); }

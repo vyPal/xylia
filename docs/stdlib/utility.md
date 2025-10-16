@@ -14,47 +14,57 @@
 ### `Pair::init`
 
 ```xylia
-func Pair::init(first, second)
+func Pair::init(first: Any, second: Any) -> Pair
 ```
 
 **Parameters:**
 
-- `first`
-- `second`
+- `first` (`Any`)
+- `second` (`Any`)
+
+**Returns:** `Pair` 
 
 ### `Pair::to_string`
 
 ```xylia
-func Pair::to_string()
+func Pair::to_string() -> string
 ```
+
+**Returns:** `string` 
 
 ### `Pair::operator +`
 
 ```xylia
-func Pair::operator +(other)
+func Pair::operator +(other: Pair) -> Pair
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Pair`)
+
+**Returns:** `Pair` 
 
 ### `Pair::operator -`
 
 ```xylia
-func Pair::operator -(other)
+func Pair::operator -(other: Pair) -> Pair
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Pair`)
+
+**Returns:** `Pair` 
 
 ### `Pair::operator ==`
 
 ```xylia
-func Pair::operator ==(other)
+func Pair::operator ==(other: Pair) -> Pair
 ```
 
 **Parameters:**
 
-- `other`
+- `other` (`Pair`)
+
+**Returns:** `Pair` 
 

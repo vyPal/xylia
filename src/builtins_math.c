@@ -76,7 +76,7 @@ xyl_builtin(max) {
 xyl_builtin(sin) {
   xyl_builtin_signature(sin, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(sin((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(sin((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(sin(AS_FLOAT(argv[0])));
 
@@ -89,7 +89,7 @@ xyl_builtin(sin) {
 xyl_builtin(cos) {
   xyl_builtin_signature(cos, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(cos((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(cos((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(cos(AS_FLOAT(argv[0])));
 
@@ -102,7 +102,7 @@ xyl_builtin(cos) {
 xyl_builtin(tan) {
   xyl_builtin_signature(tan, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(tan((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(tan((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(tan(AS_FLOAT(argv[0])));
 
@@ -115,7 +115,7 @@ xyl_builtin(tan) {
 xyl_builtin(asin) {
   xyl_builtin_signature(asin, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(asin((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(asin((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(asin(AS_FLOAT(argv[0])));
 
@@ -129,7 +129,7 @@ xyl_builtin(asin) {
 xyl_builtin(acos) {
   xyl_builtin_signature(acos, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(acos((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(acos((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(acos(AS_FLOAT(argv[0])));
 
@@ -143,7 +143,7 @@ xyl_builtin(acos) {
 xyl_builtin(atan) {
   xyl_builtin_signature(atan, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(atan((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(atan((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(atan(AS_FLOAT(argv[0])));
 
@@ -163,7 +163,7 @@ xyl_builtin(atan2) {
 xyl_builtin(sqrt) {
   xyl_builtin_signature(sqrt, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(sqrt((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(sqrt((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(sqrt(AS_FLOAT(argv[0])));
 
@@ -202,7 +202,7 @@ xyl_builtin(pow) {
 xyl_builtin(log) {
   xyl_builtin_signature(log, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(log((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(log((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(log(AS_FLOAT(argv[0])));
 
@@ -215,7 +215,7 @@ xyl_builtin(log) {
 xyl_builtin(exp) {
   xyl_builtin_signature(exp, 1, ARGC_EXACT, {VAL_ANY, OBJ_ANY});
   if (IS_NUMBER(argv[0]))
-    return NUMBER_VAL(exp((double)AS_NUMBER(argv[0])));
+    return FLOAT_VAL(exp((double)AS_NUMBER(argv[0])));
   else if (IS_FLOAT(argv[0]))
     return FLOAT_VAL(exp(AS_FLOAT(argv[0])));
 

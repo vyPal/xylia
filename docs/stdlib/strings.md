@@ -11,24 +11,28 @@
 ### `padl`
 
 ```xylia
-func padl(str, n, c)
+func padl(str: string, n: number, c: string) -> string
 ```
 
 **Parameters:**
 
-- `str`
-- `n`
-- `c`
+- `str` (`string`)
+- `n` (`number`)
+- `c` (`string`)
+
+**Returns:** `string` 
 
 ### `padr`
 
 ```xylia
-func padr(str, n, c)
+func padr(str: string, n: number, c: string) -> string
 ```
 
 **Parameters:**
 
-- `str`
-- `n`
-- `c`
+- `str` (`string`)
+- `n` (`number`)
+- `c` (`string`)
+
+**Returns:** `string` 
 

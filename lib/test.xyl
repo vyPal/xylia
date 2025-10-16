@@ -1,34 +1,34 @@
-let Vector = import("vector")::Vector;
+let Vector: Vector = import("vector")::Vector;
 
-let verbose = true;
+let verbose: bool = true;
 
-func set_verbose(value) {
+func set_verbose(value: bool) {
   assert typeof(value) == "bool", "value must be bool";
   verbose = value;
 }
 
 class Case {
-  func init(name, fn) {
+  func init(name: string, fn: function) -> Case {
     assert typeof(name) == "string", "name must be string";
     assert typeof(fn) == "function", "fn must be function";
     self.name = name;
     self.fn = fn;
   }
 
-  func run() {
+  func run() -> bool {
     self.fn();
     return case_failed();
   }
 }
 
 class Suite {
-  func init(name) {
+  func init(name: string) -> Suite {
     assert typeof(name) == "string", "name must be string";
     self.cases = Vector();
     self.name = name;
   }
 
-  func add_case(name, fn) {
+  func add_case(name: string, fn: function) {
     assert typeof(name) == "string", "name must be string";
     assert typeof(fn) == "function", "fn must be function";
     self.cases.push(Case(name, fn));
@@ -60,11 +60,11 @@ class Suite {
 }
 
 class Runner {
-  func init() {
+  func init() -> Runner {
     self.suites = Vector();
   }
 
-  func add_suite(suite) {
+  func add_suite(suite: Suite) {
     assert isinstance(suite, Suite), "suite must be test.Suite";
     self.suites.push(suite);
   }

@@ -74,88 +74,104 @@ func clamp(x, lo, hi)
 ### `sin`
 
 ```xylia
-func sin(x)
+func sin(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `cos`
 
 ```xylia
-func cos(x)
+func cos(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `tan`
 
 ```xylia
-func tan(x)
+func tan(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `asin`
 
 ```xylia
-func asin(x)
+func asin(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `acos`
 
 ```xylia
-func acos(x)
+func acos(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `atan`
 
 ```xylia
-func atan(x)
+func atan(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `atan2`
 
 ```xylia
-func atan2(y, x)
+func atan2(y: float, x: float) -> float
 ```
 
 **Parameters:**
 
-- `y`
-- `x`
+- `y` (`float`)
+- `x` (`float`)
+
+**Returns:** `float` 
 
 ### `sqrt`
 
 ```xylia
-func sqrt(x)
+func sqrt(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
 
+**Returns:** `float` 
+
 ### `pow`
 
 ```xylia
-func pow(x, y)
+func pow(x, y) -> float
 ```
 
 **Parameters:**
@@ -163,63 +179,77 @@ func pow(x, y)
 - `x`
 - `y`
 
+**Returns:** `float` 
+
 ### `log`
 
 ```xylia
-func log(x)
+func log(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `exp`
 
 ```xylia
-func exp(x)
+func exp(x) -> float
 ```
 
 **Parameters:**
 
 - `x`
+
+**Returns:** `float` 
 
 ### `floor`
 
 ```xylia
-func floor(x)
+func floor(x: float)
 ```
 
 **Parameters:**
 
-- `x`
+- `x` (`float`)
 
 ### `ceil`
 
 ```xylia
-func ceil(x)
+func ceil(x: float)
 ```
 
 **Parameters:**
 
-- `x`
+- `x` (`float`)
 
 ### `round`
 
 ```xylia
-func round(x)
+func round(x: float)
 ```
 
 **Parameters:**
 
-- `x`
+- `x` (`float`)
 
 ## Variables
 
 ### PI
 
+**Type:** `float`
+
 ### E
+
+**Type:** `float`
 
 ### NAN
 
+**Type:** `float`
+
 ### INF
+
+**Type:** `float`
 
