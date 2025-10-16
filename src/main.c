@@ -8,6 +8,7 @@
 #include "cli.h"
 #include "memory.h"
 #include "random.h"
+#include "shell_integration.h"
 #include "vm.h"
 
 #ifdef DEBUG
@@ -119,6 +120,12 @@ static bool parse_global_args_before_subcommand(int *argc, char ***argv,
     } else if (strcmp(arg, "-V") == 0 || strcmp(arg, "--version") == 0) {
       cli_show_version();
       return false;
+    } else if (strcmp(arg, "--zsh") == 0) {
+      printf("%s", ZSH_INTEGRATION);
+      return false;
+    } else if (strcmp(arg, "--bash") == 0) {
+      printf("%s", BASH_INTEGRATION);
+      return false;
     } else if (strcmp(arg, "-v") == 0 || strcmp(arg, "--verbose") == 0) {
       ctx->verbose = true;
       continue; // Don't add to new_argv
@@ -154,7 +161,8 @@ static void separate_global_and_subcommand_args(int argc, char **argv,
     if (!found_subcommand) {
       // Check for global flags first
       if (strcmp(arg, "-h") == 0 || strcmp(arg, "--help") == 0 ||
-          strcmp(arg, "-V") == 0 || strcmp(arg, "--version") == 0) {
+          strcmp(arg, "-V") == 0 || strcmp(arg, "--version") == 0 ||
+          strcmp(arg, "--zsh") == 0 || strcmp(arg, "--bash") == 0) {
         // These are global flags
         global_args[(*global_argc)++] = argv[i];
       } else if (strcmp(arg, "-v") == 0 || strcmp(arg, "--verbose") == 0) {
@@ -234,6 +242,12 @@ int main(int argc, char **argv) {
       } else if (strcmp(global_argv[i], "-V") == 0 ||
                  strcmp(global_argv[i], "--version") == 0) {
         cli_show_version();
+        return CLI_SUCCESS;
+      } else if (strcmp(global_argv[i], "--zsh") == 0) {
+        printf("%s", ZSH_INTEGRATION);
+        return CLI_SUCCESS;
+      } else if (strcmp(global_argv[i], "--bash") == 0) {
+        printf("%s", BASH_INTEGRATION);
         return CLI_SUCCESS;
       }
     }

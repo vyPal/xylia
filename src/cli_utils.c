@@ -25,6 +25,9 @@ void cli_show_help(const char *program_name) {
   printf("    -h, --help       Show this help message\n");
   printf("    -V, --version    Show version information\n");
   printf("    -v, --verbose    Enable verbose output\n");
+  printf("    --zsh            Print script to set up zsh shell integration\n");
+  printf(
+      "    --bash           Print script to set up bash shell integration\n");
   printf("\n");
 
   printf("SUBCOMMANDS:\n");

@@ -9,6 +9,8 @@ _xylia() {
     '(-h --help)'{-h,--help}'[Show this help message]'
     '(-V --version)'{-V,--version}'[Show version information]'
     '(-v --verbose)'{-v,--verbose}'[Enable verbose output]'
+    '(--zsh)'--zsh'[Print script to set up zsh shell integration]'
+    '(--bash)'--bash'[Print script to set up bash shell integration]'
   )
 
   subcmds=(
