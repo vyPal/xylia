@@ -35,7 +35,7 @@ class Suite {
   }
 
   func run() {
-    __builtin___printf(["\x1b[1;33mSuite\x1b[0m: %\n", self.name]);
+    __builtin___printf(["\x1b[1;33mSuite\x1b[0m: {}\n", self.name]);
 
     let passed = 0;
     let failed = 0;
